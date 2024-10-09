@@ -1,42 +1,19 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
+#include <SDL.h>
+#include <assert.h>
+#include <math.h>
+#include <string.h>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Gradient.cpp
- */
-
-#include <SDL.h>          // for SDL_BIG_ENDIAN, SDL_BYTEORDER
-#include <assert.h>              // for assert
-#include <math.h>                // for lrintf
-#include <string.h>              // for strcmp
-#include <iostream>              // for char_traits, operator<<, basic_ostream
-#include <sstream>               // for basic_stringstream
-#include <stdexcept>             // for runtime_error
-#include <string>                // for basic_string
-
-#include "ComponentFactory.hpp"  // for IMPLEMENT_COMPONENT_FACTORY
+#include "ComponentFactory.hpp"
 #include "Gradient.hpp"
-#include "Painter.hpp"           // for Painter
-#include "Texture.hpp"           // for Texture
-#include "TextureManager.hpp"    // for TextureManager, texture_manager
-#include "Vector2.hpp"           // for Vector2
-#include "XmlReader.hpp"         // for XmlReader
+#include "Painter.hpp"
+#include "Texture.hpp"
+#include "TextureManager.hpp"
+#include "Vector2.hpp"
+#include "XmlReader.hpp"
 
 #ifdef _MSC_VER
 #define lrintf(x) (long int)x
@@ -44,36 +21,52 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Gradient::Gradient()
     : direction(LEFT_RIGHT)
-{}
+{
+}
 
 Gradient::~Gradient()
-{}
+{
+}
 
-void
-Gradient::parse(XmlReader& reader)
+void Gradient::parse(XmlReader &reader)
 {
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(parseAttribute(attribute, value)) {
+        if (parseAttribute(attribute, value))
+        {
             continue;
-        } else if(strcmp(attribute, "from") == 0) {
-            from.parse(value);
-        } else if(strcmp(attribute, "to") == 0) {
-            to.parse(value);
-        } else if (strcmp(attribute, "direction") == 0) {
-            if(strcmp(value, "left-right") == 0) {
+        }
+        else if (attribute == "from")
+        {
+            from.parse(value.c_str());
+        }
+        else if (attribute == "to")
+        {
+            to.parse(value.c_str());
+        }
+        else if (attribute == "direction")
+        {
+            if (value == "left-right")
+            {
                 direction = LEFT_RIGHT;
-            } else if (strcmp(value, "top-bottom") == 0) {
+            }
+            else if (value == "top-bottom")
+            {
                 direction = TOP_BOTTOM;
-            } else {
+            }
+            else
+            {
                 std::stringstream msg;
                 msg << "Invalid gradient direction '" << value << "'.";
                 throw std::runtime_error(msg.str());
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribute '"
                       << attribute << "'.\n";
         }
@@ -82,34 +75,35 @@ Gradient::parse(XmlReader& reader)
     flags |= FLAG_RESIZABLE;
 }
 
-void
-Gradient::resize(float width, float height)
+void Gradient::resize(float width, float height)
 {
     assert(direction == LEFT_RIGHT || direction == TOP_BOTTOM);
-    if(width < 0) width = 0;
-    if(height < 0) height = 0;
+    if (width < 0)
+        width = 0;
+    if (height < 0)
+        height = 0;
     float w = direction == LEFT_RIGHT ? width : height;
-    float dr = ((float) to.r - (float) from.r) / w;
-    float dg = ((float) to.g - (float) from.g) / w;
-    float db = ((float) to.b - (float) from.b) / w;
-    float da = ((float) to.a - (float) from.a) / w;
+    float dr = ((float)to.r - (float)from.r) / w;
+    float dg = ((float)to.g - (float)from.g) / w;
+    float db = ((float)to.b - (float)from.b) / w;
+    float da = ((float)to.a - (float)from.a) / w;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                                (int) width, (int) height,
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                (int)width, (int)height,
                                                 32, 0xff000000,
                                                 0x00ff0000,
                                                 0x0000ff00,
                                                 0x000000ff);
 #else
-    SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                                (int) width, (int) height,
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                (int)width, (int)height,
                                                 32, 0x000000ff,
                                                 0x0000ff00,
                                                 0x00ff0000,
                                                 0xff000000);
 #endif
-    if(surface == 0)
+    if (surface == 0)
         throw std::runtime_error("Couldn't create SDL_Surface for gradient. "
                                  "(Out of memory?");
 
@@ -117,9 +111,11 @@ Gradient::resize(float width, float height)
     float g = from.g;
     float b = from.b;
     float a = from.a;
-    if(direction == LEFT_RIGHT) {
-        for(int x = 0; x < (int) width; ++x) {
-            draw_vertical_line(surface, x, 0, (int) height,
+    if (direction == LEFT_RIGHT)
+    {
+        for (int x = 0; x < (int)width; ++x)
+        {
+            draw_vertical_line(surface, x, 0, (int)height,
                                lrintf(r), lrintf(g),
                                lrintf(b), lrintf(a));
             r += dr;
@@ -127,9 +123,12 @@ Gradient::resize(float width, float height)
             b += db;
             a += da;
         }
-    } else {
-        for(int y = 0; y < (int) height; ++y) {
-            draw_horizontal_line(surface, 0, y, (int) width,
+    }
+    else
+    {
+        for (int y = 0; y < (int)height; ++y)
+        {
+            draw_horizontal_line(surface, 0, y, (int)width,
                                  lrintf(r), lrintf(g),
                                  lrintf(b), lrintf(a));
             r += dr;
@@ -144,47 +143,40 @@ Gradient::resize(float width, float height)
     this->height = height;
 }
 
-void
-Gradient::draw(Painter& painter)
+void Gradient::draw(Painter &painter)
 {
     painter.drawTexture(texture.get(), Vector2(0, 0));
 }
 
 inline void
-Gradient::draw_horizontal_line(SDL_Surface* surface, int x1, int y1, int x2,
+Gradient::draw_horizontal_line(SDL_Surface *surface, int x1, int y1, int x2,
                                uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-    uint32_t col = (uint32_t) r << surface->format->Rshift
-        | (uint32_t) g << surface->format->Gshift
-        | (uint32_t) b << surface->format->Bshift
-        | (uint32_t) a << surface->format->Ashift;
+    uint32_t col = (uint32_t)r << surface->format->Rshift | (uint32_t)g << surface->format->Gshift | (uint32_t)b << surface->format->Bshift | (uint32_t)a << surface->format->Ashift;
 
-    uint8_t* pix = (uint8_t*) surface->pixels + (y1*surface->pitch) + x1*4;
-    for(int x = x1; x < x2; ++x) {
-        uint32_t* p = (uint32_t*) pix;
+    uint8_t *pix = (uint8_t *)surface->pixels + (y1 * surface->pitch) + x1 * 4;
+    for (int x = x1; x < x2; ++x)
+    {
+        uint32_t *p = (uint32_t *)pix;
         *p = col;
         pix += 4;
     }
 }
 
 inline void
-Gradient::draw_vertical_line(SDL_Surface* surface, int x1, int y1, int y2,
+Gradient::draw_vertical_line(SDL_Surface *surface, int x1, int y1, int y2,
                              uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-    uint32_t col = (uint32_t) r << surface->format->Rshift
-        | (uint32_t) g << surface->format->Gshift
-        | (uint32_t) b << surface->format->Bshift
-        | (uint32_t) a << surface->format->Ashift;
+    uint32_t col = (uint32_t)r << surface->format->Rshift | (uint32_t)g << surface->format->Gshift | (uint32_t)b << surface->format->Bshift | (uint32_t)a << surface->format->Ashift;
     int pitch = surface->pitch;
 
-    uint8_t* pix = (uint8_t*) surface->pixels + (y1*pitch) + x1*4;
-    for(int y = y1; y < y2; ++y) {
-        uint32_t* p = (uint32_t*) pix;
+    uint8_t *pix = (uint8_t *)surface->pixels + (y1 * pitch) + x1 * 4;
+    for (int y = y1; y < y2; ++y)
+    {
+        uint32_t *p = (uint32_t *)pix;
         *p = col;
         pix += pitch;
     }
 }
 
 IMPLEMENT_COMPONENT_FACTORY(Gradient)
-
-/** @file gui/Gradient.cpp */

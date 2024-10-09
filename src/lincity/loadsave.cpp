@@ -1,87 +1,65 @@
-/* ---------------------------------------------------------------------- *
- * loadsave.cpp
- * This file is part of lincity-NG
- * See COPYING for license, and CREDITS for authors
- * ---------------------------------------------------------------------- */
-
 /* this is for saving */
 
-#include <stdio.h>                         // for sscanf, fprintf, printf
-#include <zlib.h>                          // for gzgets, gzclose, gzopen
-//#include <zlib.h> //moved to lintypes.h
-#include <iostream>                        // for basic_ostream, operator<<
+#include <stdio.h>
+// #include <zlib.h>
+#include <iostream>
 
-#include "../lincity-ng/Config.hpp"        // for getConfig, Config
-#include "engglobs.h"                      // for world, alt_min, alt_max
-#include "groups.h"                        // for GROUP_RAIL_BRIDGE, GROUP_R...
-#include "gui_interface/shared_globals.h"  // for main_screen_originx, main_...
-#include "init_game.h"                     // for clear_game
-#include "lintypes.h"                      // for MapTile, Ground, Construct...
-#include "modules/all_modules.h"           // for Residence, MODERN_WINDMILL...
-#include "stats.h"                         // for init_inventory, tpopulation
-#include "tinygettext/gettext.hpp"         // for _
-#include "transport.h"                     // for connect_transport
-#include "world.h"                         // for World
+#include "../lincity-ng/Config.hpp"
+#include "engglobs.h"
+#include "groups.h"
+#include "gui_interface/shared_globals.h"
+#include "init_game.h"
+#include "lintypes.h"
+#include "modules/all_modules.h"
+#include "stats.h"
+#include "tinygettext/gettext.hpp"
+#include "transport.h"
+#include "world.h"
 
-#if defined (TIME_WITH_SYS_TIME)
+#if defined(TIME_WITH_SYS_TIME)
 #include <sys/time.h>
 #include <time.h>
 #else
-#if defined (HAVE_SYS_TIME_H)
+#if defined(HAVE_SYS_TIME_H)
 #include <sys/time.h>
 #else
 #endif
 #endif
 
-#include <string.h>                        // for strncmp, strlen
-#include <cstdlib>                         // for NULL
-/*
-#if defined (WIN32)
-#include <winsock.h>
-#include <io.h>
-#include <direct.h>
-#include <process.h>
-#endif
-*/
+#include <string.h>
+#include <cstdlib>
+
 #ifdef __EMX__
-#define chown(x,y,z)
+#define chown(x, y, z)
 #endif
 
-#if defined (HAVE_DIRENT_H)
+#if defined(HAVE_DIRENT_H)
 #include <dirent.h>
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
 #define dirent direct
 #define NAMLEN(dirent) (dirent)->d_namlen
-#if defined (HAVE_SYS_NDIR_H)
+#if defined(HAVE_SYS_NDIR_H)
 #include <sys/ndir.h>
 #endif
-#if defined (HAVE_SYS_DIR_H)
+#if defined(HAVE_SYS_DIR_H)
 #include <sys/dir.h>
 #endif
-#if defined (HAVE_NDIR_H)
+#if defined(HAVE_NDIR_H)
 #include <ndir.h>
 #endif
 #endif
 
-#include <physfs.h>                        // for PHYSFS_getDirSeparator
+#include "gui_interface/pbar_interface.h"
 
-#include "gui_interface/pbar_interface.h"  // for pbar_st, pbars, init_pbars
-//#include "common.h"
-/*
-#ifdef LC_X11
-#include <X11/cursorfont.h>
-#endif
-*/
-#include "lctypes.h"                       // for CST_DESERT, CST_USED, CST_...
-#include "lin-city.h"                      // for FLAG_IS_RIVER, VOLATILE_FLAGS
-#include "lincity-ng/ErrorInterface.hpp"   // for do_error
+#include "lctypes.h"
+#include "lin-city.h"
+#include "lincity-ng/ErrorInterface.hpp"
 #include "loadsave.h"
-#include "xmlloadsave.h"                   // for XMLloadsave, xml_loadsave
+#include "xmlloadsave.h"
 
-
-#if defined (WIN32) && !defined (NDEBUG)
+#if defined(WIN32) && !defined(NDEBUG)
 #define START_FAST_SPEED 1
 #define SKIP_OPENING_SCENE 1
 #endif
@@ -103,13 +81,11 @@ extern void prog_box(const char *, int);
 
 extern void print_total_money(void);
 extern void desert_water_frontiers(int originx, int originy, int w, int h);
-extern void set_river_tile( int x, int y);
-
+extern void set_river_tile(int x, int y);
 
 /* -----------------------------------------------*
  * Private Functions
  * -----------------------------------------------*/
-
 
 /* ---------------------------------------------------------------------- *
  * Public functions
@@ -117,8 +93,7 @@ extern void set_river_tile( int x, int y);
 
 void save_city(char *cname)
 {
-    std::string fullname = PHYSFS_getWriteDir();
-    fullname += PHYSFS_getDirSeparator();
+    std::string fullname = "/";
     fullname += cname;
     save_city_2(fullname);
 }
@@ -128,19 +103,24 @@ void save_city_2(std::string xml_file_name)
     size_t found;
     found = xml_file_name.find(".gz");
 
-    if (found > xml_file_name.length()-3)
-    {   xml_file_name += ".gz";}
+    if (found > xml_file_name.length() - 3)
+    {
+        xml_file_name += ".gz";
+    }
     xml_loadsave.saveXMLfile(xml_file_name);
 #ifdef DEBUG
-    //TODO abandon support for writing old style savegame
+    // TODO abandon support for writing old style savegame
     if (world.len() == COMPATIBLE_WORLD_SIDE_LEN)
     {
         int dumbint = 0;
         found = xml_file_name.find(".gz");
         if (found < xml_file_name.length())
-        {   xml_file_name = xml_file_name.substr(0,found);}
+        {
+            xml_file_name = xml_file_name.substr(0, found);
+        }
         gzFile ofile = gzopen(xml_file_name.c_str(), "wb");
-        if (ofile == NULL) {
+        if (ofile == NULL)
+        {
             printf("%s <%s> - ", _("Save file"), xml_file_name.c_str());
             do_error(_("Can't open save file!"));
         }
@@ -153,58 +133,58 @@ void save_city_2(std::string xml_file_name)
             for (int y = 0; y < world.len(); y++)
             {
                 /*               TY po fl cr or i1 i2 i3 i4 i5 i6 i7 PL al ec ws gp wa wp ww wn g1 g2 g3 g4 DA TK AN d4 d5 d6 d7 d8 d9 */
-                gzprintf(ofile, "%u %d %d %u %u %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
-                           , world(x, y)->is_visible() ? world(x, y)->getTopType() : CST_USED
-                           , 0 //MP_INFO(x, y).population
-                           , world(x, y)->flags
-                           , world(x, y)->coal_reserve
-                           , world(x, y)->ore_reserve
-                           , 0 //MP_INFO(x, y).int_1
-                           , 0 //MP_INFO(x, y).int_2
-                           , 0 //MP_INFO(x, y).int_3
-                           , 0 //MP_INFO(x, y).int_4
-                           , 0 //MP_INFO(x, y).int_5
-                           , 0 //MP_INFO(x, y).int_6
-                           , 0 //MP_INFO(x, y).int_7
-                           , world(x, y)->pollution
-                           , world(x, y)->ground.altitude
-                           , world(x, y)->ground.ecotable
-                           , world(x, y)->ground.wastes
-                           , world(x, y)->ground.pollution
-                           , world(x, y)->ground.water_alt
-                           , world(x, y)->ground.water_pol
-                           , world(x, y)->ground.water_wast
-                           , world(x, y)->ground.water_next
-                           , world(x, y)->ground.int1
-                           , world(x, y)->ground.int2
-                           , world(x, y)->ground.int3
-                           , world(x, y)->ground.int4
-                           , 0 //MP_DATE(x,y)   // d1 = date of built
-                           , 0 //MP_TECH(x,y)   // d2 = tech at build time
-                           , 0 //MP_ANIM(x,y)   // d3 = animation_time (see reset_animation_time mess :)
-                           , dumbint        // d4  could be         image index for smooth animation, cf windmill anim_tile
-                           , dumbint        // d5                   percentage of activity to choose family of pic
-                           , dumbint        // d6
-                           , dumbint        // d7
-                           , dumbint        // d8
-                           , dumbint        // d9
-                           );
-            }//end for y
-        }//end for x
+                gzprintf(ofile, "%u %d %d %u %u %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", world(x, y)->is_visible() ? world(x, y)->getTopType() : CST_USED, 0 // MP_INFO(x, y).population
+                         ,
+                         world(x, y)->flags, world(x, y)->coal_reserve, world(x, y)->ore_reserve, 0 // MP_INFO(x, y).int_1
+                         ,
+                         0 // MP_INFO(x, y).int_2
+                         ,
+                         0 // MP_INFO(x, y).int_3
+                         ,
+                         0 // MP_INFO(x, y).int_4
+                         ,
+                         0 // MP_INFO(x, y).int_5
+                         ,
+                         0 // MP_INFO(x, y).int_6
+                         ,
+                         0 // MP_INFO(x, y).int_7
+                         ,
+                         world(x, y)->pollution, world(x, y)->ground.altitude, world(x, y)->ground.ecotable, world(x, y)->ground.wastes, world(x, y)->ground.pollution, world(x, y)->ground.water_alt, world(x, y)->ground.water_pol, world(x, y)->ground.water_wast, world(x, y)->ground.water_next, world(x, y)->ground.int1, world(x, y)->ground.int2, world(x, y)->ground.int3, world(x, y)->ground.int4, 0 // MP_DATE(x,y)   // d1 = date of built
+                         ,
+                         0 // MP_TECH(x,y)   // d2 = tech at build time
+                         ,
+                         0 // MP_ANIM(x,y)   // d3 = animation_time (see reset_animation_time mess :)
+                         ,
+                         dumbint // d4  could be         image index for smooth animation, cf windmill anim_tile
+                         ,
+                         dumbint // d5                   percentage of activity to choose family of pic
+                         ,
+                         dumbint // d6
+                         ,
+                         dumbint // d7
+                         ,
+                         dumbint // d8
+                         ,
+                         dumbint // d9
+                );
+            } // end for y
+        } // end for x
         gzprintf(ofile, "%d\n", main_screen_originx);
         gzprintf(ofile, "%d\n", main_screen_originy);
 
         gzprintf(ofile, "%d\n", total_time);
-        for (int x = 0; x < MAX_NUMOF_SUBSTATIONS; x++) {
-            gzprintf(ofile, "%d\n", 0);//substationx[x]
-            gzprintf(ofile, "%d\n", 0);//substationy[x]
+        for (int x = 0; x < MAX_NUMOF_SUBSTATIONS; x++)
+        {
+            gzprintf(ofile, "%d\n", 0); // substationx[x]
+            gzprintf(ofile, "%d\n", 0); // substationy[x]
         }
-        gzprintf(ofile, "%d\n", 0);//numof_substations);
-        for (int x = 0; x < MAX_NUMOF_MARKETS; x++) {
-            gzprintf(ofile, "%d\n", 0);//marketx[x]
-            gzprintf(ofile, "%d\n", 0);//markety[x]
+        gzprintf(ofile, "%d\n", 0); // numof_substations);
+        for (int x = 0; x < MAX_NUMOF_MARKETS; x++)
+        {
+            gzprintf(ofile, "%d\n", 0); // marketx[x]
+            gzprintf(ofile, "%d\n", 0); // markety[x]
         }
-        gzprintf(ofile, "%d\n", 0);//numof_markets);
+        gzprintf(ofile, "%d\n", 0); // numof_markets);
         gzprintf(ofile, "%d\n", people_pool);
         gzprintf(ofile, "%o\n", total_money);
         gzprintf(ofile, "%d\n", income_tax_rate);
@@ -233,7 +213,8 @@ void save_city_2(std::string xml_file_name)
 
         /* Changed, version 1.12 */
         gzprintf(ofile, "%d\n", monthgraph_size);
-        for (int x = 0; x < monthgraph_size; x++) {
+        for (int x = 0; x < monthgraph_size; x++)
+        {
             gzprintf(ofile, "%d\n", monthgraph_pop[x]);
             gzprintf(ofile, "%d\n", monthgraph_starve[x]);
             gzprintf(ofile, "%d\n", monthgraph_nojobs[x]);
@@ -247,7 +228,8 @@ void save_city_2(std::string xml_file_name)
             for (int p = 0; p < NUM_PBARS; p++)
                 gzprintf(ofile, "%d\n", pbars[p].data[x]);
 
-        for (int p = 0; p < NUM_PBARS; p++) {
+        for (int p = 0; p < NUM_PBARS; p++)
+        {
             gzprintf(ofile, "%d\n", pbars[p].oldtot);
             gzprintf(ofile, "%d\n", pbars[p].diff);
         }
@@ -269,9 +251,9 @@ void save_city_2(std::string xml_file_name)
         if (strlen(given_scene) > 1)
             gzprintf(ofile, "%s\n", given_scene);
         else
-            gzprintf(ofile, "dummy\n");     /* 1 */
+            gzprintf(ofile, "dummy\n"); /* 1 */
 
-        gzprintf(ofile, "%d\n", highest_tech_level);        /* 2 */
+        gzprintf(ofile, "%d\n", highest_tech_level); /* 2 */
 
         gzprintf(ofile, "sust %d %d %d %d %d %d %d %d %d %d\n", sust_dig_ore_coal_count, sust_port_count, sust_old_money_count, sust_old_population_count, sust_old_tech_count, sust_fire_count, sust_old_money, sust_old_population, sust_old_tech, sustain_flag); /* 3 */
 
@@ -311,7 +293,9 @@ void load_city_2(char *cname)
     xml_file_name = cname;
     found = xml_file_name.find(".gz");
     if (found > xml_file_name.length() - 3)
-    {   xml_file_name += ".gz";}
+    {
+        xml_file_name += ".gz";
+    }
     init_pbars();
     num_pbars = OLD_NUM_PBARS;
     pbar_data_size = PBAR_DATA_SIZE;
@@ -319,16 +303,16 @@ void load_city_2(char *cname)
     r = xml_loadsave.loadXMLfile(xml_file_name);
     if (r == -1)
     {
-        std::cout << "importing: "<< cname << std::endl;
-        //old savegames are always WORLD_SIDE_LEN == 100
+        std::cout << "importing: " << cname << std::endl;
+        // old savegames are always WORLD_SIDE_LEN == 100
         world.len(COMPATIBLE_WORLD_SIDE_LEN);
         clear_game();
-        binary_mode = false; //set save default for old files
-        seed_compression = false; //set save default for old files
+        binary_mode = false;      // set save default for old files
+        seed_compression = false; // set save default for old files
         gzfile = gzopen(cname, "rb");
         if (gzfile == NULL)
         {
-            printf("%s <%s> (%s)",_("Can't open"),cname, _("gzipped"));
+            printf("%s <%s> (%s)", _("Can't open"), cname, _("gzipped"));
             do_error("Can't open it!");
         }
 
@@ -336,7 +320,7 @@ void load_city_2(char *cname)
         if (ldsv_version < WATERWELL_V2)
         {
             gzclose(gzfile);
-            load_city_old( cname );
+            load_city_old(cname);
             /* Fix desert frontier for old saved games and scenarios */
             connect_transport(1, 1, world.len() - 2, world.len() - 2);
             desert_water_frontiers(0, 0, world.len(), world.len());
@@ -346,7 +330,6 @@ void load_city_2(char *cname)
         fprintf(stderr, " ldsv_version = %i \n", ldsv_version);
         use_waterwell = true;
 
-
         // Easier debugging from saved game: #Line = 100 x + y + 1  (first line = ldsv_version)
         for (x = 0; x < COMPATIBLE_WORLD_SIDE_LEN; x++)
         {
@@ -354,47 +337,44 @@ void load_city_2(char *cname)
             {
                 gzgets(gzfile, s, 512);
                 //         TY  po fl cr  or  i1 i2 i3 i4 i5 i6 i7 PL al ec ws gp wa wp ww wn g1 g2 g3 g4 DA TK AN d4 d5 d6 d7 d8 d9
-                sscanf(s, "%hu %d %i %hu %hu %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
-                        , &(world(x, y)->type)
-                        , &dummy //&MP_INFO(x, y).population
-                        , &(world(x, y)->flags)
-                        , &(world(x, y)->coal_reserve)
-                        , &(world(x, y)->ore_reserve)
-                        , &dummy //&MP_INFO(x, y).int_1
-                        , &dummy //&MP_INFO(x, y).int_2
-                        , &dummy //&MP_INFO(x, y).int_3
-                        , &dummy //&MP_INFO(x, y).int_4
-                        , &dummy //&MP_INFO(x, y).int_5
-                        , &dummy //&MP_INFO(x, y).int_6
-                        , &dummy //&MP_INFO(x, y).int_7
-                        , &(world(x, y)->pollution)
-                        , &world(x, y)->ground.altitude
-                        , &world(x, y)->ground.ecotable
-                        , &world(x, y)->ground.wastes
-                        , &world(x, y)->ground.pollution
-                        , &world(x, y)->ground.water_alt
-                        , &world(x, y)->ground.water_pol
-                        , &world(x, y)->ground.water_wast
-                        , &world(x, y)->ground.water_next
-                        , &world(x, y)->ground.int1
-                        , &world(x, y)->ground.int2
-                        , &world(x, y)->ground.int3
-                        , &world(x, y)->ground.int4
-                        , &dummy//&MP_DATE(x,y)   // d1 = date of built
-                        , &dummy//&MP_TECH(x,y)   // d2 = tech at build time
-                        , &dummy//&MP_ANIM(x,y)   // d3 = animation_time (see reset_animation_time mess :)
-                        , &dumbint        // d4  could be         image index for smooth animation, cf windmill anim_tile
-                        , &dumbint        // d5                   percentage of activity to choose family of pic
-                        , &dumbint        // d6
-                        , &dumbint        // d7
-                        , &dumbint        // d8
-                        , &dumbint        // d9
-                        );
+                sscanf(s, "%hu %d %i %hu %hu %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &(world(x, y)->type), &dummy //&MP_INFO(x, y).population
+                       ,
+                       &(world(x, y)->flags), &(world(x, y)->coal_reserve), &(world(x, y)->ore_reserve), &dummy //&MP_INFO(x, y).int_1
+                       ,
+                       &dummy //&MP_INFO(x, y).int_2
+                       ,
+                       &dummy //&MP_INFO(x, y).int_3
+                       ,
+                       &dummy //&MP_INFO(x, y).int_4
+                       ,
+                       &dummy //&MP_INFO(x, y).int_5
+                       ,
+                       &dummy //&MP_INFO(x, y).int_6
+                       ,
+                       &dummy //&MP_INFO(x, y).int_7
+                       ,
+                       &(world(x, y)->pollution), &world(x, y)->ground.altitude, &world(x, y)->ground.ecotable, &world(x, y)->ground.wastes, &world(x, y)->ground.pollution, &world(x, y)->ground.water_alt, &world(x, y)->ground.water_pol, &world(x, y)->ground.water_wast, &world(x, y)->ground.water_next, &world(x, y)->ground.int1, &world(x, y)->ground.int2, &world(x, y)->ground.int3, &world(x, y)->ground.int4, &dummy //&MP_DATE(x,y)   // d1 = date of built
+                       ,
+                       &dummy //&MP_TECH(x,y)   // d2 = tech at build time
+                       ,
+                       &dummy //&MP_ANIM(x,y)   // d3 = animation_time (see reset_animation_time mess :)
+                       ,
+                       &dumbint // d4  could be         image index for smooth animation, cf windmill anim_tile
+                       ,
+                       &dumbint // d5                   percentage of activity to choose family of pic
+                       ,
+                       &dumbint // d6
+                       ,
+                       &dumbint // d7
+                       ,
+                       &dumbint // d8
+                       ,
+                       &dumbint // d9
+                );
                 world(x, y)->group = get_group_of_type(world(x, y)->type);
-
             }
         }
-        //set_map_groups();
+        // set_map_groups();
 
         sscanf(gzgets(gzfile, s, 256), "%d", &main_screen_originx);
         sscanf(gzgets(gzfile, s, 256), "%d", &main_screen_originy);
@@ -403,17 +383,17 @@ void load_city_2(char *cname)
 
         for (x = 0; x < MAX_NUMOF_SUBSTATIONS; x++)
         {
-            sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&substationx[x]);
-            sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&substationy[x]);
+            sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&substationx[x]);
+            sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&substationy[x]);
         }
-        sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&numof_substations);
+        sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&numof_substations);
 
         for (x = 0; x < MAX_NUMOF_MARKETS; x++)
         {
-            sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&marketx[x]);
-            sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&markety[x]);
+            sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&marketx[x]);
+            sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&markety[x]);
         }
-        sscanf(gzgets(gzfile, s, 256), "%d", &dummy);//&numof_markets);
+        sscanf(gzgets(gzfile, s, 256), "%d", &dummy); //&numof_markets);
         sscanf(gzgets(gzfile, s, 256), "%d", &people_pool);
         sscanf(gzgets(gzfile, s, 256), "%d", &total_money);
         sscanf(gzgets(gzfile, s, 256), "%d", &income_tax_rate);
@@ -429,7 +409,7 @@ void load_city_2(char *cname)
         sscanf(gzgets(gzfile, s, 256), "%d", &tpopulation);
         sscanf(gzgets(gzfile, s, 256), "%d", &tstarving_population);
         sscanf(gzgets(gzfile, s, 256), "%d", &tunemployed_population);
-        sscanf(gzgets(gzfile, s, 256), "%d", &dummy);   /* waste_goods obsolete */
+        sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* waste_goods obsolete */
         sscanf(gzgets(gzfile, s, 256), "%d", &power_made);
         sscanf(gzgets(gzfile, s, 256), "%d", &power_used);
         sscanf(gzgets(gzfile, s, 256), "%d", &coal_made);
@@ -438,45 +418,46 @@ void load_city_2(char *cname)
         sscanf(gzgets(gzfile, s, 256), "%d", &goods_used);
         sscanf(gzgets(gzfile, s, 256), "%d", &ore_made);
         sscanf(gzgets(gzfile, s, 256), "%d", &ore_used);
-        sscanf(gzgets(gzfile, s, 256), "%d", &dummy);       /* &diff_old_population */
+        sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* &diff_old_population */
 
-        //build new constructions according to type info
+        // build new constructions according to type info
         int constuctionCounter = 0;
         for (x = 0; x < COMPATIBLE_WORLD_SIDE_LEN; x++)
         {
             for (y = 0; y < COMPATIBLE_WORLD_SIDE_LEN; y++)
             {
                 unsigned short type = world(x, y)->type;
-                unsigned short group = world(x,y)->group;
-                world(x,y)->flags &= ~VOLATILE_FLAGS;
+                unsigned short group = world(x, y)->group;
+                world(x, y)->flags &= ~VOLATILE_FLAGS;
                 if (world(x, y)->flags & FLAG_IS_RIVER)
-                    {   set_river_tile( x, y);}
+                {
+                    set_river_tile(x, y);
+                }
 
-                if((group == GROUP_TRACK_BRIDGE) || (group == GROUP_ROAD_BRIDGE)
-                || (group == GROUP_RAIL_BRIDGE))
-                {   world(x, y)->setTerrain(CST_WATER);}
+                if ((group == GROUP_TRACK_BRIDGE) || (group == GROUP_ROAD_BRIDGE) || (group == GROUP_RAIL_BRIDGE))
+                {
+                    world(x, y)->setTerrain(CST_WATER);
+                }
 
                 if (ConstructionGroup::countConstructionGroup(group))
                 {
                     ConstructionGroup::getConstructionGroup(group)->placeItem(x, y);
-                    if(world(x,y)->is_residence())
+                    if (world(x, y)->is_residence())
                     {
-                        Residence *residence = dynamic_cast<Residence*>(world(x,y)->construction);
+                        Residence *residence = dynamic_cast<Residence *>(world(x, y)->construction);
                         residence->local_population = 95 * residence->max_population / 100;
                     }
-                    world(x,y)->construction->bootstrap_commodities(50);
+                    world(x, y)->construction->bootstrap_commodities(50);
                     constuctionCounter++;
                 }
-                else if(type == CST_USED)
+                else if (type == CST_USED)
                 {
                     world(x, y)->setTerrain(CST_DESERT);
-                }//endif countConstruction
-            }// end for y
-        }// end for x
-        std::cout<<"Generated and initialized "<<constuctionCounter<<" modern Constructions"<<std::endl;
+                } // endif countConstruction
+            } // end for y
+        } // end for x
+        std::cout << "Generated and initialized " << constuctionCounter << " modern Constructions" << std::endl;
         //}
-
-
 
         /* Get size of monthgraph array */
         sscanf(gzgets(gzfile, s, 256), "%d", &i);
@@ -486,10 +467,10 @@ void load_city_2(char *cname)
                then we need to skip past them. */
             if (x >= monthgraph_size)
             {
-                sscanf(gzgets(gzfile, s, 256), "%d", &dummy);       /* &monthgraph_pop[x] */
-                sscanf(gzgets(gzfile, s, 256), "%d", &dummy);       /* &monthgraph_starve[x] */
-                sscanf(gzgets(gzfile, s, 256), "%d", &dummy);       /* &monthgraph_nojobs[x] */
-                sscanf(gzgets(gzfile, s, 256), "%d", &dummy);       /* &monthgraph_ppool[x] */
+                sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* &monthgraph_pop[x] */
+                sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* &monthgraph_starve[x] */
+                sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* &monthgraph_nojobs[x] */
+                sscanf(gzgets(gzfile, s, 256), "%d", &dummy); /* &monthgraph_ppool[x] */
             }
             else
             {
@@ -522,7 +503,9 @@ void load_city_2(char *cname)
         }
 
         for (p = 0; p < num_pbars; p++)
-        {   pbars[p].data_size = pbar_data_size;}
+        {
+            pbars[p].data_size = pbar_data_size;
+        }
 
         for (p = 0; p < num_pbars; p++)
         {
@@ -542,29 +525,35 @@ void load_city_2(char *cname)
         sscanf(gzgets(gzfile, s, 256), "%d", &total_births);
 
         for (x = 0; x < NUMOF_MODULES; x++)
-        {   sscanf(gzgets(gzfile, s, 256), "%d", &dummy);}
+        {
+            sscanf(gzgets(gzfile, s, 256), "%d", &dummy);
+        }
 
         sscanf(gzgets(gzfile, s, 256), "%128s", given_scene);
         if (strncmp(given_scene, "dummy", 5) == 0 || strlen(given_scene) < 3)
-        {   given_scene[0] = 0;}
+        {
+            given_scene[0] = 0;
+        }
         sscanf(gzgets(gzfile, s, 256), "%128s", s);
         if (strncmp(given_scene, "dummy", 5) != 0)
-        {   sscanf(s, "%d", &highest_tech_level);}
+        {
+            sscanf(s, "%d", &highest_tech_level);
+        }
         else
-        {   highest_tech_level = 0;}
+        {
+            highest_tech_level = 0;
+        }
 
         gzgets(gzfile, s, 200);
-        if (sscanf
-            (s, "sust %d %d %d %d %d %d %d %d %d %d", &sust_dig_ore_coal_count, &sust_port_count, &sust_old_money_count,
-             &sust_old_population_count, &sust_old_tech_count, &sust_fire_count, &sust_old_money, &sust_old_population,
-             &sust_old_tech, &sustain_flag) == 10)
+        if (sscanf(s, "sust %d %d %d %d %d %d %d %d %d %d", &sust_dig_ore_coal_count, &sust_port_count, &sust_old_money_count,
+                   &sust_old_population_count, &sust_old_tech_count, &sust_fire_count, &sust_old_money, &sust_old_population,
+                   &sust_old_tech, &sustain_flag) == 10)
         {
             sust_dig_ore_coal_tip_flag = sust_port_flag = 1;
         }
         else
-        {    sustain_flag = sust_dig_ore_coal_count = sust_port_count
-                = sust_old_money_count = sust_old_population_count
-                = sust_old_tech_count = sust_fire_count = sust_old_money = sust_old_population = sust_old_tech = 0;
+        {
+            sustain_flag = sust_dig_ore_coal_count = sust_port_count = sust_old_money_count = sust_old_population_count = sust_old_tech_count = sust_fire_count = sust_old_money = sust_old_population = sust_old_tech = 0;
         }
 
         gzgets(gzfile, s, 80);
@@ -580,29 +569,33 @@ void load_city_2(char *cname)
 
     // Engine stuff
     if (tech_level > MODERN_WINDMILL_TECH)
-    {   modern_windmill_flag = 1;}
+    {
+        modern_windmill_flag = 1;
+    }
 
     // print_total_money();
 
-    //reset_animation_times
-    //get alt_min, alt_max
+    // reset_animation_times
+    // get alt_min, alt_max
     alt_min = 2000000000;
     alt_max = -alt_min;
 
-    for ( y = 0; y < world.len(); y++){
-        for ( x = 0; x < world.len(); x++) {
+    for (y = 0; y < world.len(); y++)
+    {
+        for (x = 0; x < world.len(); x++)
+        {
             if (alt_min > world(x, y)->ground.altitude)
             {
-                 alt_min = world(x, y)->ground.altitude;
+                alt_min = world(x, y)->ground.altitude;
             }
             if (alt_max < world(x, y)->ground.altitude)
             {
-                 alt_max = world(x, y)->ground.altitude;
+                alt_max = world(x, y)->ground.altitude;
             }
         }
     }
 
-    alt_step = (alt_max - alt_min) /10;
+    alt_step = (alt_max - alt_min) / 10;
 
     // UI stuff
     if (main_screen_originx > COMPATIBLE_WORLD_SIDE_LEN - getConfig()->videoX / 16 - 1)
@@ -614,8 +607,4 @@ void load_city_2(char *cname)
     connect_transport(1, 1, world.len() - 2, world.len() - 2);
     /* Fix desert frontier for old saved games and scenarios */
     desert_water_frontiers(0, 0, world.len(), world.len());
-
 }
-
-
-/** @file lincity/loadsave.cpp */

@@ -1,7 +1,6 @@
 #ifndef ALL_MODULES_H
 #define ALL_MODULES_H
 
-// IWYU pragma: begin_exports
 #include "blacksmith.h"
 #include "coal_power.h"
 #include "coalmine.h"
@@ -21,10 +20,8 @@
 #include "port.h"
 #include "pottery.h"
 #include "power_line.h"
-//#include "rail.h" //superseeded by track_road_rail_powerline.h
 #include "recycle.h"
 #include "residence.h"
-//#include "road.h" //superseeded by track_road_rail_powerline.h
 #include "rocket_pad.h"
 #include "school.h"
 #include "shanty.h"
@@ -32,17 +29,12 @@
 #include "substation.h"
 #include "tip.h"
 #include "track_road_rail.h"
-//#include "track.h" //superseeded by track_road_rail_powerline.h
 #include "university.h"
 #include "water.h"
 #include "waterwell.h"
 #include "windmill.h"
 #include "windpower.h"
-// IWYU pragma: end_exports
 
 void initializeModules();
 
 #endif
-
-
-/** @file lincity/modules/all_modules.h */

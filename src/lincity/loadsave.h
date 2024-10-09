@@ -1,11 +1,6 @@
-/* ---------------------------------------------------------------------- *
- * loadsave.h
- * This file is part of lincity-NG
- * ---------------------------------------------------------------------- */
-
 /* This is the loading/saving facility */
 
-#include <string>  // for string
+#include <string>  
 
 #ifndef __loadsave_h__
 #define __loadsave_h__
@@ -24,7 +19,6 @@
 
 #define RESULTS_FILENAME "results.txt"
 
-
 /* New load/save format */
 #define WATERWELL_V2 1322
 
@@ -38,5 +32,3 @@ void load_city_2(char *);
 extern void load_city_old(char *);
 
 #endif /* __loadsave_h__ */
-
-/** @file lincity/loadsave.h */

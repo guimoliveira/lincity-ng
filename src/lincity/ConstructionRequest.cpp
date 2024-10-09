@@ -1,25 +1,21 @@
 #include "ConstructionRequest.h"
 
-#include "../gui_interface/mps.h"  // for mps_set, MPS_MAP
-#include "all_buildings.h"         // for ORE_RESERVE
-#include "engglobs.h"              // for world
-#include "engine.h"                // for desert_water_frontiers, connect_ri...
-#include "groups.h"                // for GROUP_WATER
-#include "lin-city.h"              // for FLAG_POWER_CABLES_0, FLAG_POWER_CA...
-#include "lintypes.h"              // for Construction, MapTile, Constructio...
-#include "modules/all_modules.h"   // for FireConstructionGroup, Fire, Parkl...
-#include "transport.h"             // for connect_transport, POWER_MODULUS
-#include "world.h"                 // for World
-
-//#include "../lincity-ng/Mps.hpp"
-//FIXME cannot include mps.h because of differing paths for further dependencies
-//TODO eliminate duplicated code
+#include "../gui_interface/mps.h"
+#include "all_buildings.h"
+#include "engglobs.h"
+#include "engine.h"
+#include "groups.h"
+#include "lin-city.h"
+#include "lintypes.h"
+#include "modules/all_modules.h"
+#include "transport.h"
+#include "world.h"
 
 extern int mps_x, mps_y;
 
 void ConstructionDeletionRequest::execute()
 {
-    //std::cout << "deleting: " << subject->constructionGroup->name
+    // std::cout << "deleting: " << subject->constructionGroup->name
     //<< " (" << subject->x << "," << subject->y << ")" << std::endl;
     unsigned short size = subject->constructionGroup->size;
     int x = subject->x;
@@ -30,10 +26,12 @@ void ConstructionDeletionRequest::execute()
     {
         for (int j = 0; j < size; j++)
         {
-            //update mps display
+            // update mps display
             world(x + j, y + i)->flags &= ~(FLAG_POWER_CABLES_0 | FLAG_POWER_CABLES_90);
             if (mps_x == x + j && mps_y == y + i)
-            {   mps_set(x + j, y + i, MPS_MAP);}
+            {
+                mps_set(x + j, y + i, MPS_MAP);
+            }
         }
     }
     // update adjacencies
@@ -53,15 +51,17 @@ void OreMineDeletionRequest::execute()
         for (int j = 0; j < size; j++)
         {
             world(x + j, y + i)->flags &= ~(FLAG_POWER_CABLES_0 | FLAG_POWER_CABLES_90);
-            if (world(x+j,y+i)->ore_reserve < ORE_RESERVE / 2)
+            if (world(x + j, y + i)->ore_reserve < ORE_RESERVE / 2)
             {
-                world(x+j,y+i)->setTerrain(GROUP_WATER);
-                world(x+j,y+i)->flags |= (FLAG_HAS_UNDERGROUND_WATER | FLAG_ALTERED);
-                connect_rivers(x+j,y+i);
+                world(x + j, y + i)->setTerrain(GROUP_WATER);
+                world(x + j, y + i)->flags |= (FLAG_HAS_UNDERGROUND_WATER | FLAG_ALTERED);
+                connect_rivers(x + j, y + i);
             }
-            //update mps display
+            // update mps display
             if (mps_x == x + j && mps_y == y + i)
-            {   mps_set(x + j, y + i, MPS_MAP);}
+            {
+                mps_set(x + j, y + i, MPS_MAP);
+            }
         }
     }
 
@@ -82,11 +82,15 @@ void CommuneDeletionRequest::execute()
         for (unsigned short j = 0; j < size; ++j)
         {
             world(x + j, y + i)->flags &= ~(FLAG_POWER_CABLES_0 | FLAG_POWER_CABLES_90);
-            if (world(x+j,y+i)->flags & FLAG_HAS_UNDERGROUND_WATER)
-            {    parklandConstructionGroup.placeItem(x+j, y+i);}
-            //update mps display
+            if (world(x + j, y + i)->flags & FLAG_HAS_UNDERGROUND_WATER)
+            {
+                parklandConstructionGroup.placeItem(x + j, y + i);
+            }
+            // update mps display
             if (mps_x == x + j && mps_y == y + i)
-            {   mps_set(x + j, y + i, MPS_MAP);}
+            {
+                mps_set(x + j, y + i, MPS_MAP);
+            }
         }
     }
     // update adjacencies
@@ -106,11 +110,13 @@ void BurnDownRequest::execute()
         for (unsigned short j = 0; j < size; ++j)
         {
             world(x + j, y + i)->flags &= ~(FLAG_POWER_CABLES_0 | FLAG_POWER_CABLES_90);
-            fireConstructionGroup.placeItem(x+j, y+i);
-            static_cast<Fire*> (world(x+j,y+i)->construction)->burning_days = FIRE_LENGTH - 25;
-            //update mps display
+            fireConstructionGroup.placeItem(x + j, y + i);
+            static_cast<Fire *>(world(x + j, y + i)->construction)->burning_days = FIRE_LENGTH - 25;
+            // update mps display
             if (mps_x == x + j && mps_y == y + i)
-            {   mps_set(x + j, y + i, MPS_MAP);}
+            {
+                mps_set(x + j, y + i, MPS_MAP);
+            }
         }
     }
     // update adjacencies
@@ -130,10 +136,12 @@ void SetOnFire::execute()
         for (unsigned short j = 0; j < size; ++j)
         {
             world(x + j, y + i)->flags &= ~(FLAG_POWER_CABLES_0 | FLAG_POWER_CABLES_90);
-            fireConstructionGroup.placeItem(x+j, y+i);
-            //update mps display
+            fireConstructionGroup.placeItem(x + j, y + i);
+            // update mps display
             if (mps_x == x + j && mps_y == y + i)
-            {   mps_set(x + j, y + i, MPS_MAP);}
+            {
+                mps_set(x + j, y + i, MPS_MAP);
+            }
         }
     }
     // update adjacencies
@@ -143,8 +151,10 @@ void SetOnFire::execute()
 
 void PowerLineFlashRequest::execute()
 {
-    int *anim_counter = &(dynamic_cast<Powerline*>(subject)->anim_counter);
+    int *anim_counter = &(dynamic_cast<Powerline *>(subject)->anim_counter);
     // 2/3 cooldown will prevent interlacing wave packets
-    if (*anim_counter <= POWER_MODULUS/3)
-    {   *anim_counter = POWER_MODULUS;}
+    if (*anim_counter <= POWER_MODULUS / 3)
+    {
+        *anim_counter = POWER_MODULUS;
+    }
 }

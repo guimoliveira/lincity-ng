@@ -1,10 +1,3 @@
-/* ---------------------------------------------------------------------- *
- * stats.h
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2002.
- * Portions copyright (c) Corey Keasling, 2000-2002.
- * ---------------------------------------------------------------------- */
-
 #ifndef __stats_h__
 #define __stats_h__
 
@@ -12,7 +5,7 @@
 
 /* Daily accumulators */
 
-#include <deque>  // for deque
+#include <deque> // for deque
 
 /*
   Note on variables (GCS):
@@ -41,7 +34,7 @@ extern int tunemployed_population;
 extern int tbirths, tdeaths, tunnat_deaths;
 // monthly updated births/deaths for last 12 month
 extern int ltbirths, ltdeaths, ltunnat_deaths;
-//history of last 12 month
+// history of last 12 month
 extern std::deque<int> birthq, deathq, unnatdeathq;
 
 /* yearly */
@@ -82,9 +75,9 @@ extern int ly_rocket_pad_cost;
 extern int ly_interest;
 extern int ly_windmill_cost;
 extern int ly_cricket_cost;
-extern int ly_births; // total births during last 12 month
-extern int ly_deaths; // total deaths during last 12 month
-extern int ly_unnatdeaths; //total unnat deaths during last 12 month
+extern int ly_births;      // total births during last 12 month
+extern int ly_deaths;      // total deaths during last 12 month
+extern int ly_unnatdeaths; // total unnat deaths during last 12 month
 
 /* Averaging variables */
 extern int data_last_month;
@@ -99,5 +92,3 @@ void init_yearly(void);
 void add_daily_to_monthly(void);
 
 #endif
-
-/** @file lincity/stats.h */

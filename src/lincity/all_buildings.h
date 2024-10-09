@@ -1,11 +1,3 @@
-/* ---------------------------------------------------------------------- *
- * all_buildings.h
- * This file is part of lincity-ng
- * Lincity is copyright (c) see CREDITS for more informations
- *
- * See COPYING COPYING-data.txt and COPYING-fonts.txt for licenses informations
- * ---------------------------------------------------------------------- */
-
 #ifndef __all_buildings_h__
 #define __all_buildings_h__
 
@@ -17,7 +9,7 @@
 #define ROAD_POLLUTION          1
 #define DAYS_PER_ROAD_POLLUTION 20
 #define UNNAT_DEATHS_COST       500
-#define POL_DIV                 64      /* GCS -- from engine.c */
+#define POL_DIV                 64   
 
 #define INCOME_TAX_RATE 8
 #define COAL_TAX_RATE 15
@@ -148,8 +140,4 @@ extern TileConstructionGroup treeConstructionGroup;
 extern TileConstructionGroup tree2ConstructionGroup;
 extern TileConstructionGroup tree3ConstructionGroup;
 
-
-
 #endif // __all_buildings_h__
-
-/** @file lincity/all_buildings.h */

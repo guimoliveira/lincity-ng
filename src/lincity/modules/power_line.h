@@ -1,11 +1,12 @@
-#include <array>                // for array
+#include <array>
 
-#include "lincity/transport.h"  // for MAX_HIVOLT_ON_POWERLINE
-#include "modules.h"            // for Commodity, CommodityRule, Constructio...
+#include "lincity/transport.h"
+#include "modules.h"
 
 #define POWER_LINE_FLASH_SPEED 100
 
-class PowerlineConstructionGroup: public ConstructionGroup {
+class PowerlineConstructionGroup : public ConstructionGroup
+{
 public:
     PowerlineConstructionGroup(
         const char *name,
@@ -13,11 +14,9 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         commodityRuleCount[STUFF_HIVOLT].maxload = MAX_HIVOLT_ON_POWERLINE;
         commodityRuleCount[STUFF_HIVOLT].take = true;
@@ -29,9 +28,10 @@ public:
 
 extern PowerlineConstructionGroup powerlineConstructionGroup;
 
-class Powerline: public RegisteredConstruction<Powerline> { // Powerlineinherits from its own RegisteredConstruction
+class Powerline : public RegisteredConstruction<Powerline>
+{ // Powerlineinherits from its own RegisteredConstruction
 public:
-    Powerline(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Powerline>(x, y)
+    Powerline(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Powerline>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -44,7 +44,7 @@ public:
 
         commodityMaxCons[STUFF_HIVOLT] = 100 * 1;
     }
-    virtual ~Powerline() { }
+    virtual ~Powerline() {}
     virtual void update() override;
     virtual void report() override;
     virtual void animate() override;
@@ -54,6 +54,3 @@ public:
     int anim;
     bool flashing;
 };
-
-
-/** @file lincity/modules/power_line.h */

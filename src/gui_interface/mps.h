@@ -1,9 +1,3 @@
-/* ---------------------------------------------------------------------- *
- * mps.h
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
-
 #ifndef __mps_h__
 #define __mps_h__
 
@@ -13,27 +7,23 @@ static const int MPS_PARAGRAPH_COUNT = 13;
 
 /* New, simplified mps routines */
 
-#define MPS_MAP 0 /* Left click on map; x/y module statistics */
-#define MPS_ENV 1 /* Right click on map; x/y environmental status */
+#define MPS_MAP 0    /* Left click on map; x/y module statistics */
+#define MPS_ENV 1    /* Right click on map; x/y environmental status */
 #define MPS_GLOBAL 2 /* Global style; choose one of below */
 
 #define MPS_NONE 255
 
-#define MPS_GLOBAL_FINANCE 0 /* Overall financial information */
+#define MPS_GLOBAL_FINANCE 0     /* Overall financial information */
 #define MPS_GLOBAL_OTHER_COSTS 1 /* More detailed financials */
-#define MPS_GLOBAL_HOUSING 2 /* Citywide population information */
+#define MPS_GLOBAL_HOUSING 2     /* Citywide population information */
 
 #define MPS_GLOBAL_STYLES 3 /* Number of global styles */
 #define MPS_MAP_PAGES 2
 
-
-//void mps_init();
-
 int mps_set(int x, int y, int style); /* Attaches an area or global display */
-void mps_refresh(void); /* refresh the information display's contents */
-void mps_update(void);  /* Update text contents for later display (refresh) */
-void mps_scroll_page(bool forward); /* rotate through mps pages */
-
+void mps_refresh(void);               /* refresh the information display's contents */
+void mps_update(void);                /* Update text contents for later display (refresh) */
+void mps_scroll_page(bool forward);   /* rotate through mps pages */
 
 /* mps_info storage functions; place values of corresponding type into
    mps_info[], performing certain pretification. The single argument
@@ -57,7 +47,6 @@ void mps_store_ssddp(int i, const std::string &ascii, const std::string &s2, int
 
 void mps_store_sss(int i, const std::string &s1, const std::string &s2, const std::string &s3);
 
-
 /* Data for new mps routines */
 extern int mps_global_style;
 
@@ -68,15 +57,10 @@ extern int mps_map_page;
 void mps_global_finance(void);
 void mps_global_other_costs(void);
 void mps_global_housing(void);
-void mps_right (int x, int y);
-
+void mps_right(int x, int y);
 
 #define _generic_mps
 #ifdef _generic_mps
 #endif
 
-
 #endif /* __mps_h__ */
-
-
-/** @file gui_interface/mps.h */

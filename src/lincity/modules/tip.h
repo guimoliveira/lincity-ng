@@ -9,19 +9,19 @@
 #define GROUP_TIP_SIZE 4
 
 #define TIP_DEGRADE_TIME (200 * NUMOF_DAYS_IN_YEAR)
-#define MAX_WASTE_AT_TIP  10000000
+#define MAX_WASTE_AT_TIP 10000000
 
 #define WASTE_BURRIED 200
-#define CRITICAL_WASTE_LEVEL 20 //gives waste if inbox is below and swallows if above
+#define CRITICAL_WASTE_LEVEL 20 // gives waste if inbox is below and swallows if above
 #define TIP_TAKES_WASTE (20 * WASTE_BURRIED)
 
-#include <array>                    // for array
-#include <string>                   // for basic_string
+#include <array>
+#include <string>
 
 #include "modules.h"
 
-
-class TipConstructionGroup: public ConstructionGroup {
+class TipConstructionGroup : public ConstructionGroup
+{
 public:
     TipConstructionGroup(
         const char *name,
@@ -29,11 +29,9 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         commodityRuleCount[STUFF_WASTE].maxload = TIP_TAKES_WASTE;
         commodityRuleCount[STUFF_WASTE].take = true;
@@ -45,30 +43,31 @@ public:
 
 extern TipConstructionGroup tipConstructionGroup;
 
-class Tip: public RegisteredConstruction<Tip>{ // Tip inherits from its own RegisteredConstruction
+class Tip : public RegisteredConstruction<Tip>
+{ // Tip inherits from its own RegisteredConstruction
 public:
-    Tip(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Tip>(x, y)
+    Tip(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Tip>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
         this->flags |= FLAG_NEVER_EVACUATE;
         this->total_waste = 0;
-        setMemberSaved(&this->total_waste,"total_waste");
+        setMemberSaved(&this->total_waste, "total_waste");
         this->working_days = 0;
         this->busy = 0;
         this->degration_days = 0;
-        setMemberSaved(&this->degration_days,"degration_days");
+        setMemberSaved(&this->degration_days, "degration_days");
         initialize_commodities();
 
         commodityMaxCons[STUFF_WASTE] = 100 * WASTE_BURRIED;
         commodityMaxProd[STUFF_WASTE] = 100 * WASTE_BURRIED;
     }
-    virtual ~Tip() { }
+    virtual ~Tip() {}
     virtual void update() override;
     virtual void report() override;
     virtual void animate() override;
 
-    int  working_days, busy;
-    int  total_waste;
-    int  degration_days;
+    int working_days, busy;
+    int total_waste;
+    int degration_days;
 };

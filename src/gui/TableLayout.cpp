@@ -1,39 +1,21 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 #include "TableLayout.hpp"
 
-#include <assert.h>              // for assert
-#include <libxml/xmlreader.h>    // for XML_READER_TYPE_ELEMENT
-#include <stdio.h>               // for sscanf
-#include <string.h>              // for strcmp, size_t
-#include <iostream>              // for operator<<, basic_ostream, char_traits
-#include <sstream>               // for basic_stringstream
-#include <stdexcept>             // for runtime_error
-#include <string>                // for operator==, basic_string, operator<<
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
-#include "Child.hpp"             // for Childs, Child
-#include "Color.hpp"             // for Color
-#include "ComponentFactory.hpp"  // for IMPLEMENT_COMPONENT_FACTORY
-#include "ComponentLoader.hpp"   // for parseEmbeddedComponent
-#include "Painter.hpp"           // for Painter
-#include "Rect2D.hpp"            // for Rect2D
-#include "Vector2.hpp"           // for Vector2
-#include "XmlReader.hpp"         // for XmlReader
+#include "Child.hpp"
+#include "Color.hpp"
+#include "ComponentFactory.hpp"
+#include "ComponentLoader.hpp"
+#include "Painter.hpp"
+#include "Rect2D.hpp"
+#include "Vector2.hpp"
+#include "XmlReader.hpp"
 
 TableLayout::TableLayout()
 {
@@ -44,156 +26,219 @@ TableLayout::~TableLayout()
 {
 }
 
-void
-TableLayout::parse(XmlReader& reader)
+void TableLayout::parse(XmlReader &reader)
 {
     int rows = -1, cols = -1;
     border = false;
 
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(parseAttribute(attribute, value)) {
+        if (parseAttribute(attribute, value))
+        {
             continue;
-        } else if(strcmp(attribute, "rows") == 0) {
-            if(sscanf(value, "%d", &rows) != 1) {
+        }
+        else if (attribute == "rows")
+        {
+            if (sscanf(value.c_str(), "%d", &rows) != 1)
+            {
                 std::stringstream msg;
                 msg << "Error while parsing rows attribute: " << value;
                 throw std::runtime_error(msg.str());
             }
-        } else if(strcmp(attribute, "cols") == 0) {
-            if(sscanf(value, "%d", &cols) != 1) {
+        }
+        else if (attribute == "cols")
+        {
+            if (sscanf(value.c_str(), "%d", &cols) != 1)
+            {
                 std::stringstream msg;
                 msg << "Error while parsing cols attribute: " << value;
                 throw std::runtime_error(msg.str());
             }
-        } else if(strcmp(attribute, "border") == 0) {
-            if(strcmp(value, "true") == 0) {
+        }
+        else if (attribute == "border")
+        {
+            if (value == "true")
+            {
                 border = true;
-            } else if(strcmp(value, "false") == 0) {
-                border = false;
-            } else {
-                std::cerr << "Invalid value for border attribute. "
-                    "Please specify 'true' or 'false'\n";
             }
-        } else {
+            else if (value == "false")
+            {
+                border = false;
+            }
+            else
+            {
+                std::cerr << "Invalid value for border attribute. "
+                             "Please specify 'true' or 'false'\n";
+            }
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribute '" << attribute << "'.\n";
         }
     }
-    if(rows <= 0 || cols <= 0) {
+    if (rows <= 0 || cols <= 0)
+    {
         throw std::runtime_error("Invalid values for rows/cols");
     }
 
     rowproperties.assign(rows, RowColProperties());
     colproperties.assign(cols, RowColProperties());
-    cells.assign(rows*cols, Cell());
+    cells.assign(rows * cols, Cell());
 
     int depth = reader.getDepth();
-    while(reader.read() && reader.getDepth() > depth) {
-        if(reader.getNodeType() == XML_READER_TYPE_ELEMENT) {
-            const std::string& element = (const char*) reader.getName();
-            if(element == "rowsize") {
+    while (reader.read() && reader.getDepth() > depth)
+    {
+        if (reader.getNodeType() == XML_READER_TYPE_ELEMENT)
+        {
+            const std::string &element = reader.getName();
+            if (element == "rowsize")
+            {
                 RowColProperties props;
                 int num = parseProperties(reader, props) - 1;
-                if(num < 0 || num >= rows) {
+                if (num < 0 || num >= rows)
+                {
                     std::cerr
                         << "Invalid row specified in rowsize element.\n";
                     continue;
                 }
                 rowproperties[num] = props;
-            } else if(element == "colsize") {
+            }
+            else if (element == "colsize")
+            {
                 RowColProperties props;
                 int num = parseProperties(reader, props) - 1;
-                if(num < 0 || num >= cols) {
+                if (num < 0 || num >= cols)
+                {
                     std::cerr
                         << "Invalid col specified in colsize element.\n";
                     continue;
                 }
                 colproperties[num] = props;
-            } else if(element == "cell") {
+            }
+            else if (element == "cell")
+            {
                 int row = -1, col = -1;
                 int colspan = 1, rowspan = 1;
                 Cell::Alignment halign = Cell::CENTER;
                 Cell::Alignment valign = Cell::CENTER;
                 XmlReader::AttributeIterator iter(reader);
-                while(iter.next()) {
-                    const char* name = (const char*) iter.getName();
-                    const char* value = (const char*) iter.getValue();
+                while (iter.next())
+                {
+                    std::string name = iter.getName();
+                    std::string value = iter.getValue();
 
-                    if(strcmp(name, "row") == 0) {
-                        if(sscanf(value, "%d", &row) != 1) {
+                    if (name == "row")
+                    {
+                        if (sscanf(value.c_str(), "%d", &row) != 1)
+                        {
                             std::cerr << "Couldn't parse integer value '"
-                                << value << "' in row attribute.\n";
+                                      << value << "' in row attribute.\n";
                         }
-                    } else if(strcmp(name, "col") == 0) {
-                        if(sscanf(value, "%d", &col) != 1) {
+                    }
+                    else if (name == "col")
+                    {
+                        if (sscanf(value.c_str(), "%d", &col) != 1)
+                        {
                             std::cerr << "Couldn't parse integer value '"
-                                << value << "' in col attribute.\n";
+                                      << value << "' in col attribute.\n";
                         }
-                    } else if(strcmp(name, "rowspan") == 0) {
-                        if(sscanf(value, "%d", &rowspan) != 1) {
+                    }
+                    else if (name == "rowspan")
+                    {
+                        if (sscanf(value.c_str(), "%d", &rowspan) != 1)
+                        {
                             std::cerr << "Couldn't parse integer value '"
-                                << value << "' in rowspan attribute.\n";
+                                      << value << "' in rowspan attribute.\n";
                         }
-                    } else if(strcmp(name, "colspan") == 0) {
-                        if(sscanf(value, "%d", &colspan) != 1) {
+                    }
+                    else if (name == "colspan")
+                    {
+                        if (sscanf(value.c_str(), "%d", &colspan) != 1)
+                        {
                             std::cerr << "Couldn't parse integer value '"
-                                << value << "' in colspan attribute.\n";
+                                      << value << "' in colspan attribute.\n";
                         }
-                    } else if(strcmp(name, "halign") == 0) {
-                        if(strcmp(value, "left") == 0) {
+                    }
+                    else if (name == "halign")
+                    {
+                        if (value == "left")
+                        {
                             halign = Cell::LEFT;
-                        } else if(strcmp(value, "center") == 0) {
+                        }
+                        else if (value == "center")
+                        {
                             halign = Cell::CENTER;
-                        } else if(strcmp(value, "right") == 0) {
+                        }
+                        else if (value == "right")
+                        {
                             halign = Cell::RIGHT;
-                        } else {
+                        }
+                        else
+                        {
                             std::cerr << "Skipping unknown halignment value '"
-                                << value << "'.\n";
+                                      << value << "'.\n";
                         }
-                    } else if(strcmp(name, "valign") == 0) {
-                        if(strcmp(value, "top") == 0) {
+                    }
+                    else if (name == "valign")
+                    {
+                        if (value == "top")
+                        {
                             valign = Cell::TOP;
-                        } else if(strcmp(value, "center") == 0) {
-                            valign = Cell::CENTER;
-                        } else if(strcmp(value, "bottom") == 0) {
-                            valign = Cell::BOTTOM;
-                        } else {
-                            std::cerr << "Skipping unknown valignment value '"
-                                << value << "'.\n";
                         }
-                    } else {
+                        else if (value == "center")
+                        {
+                            valign = Cell::CENTER;
+                        }
+                        else if (value == "bottom")
+                        {
+                            valign = Cell::BOTTOM;
+                        }
+                        else
+                        {
+                            std::cerr << "Skipping unknown valignment value '"
+                                      << value << "'.\n";
+                        }
+                    }
+                    else
+                    {
                         std::cerr << "Unknown attribute '" << name
-                            << "' in cell element.\n";
+                                  << "' in cell element.\n";
                     }
                 }
                 row--;
                 col--;
-                if(row < 0 || row >= rows) {
+                if (row < 0 || row >= rows)
+                {
                     std::cerr
                         << "Skipping cell because row value is invalid.\n";
                     continue;
                 }
-                if(col < 0 || col >= cols) {
+                if (col < 0 || col >= cols)
+                {
                     std::cerr
                         << "Skipping cell because col value is invalid.\n";
                     continue;
                 }
-                if(rowspan <= 0 || row + rowspan - 1 >= rows) {
+                if (rowspan <= 0 || row + rowspan - 1 >= rows)
+                {
                     std::cerr << "rowspan value invalid.\n";
                     rowspan = 1;
                 }
-                if(colspan <= 0 || col + colspan - 1 >= cols) {
+                if (colspan <= 0 || col + colspan - 1 >= cols)
+                {
                     std::cerr << "colspan value invalid.\n";
                     colspan = 1;
                 }
 
-                Component* component = parseEmbeddedComponent(reader);
-                if(component == 0) {
+                Component *component = parseEmbeddedComponent(reader);
+                if (component == 0)
+                {
                     std::cerr << "No Component specified in cell "
-                        << (row+1) << ", " << (col+1) << "\n";
+                              << (row + 1) << ", " << (col + 1) << "\n";
                     continue;
                 }
                 addChild(component);
@@ -202,10 +247,12 @@ TableLayout::parse(XmlReader& reader)
                 cell.valign = valign;
                 cell.rowspan = rowspan;
                 cell.colspan = colspan;
-                cells[row*cols + col] = cell;
-            } else {
+                cells[row * cols + col] = cell;
+            }
+            else
+            {
                 std::cerr << "Unknown element '" << element
-                    << "' in TableLayout.\n";
+                          << "' in TableLayout.\n";
                 reader.nextNode();
                 continue;
             }
@@ -221,15 +268,16 @@ TableLayout::parse(XmlReader& reader)
  * @todo Remove code duplication with SwitchComponent::opaque (pos) and
  *       Panel::opaque(pos).
  */
-bool
-TableLayout::opaque(const Vector2& pos) const
+bool TableLayout::opaque(const Vector2 &pos) const
 {
-    for(Childs::const_iterator i = childs.begin(); i != childs.end(); ++i) {
-        const Child& child = *i;
-        if(child.getComponent() == 0 || !child.isEnabled())
+    for (Childs::const_iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        const Child &child = *i;
+        if (child.getComponent() == 0 || !child.isEnabled())
             continue;
 
-        if(child.getComponent()->opaque(pos - child.getPos())) {
+        if (child.getComponent()->opaque(pos - child.getPos()))
+        {
             return true;
         }
     }
@@ -237,54 +285,64 @@ TableLayout::opaque(const Vector2& pos) const
     return false;
 }
 
-void
-TableLayout::removeComponents()
+void TableLayout::removeComponents()
 {
     cells.clear();
     childs.clear();
 }
 
-int
-TableLayout::parseProperties(XmlReader& reader, RowColProperties& props)
+int TableLayout::parseProperties(XmlReader &reader, RowColProperties &props)
 {
     props.type = RowColProperties::TYPE_RELATIVE;
 
     int num = -1;
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* name = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
-        if(strcmp(name, "fixed") == 0) {
+    while (iter.next())
+    {
+        std::string name = iter.getName();
+        std::string value = iter.getValue();
+        if (name == "fixed")
+        {
             props.type = RowColProperties::TYPE_FIXEDSIZE;
-            if(sscanf(value, "%f", &props.val) != 1) {
+            if (sscanf(value.c_str(), "%f", &props.val) != 1)
+            {
                 std::cerr << "Error parsing float value '"
-                    << value << "' in fixed attribute.\n";
+                          << value << "' in fixed attribute.\n";
             }
-        } else if(strcmp(name, "relative") == 0) {
+        }
+        else if (name == "relative")
+        {
             props.type = RowColProperties::TYPE_RELATIVE;
-            if(sscanf(value, "%f", &props.val) != 1) {
+            if (sscanf(value.c_str(), "%f", &props.val) != 1)
+            {
                 std::cerr << "Error parsing float vluae '"
-                    << value << "' in relative attribute.\n";
+                          << value << "' in relative attribute.\n";
             }
-        } else if(strcmp(name, "row") == 0 || strcmp(name, "col") == 0) {
-            if(sscanf(value, "%d", &num) != 1) {
+        }
+        else if (name == "row" || name == "col")
+        {
+            if (sscanf(value.c_str(), "%d", &num) != 1)
+            {
                 std::cerr << "Error parsing int value '"
-                    << value << "' in row or col attribute.\n";
+                          << value << "' in row or col attribute.\n";
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Unknown attribute '" << name
-                << "' in colsize/rowsize element.\n";
+                      << "' in colsize/rowsize element.\n";
         }
     }
 
     return num;
 }
 
-void
-TableLayout::resize(float width, float height)
+void TableLayout::resize(float width, float height)
 {
-    if(width < 0) width = 0;
-    if(height < 0) height = 0;
+    if (width < 0)
+        width = 0;
+    if (height < 0)
+        height = 0;
     this->width = width;
     this->height = height;
 
@@ -292,48 +350,60 @@ TableLayout::resize(float width, float height)
     float remainingwidth = 0, remainingheight = 0;
 
     // Step1: assign all fixed sizes
-    for(Properties::iterator i = rowproperties.begin();
-            i != rowproperties.end(); ++i) {
-        if(i->type == RowColProperties::TYPE_FIXEDSIZE) {
+    for (Properties::iterator i = rowproperties.begin();
+         i != rowproperties.end(); ++i)
+    {
+        if (i->type == RowColProperties::TYPE_FIXEDSIZE)
+        {
             fixedheight += i->val;
             i->realval = i->val;
-        } else {
+        }
+        else
+        {
             remainingheight += i->val;
         }
     }
-    for(Properties::iterator i = colproperties.begin();
-            i != colproperties.end(); ++i) {
-        if(i->type == RowColProperties::TYPE_FIXEDSIZE) {
+    for (Properties::iterator i = colproperties.begin();
+         i != colproperties.end(); ++i)
+    {
+        if (i->type == RowColProperties::TYPE_FIXEDSIZE)
+        {
             fixedwidth += i->val;
             i->realval = i->val;
-        } else {
+        }
+        else
+        {
             remainingwidth += i->val;
         }
     }
 
     // Step2: distribute remaining space to remaining rows/cols
     float heightfact;
-    if(remainingheight <= 0)
+    if (remainingheight <= 0)
         heightfact = 0;
     else
         heightfact = (height - fixedheight) / remainingheight;
 
-    for(Properties::iterator i = rowproperties.begin();
-            i != rowproperties.end(); ++i) {
-        if(i->type == RowColProperties::TYPE_RELATIVE) {
+    for (Properties::iterator i = rowproperties.begin();
+         i != rowproperties.end(); ++i)
+    {
+        if (i->type == RowColProperties::TYPE_RELATIVE)
+        {
             i->realval = heightfact * i->val;
         }
     }
 
     float widthfact;
-    if(remainingwidth <= 0)
+    if (remainingwidth <= 0)
         widthfact = 0;
     else
         widthfact = (width - fixedwidth) / remainingwidth;
 
-    for(Properties::iterator i = colproperties.begin();
-            i != colproperties.end(); ++i) {
-        if(i->type == RowColProperties::TYPE_RELATIVE) {
+    for (Properties::iterator i = colproperties.begin();
+         i != colproperties.end(); ++i)
+    {
+        if (i->type == RowColProperties::TYPE_RELATIVE)
+        {
             i->realval = widthfact * i->val;
         }
     }
@@ -341,71 +411,75 @@ TableLayout::resize(float width, float height)
     // layout childs
     int r = 0, c;
     Vector2 p;
-    for(Properties::iterator row = rowproperties.begin();
-        row != rowproperties.end(); ++row) {
+    for (Properties::iterator row = rowproperties.begin();
+         row != rowproperties.end(); ++row)
+    {
         c = 0;
         p.x = 0;
-        for(Properties::iterator col = colproperties.begin();
-            col != colproperties.end(); ++col) {
-            Cell& cell = cells[r * colproperties.size() + c];
+        for (Properties::iterator col = colproperties.begin();
+             col != colproperties.end(); ++col)
+        {
+            Cell &cell = cells[r * colproperties.size() + c];
             int childid = cell.childid;
             ++c;
 
-            if(childid < 0) {
+            if (childid < 0)
+            {
                 p.x += col->realval;
                 continue;
             }
-            Child& child = childs[childid];
-            Component* component = child.getComponent();
+            Child &child = childs[childid];
+            Component *component = child.getComponent();
 
-            if(!component) {
+            if (!component)
+            {
                 p.x += col->realval;
                 continue;
             }
 
             float width = 0;
-            for(int i = 0; i < cell.colspan; ++i)
-                width += (col+i)->realval;
+            for (int i = 0; i < cell.colspan; ++i)
+                width += (col + i)->realval;
             float height = 0;
-            for(int i = 0; i < cell.rowspan; ++i)
-                height += (row+i)->realval;
+            for (int i = 0; i < cell.rowspan; ++i)
+                height += (row + i)->realval;
 
-            if(component->getFlags() & FLAG_RESIZABLE)
+            if (component->getFlags() & FLAG_RESIZABLE)
                 component->resize(width, height);
                 // TODO: honor minimum sizes of children
 #ifdef DEBUG
-            if(! (component->getFlags() & FLAG_RESIZABLE)
-                    && (component->getWidth() <= 0
-                        || component->getHeight() <= 0))
+            if (!(component->getFlags() & FLAG_RESIZABLE) && (component->getWidth() <= 0 || component->getHeight() <= 0))
                 std::cerr << "Warning: component with name '"
-                    << component->getName()
-                    << "' has invalid width/height but is not resizable.\n";
+                          << component->getName()
+                          << "' has invalid width/height but is not resizable.\n";
 #endif
 
             Vector2 pos = p;
-            switch(cell.halign) {
-                case Cell::LEFT:
-                    break;
-                case Cell::CENTER:
-                    pos.x += (width - component->getWidth()) / 2;
-                    break;
-                case Cell::RIGHT:
-                    pos.x += width - component->getWidth();
-                    break;
-                default:
-                    assert(false);
+            switch (cell.halign)
+            {
+            case Cell::LEFT:
+                break;
+            case Cell::CENTER:
+                pos.x += (width - component->getWidth()) / 2;
+                break;
+            case Cell::RIGHT:
+                pos.x += width - component->getWidth();
+                break;
+            default:
+                assert(false);
             }
-            switch(cell.valign) {
-                case Cell::TOP:
-                    break;
-                case Cell::CENTER:
-                    pos.y += (height - component->getHeight()) / 2;
-                    break;
-                case Cell::BOTTOM:
-                    pos.y += height - component->getHeight();
-                    break;
-                default:
-                    assert(false);
+            switch (cell.valign)
+            {
+            case Cell::TOP:
+                break;
+            case Cell::CENTER:
+                pos.y += (height - component->getHeight()) / 2;
+                break;
+            case Cell::BOTTOM:
+                pos.y += height - component->getHeight();
+                break;
+            default:
+                assert(false);
             }
             child.setPos(pos);
 
@@ -418,18 +492,20 @@ TableLayout::resize(float width, float height)
     setDirty();
 }
 
-void
-TableLayout::draw(Painter& painter)
+void TableLayout::draw(Painter &painter)
 {
     Component::draw(painter);
 
-    if(border) {
+    if (border)
+    {
         float r = 0;
         float c = 0;
         painter.setLineColor(Color(0, 0, 255));
-        for(size_t row = 0; row < rowproperties.size(); ++row) {
+        for (size_t row = 0; row < rowproperties.size(); ++row)
+        {
             float nextr = r + rowproperties[row].realval;
-            for(size_t col = 0; col < colproperties.size(); ++col) {
+            for (size_t col = 0; col < colproperties.size(); ++col)
+            {
                 float nextc = c + colproperties[col].realval;
                 painter.drawRectangle(Rect2D(c, r, nextc, nextr));
                 c = nextc;
@@ -440,38 +516,32 @@ TableLayout::draw(Painter& painter)
     }
 }
 
-void
-TableLayout::addRow(const RowColProperties& props)
+void TableLayout::addRow(const RowColProperties &props)
 {
     removeComponents();
     rowproperties.push_back(props);
     cells.assign(rowproperties.size() * colproperties.size(), Cell());
 }
 
-void
-TableLayout::addColumn(const RowColProperties& props)
+void TableLayout::addColumn(const RowColProperties &props)
 {
     removeComponents();
     colproperties.push_back(props);
     cells.assign(rowproperties.size() * colproperties.size(), Cell());
 }
 
-void
-TableLayout::addComponent(size_t col, size_t row, Component* component)
+void TableLayout::addComponent(size_t col, size_t row, Component *component)
 {
-    if(row >= rowproperties.size())
+    if (row >= rowproperties.size())
         throw std::runtime_error("row out of range");
-    if(col >= colproperties.size())
+    if (col >= colproperties.size())
         throw std::runtime_error("col out of range");
 
-    if(cells[row * colproperties.size() + col].childid >= 0)
+    if (cells[row * colproperties.size() + col].childid >= 0)
         throw std::runtime_error("Already a component in this cell.");
 
     addChild(component);
-    cells[row * colproperties.size() + col] = Cell(childs.size()-1);
+    cells[row * colproperties.size() + col] = Cell(childs.size() - 1);
 }
 
 IMPLEMENT_COMPONENT_FACTORY(TableLayout)
-
-
-/** @file gui/TableLayout.cpp */

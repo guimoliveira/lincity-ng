@@ -1,169 +1,60 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun.
- * @file gui/XmlReader.hpp
- * @brief Simple wrapper around libxml2 xmlreader interface.
- */
-
 #ifndef __XMLREADER_HPP__
 #define __XMLREADER_HPP__
 
-#include <libxml/xmlreader.h>  // for xmlTextReaderConstName, xmlTextReaderC...
-#include <libxml/xmlstring.h>  // for xmlChar
-#include <sstream>             // for basic_stringstream, basic_ostream, ope...
-#include <stdexcept>           // for runtime_error
-#include <string>              // for char_traits, allocator, basic_string
+#define XML_READER_TYPE_ELEMENT                1
+#define XML_READER_TYPE_ATTRIBUTE              2
+#define XML_READER_TYPE_TEXT                   3
+#define XML_READER_TYPE_CDATA                  4
+#define XML_READER_TYPE_PI                     7
+#define XML_READER_TYPE_COMMENT                8
+#define XML_READER_TYPE_DOCUMENT               9
+#define XML_READER_TYPE_DOCUMENT_TYPE          10
+#define XML_READER_TYPE_END_ELEMENT            15
+#define XML_READER_TYPE_END_ENTITY             16
+
+#include <string>
 
 class XmlReader
 {
 public:
-    XmlReader(const std::string& filename);
+    XmlReader(const std::string &filename);
     ~XmlReader();
 
-    int getDepth()
+    int getDepth();
+    int getNodeType();
+
+    std::string getName();
+    std::string getValue();
+
+    std::string readString()
     {
-        return xmlTextReaderDepth(reader);
+        return getValue();
     }
 
-    int getNodeType()
-    {
-        return xmlTextReaderNodeType(reader);
-    }
-
-    bool hasValue()
-    {
-        return xmlTextReaderHasValue(reader) != 0;
-    }
-
-    bool isEmptyElement()
-    {
-        return xmlTextReaderIsEmptyElement(reader) != 0;
-    }
-
-    const xmlChar* getName()
-    {
-        return xmlTextReaderConstName(reader);
-    }
-
-    const xmlChar* getValue()
-    {
-        return xmlTextReaderConstValue(reader);
-    }
-
-    void nextNode()
-    {
-        xmlTextReaderNext(reader);
-    }
-
-    const xmlChar* readString()
-    {
-        return xmlTextReaderReadString(reader);
-    }
+    bool hasValue();
+    bool isEmptyElement();
+    bool nextNode();
+    bool read();
 
     class AttributeIterator
     {
     public:
-        AttributeIterator(XmlReader& reader)
-        {
-            this->reader = reader.reader;
-            first = true;
-            last = false;
-        }
+        AttributeIterator(XmlReader &reader);
+        ~AttributeIterator();
 
-        ~AttributeIterator()
-        {
-            if(!last)
-                xmlTextReaderMoveToElement(reader);
-        }
+        bool next();
 
-        bool next()
-        {
-            int res;
-            if(first) {
-                res = xmlTextReaderMoveToFirstAttribute(reader);
-            } else {
-                res = xmlTextReaderMoveToNextAttribute(reader);
-
-            }
-
-            if(res < 0)
-                throw std::runtime_error("parse error.");
-            if(res == 0) {
-                last = true;
-                xmlTextReaderMoveToElement(reader);
-                return false;
-            }
-            first = false;
-
-            return true;
-        }
-        const xmlChar* getName()
-        {
-            return xmlTextReaderConstName(reader);
-        }
-        const xmlChar* getValue()
-        {
-            return xmlTextReaderConstValue(reader);
-        }
+        std::string getName();
+        std::string getValue();
 
     private:
         bool first;
         bool last;
-        xmlTextReaderPtr reader;
+        int reader;
     };
 
-    bool read()
-    {
-        int ret = xmlTextReaderRead(reader);
-        if(ret < 0) {
-            std::stringstream msg;
-            /* This only works in libxml2.6.17 it seems... I have to upgrade
-             * sometime...
-             * msg << "Parse error at line " << xmlTextReaderGetParserLineNumber()...
-             */
-            msg << "Parser error";
-            throw std::runtime_error(msg.str());
-        }
-
-        // Useful for debug sometimes...
-#if 0
-        for(int i = 0; i < getDepth(); ++i)
-            std::cout << " ";
-        std::cout << "T: " << getNodeType();
-        if(getName())
-            std::cout << " N:" << (const char*) getName();
-        if(getValue())
-            std::cout << " - " << (const char*) getValue();
-        std::cout << "\n";
-#endif
-        return ret == 1;
-    }
-
 private:
-    xmlTextReaderPtr reader;
-
-    static int readCallback(void* context, char* buffer, int len);
-    static int closeCallback(void* context);
+    int reader;
 };
 
 #endif
-
-
-/** @file gui/XmlReader.hpp */

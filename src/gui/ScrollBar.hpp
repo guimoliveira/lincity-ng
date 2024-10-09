@@ -1,35 +1,12 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file ScrollBar.hpp
- */
-
 #ifndef __SCROLLBAR_HPP__
 #define __SCROLLBAR_HPP__
 
-#include <vector>               // for vector
+#include <vector>
 
-#include "Child.hpp"            // for Child, Childs
-#include "Component.hpp"        // for Component
-#include "Event.hpp"            // for Event
-#include "callback/Signal.hpp"  // for Signal
+#include "Child.hpp"
+#include "Component.hpp"
+#include "Event.hpp"
+#include "callback/Signal.hpp"
 
 class Button;
 class Painter;
@@ -44,14 +21,14 @@ public:
     ScrollBar();
     virtual ~ScrollBar();
 
-    void parse(XmlReader& reader);
+    void parse(XmlReader &reader);
 
     void resize(float width, float height);
-    void draw(Painter& painter);
-    void event(const Event& event);
+    void draw(Painter &painter);
+    void event(const Event &event);
 
     void setRange(float min, float max);
-    
+
     float getRangeMin() const
     {
         return minVal;
@@ -66,19 +43,25 @@ public:
     }
     void setValue(float value);
 
-    Signal<ScrollBar*, float> valueChanged;
+    Signal<ScrollBar *, float> valueChanged;
 
 private:
-    void buttonPressed(Button* button);
-    void buttonReleased(Button* button);
-    
-    Child& button1()
-    { return childs[0]; }
-    Child& button2()
-    { return childs[1]; }
-    Child& scroller()
-    { return childs[2]; }
-    
+    void buttonPressed(Button *button);
+    void buttonReleased(Button *button);
+
+    Child &button1()
+    {
+        return childs[0];
+    }
+    Child &button2()
+    {
+        return childs[1];
+    }
+    Child &scroller()
+    {
+        return childs[2];
+    }
+
     float minVal;
     float maxVal;
     float currentVal;
@@ -90,7 +73,3 @@ private:
 };
 
 #endif
-
-
-/** @file gui/ScrollBar.hpp */
-

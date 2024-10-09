@@ -1,37 +1,14 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @file Component.cpp
- * @author Matthias Braun
- */
-
-#include <assert.h>     // for assert
-#include <string.h>     // for strcmp, strncmp
-#include <stdexcept>    // for runtime_error
-#include <vector>       // for vector
+#include <assert.h>
+#include <string.h>
+#include <stdexcept>
+#include <vector>
+#include <iostream>
 
 #include "Component.hpp"
-#include "Event.hpp"    // for Event
-#include "Painter.hpp"  // for Painter
+#include "Event.hpp"
+#include "Painter.hpp"
 
-Component::Component() :
-  parent(0), desktop(NULL), flags(0)
+Component::Component() : parent(0), desktop(NULL), flags(0)
 {
 }
 
@@ -39,62 +16,64 @@ Component::~Component()
 {
 }
 
-bool
-Component::parseAttribute(const char* attribute, const char* value)
+bool Component::parseAttribute(const char *attribute, const char *value)
 {
-    if(strcmp(attribute, "name") == 0) {
+    if (strcmp(attribute, "name") == 0)
+    {
         name = value;
         return true;
-    } else if(strncmp(attribute, "xmlns", 5) == 0) { // can be ignored for now
+    }
+    else if (strncmp(attribute, "xmlns", 5) == 0)
+    { // can be ignored for now
         return true;
     }
 
     return false;
 }
 
-void
-Component::drawChild(Child& child, Painter& painter)
+void Component::drawChild(Child &child, Painter &painter)
 {
     assert(child.getComponent() != 0);
 
-    if(child.useClipRect) {
+    if (child.useClipRect)
+    {
         painter.setClipRectangle(child.clipRect);
     }
-    if(child.position != Vector2(0, 0)) {
+    if (child.position != Vector2(0, 0))
+    {
         painter.pushTransform();
         painter.translate(child.position);
     }
     child.component->draw(painter);
-    if(child.position != Vector2(0, 0)) {
+    if (child.position != Vector2(0, 0))
+    {
         painter.popTransform();
     }
-    if(child.useClipRect) {
+    if (child.useClipRect)
+    {
         painter.clearClipRectangle();
     }
 }
 
-void
-Component::draw(Painter& painter)
+void Component::draw(Painter &painter)
 {
-    for(Childs::iterator i = childs.begin(); i != childs.end(); ++i) {
-        Child& child = *i;
-        if(child.enabled)
+    for (Childs::iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        Child &child = *i;
+        if (child.enabled)
             drawChild(child, painter);
     }
 }
 
-bool
-Component::eventChild(Child& child, const Event& event, bool visible)
+bool Component::eventChild(Child &child, const Event &event, bool visible)
 {
     assert(child.getComponent() != 0);
 
     Event ev = event;
-    if(event.type == Event::MOUSEMOTION
-        || event.type == Event::MOUSEBUTTONDOWN
-        || event.type == Event::MOUSEBUTTONUP
-        || event.type == Event::MOUSEWHEEL) {
+    if (event.type == Event::MOUSEMOTION || event.type == Event::MOUSEBUTTONDOWN || event.type == Event::MOUSEBUTTONUP || event.type == Event::MOUSEWHEEL)
+    {
         ev.mousepos -= child.position;
-        if(visible && child.component->opaque(ev.mousepos))
+        if (visible && child.component->opaque(ev.mousepos))
             ev.inside = true;
         else
             ev.inside = false;
@@ -104,38 +83,41 @@ Component::eventChild(Child& child, const Event& event, bool visible)
     return ev.inside;
 }
 
-void
-Component::event(const Event& event) {
+void Component::event(const Event &event)
+{
     bool visible = event.inside;
-    for(Childs::reverse_iterator i = childs.rbegin(); i != childs.rend(); ++i) {
-        Child& child = *i;
-        if(!child.enabled)
-          continue;
+    for (Childs::reverse_iterator i = childs.rbegin(); i != childs.rend(); ++i)
+    {
+        Child &child = *i;
+        if (!child.enabled)
+            continue;
 
-        if(eventChild(child, event, visible))
+        if (eventChild(child, event, visible))
             visible = false;
     }
 }
 
-void
-Component::reLayout()
+void Component::reLayout()
 {
-    if(getFlags() & FLAG_RESIZABLE) {
+    if (getFlags() & FLAG_RESIZABLE)
+    {
         resize(getWidth(), getHeight());
     }
 }
 
-Component*
-Component::findComponent(const std::string& name)
+Component *
+Component::findComponent(const std::string &name)
 {
-    if(getName() == name)
+    if (getName() == name)
         return this;
 
-    for(Childs::const_iterator i = childs.begin(); i != childs.end(); ++i) {
-        const Child& child = *i;
-        if (child.getComponent()) {
-            Component* component = child.component->findComponent(name);
-            if(component)
+    for (Childs::const_iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        const Child &child = *i;
+        if (child.getComponent())
+        {
+            Component *component = child.component->findComponent(name);
+            if (component)
                 return component;
         }
     }
@@ -144,17 +126,17 @@ Component::findComponent(const std::string& name)
 }
 
 Vector2
-Component::relative2Global(const Vector2& pos)
+Component::relative2Global(const Vector2 &pos)
 {
-    if(!parent)
+    if (!parent)
         return pos;
 
-    Child& me = parent->findChild(this);
+    Child &me = parent->findChild(this);
     return parent->relative2Global(me.getPos() + pos);
 }
 
-Child&
-Component::addChild(Component* component)
+Child &
+Component::addChild(Component *component)
 {
     assert(component->parent == 0);
 
@@ -165,14 +147,14 @@ Component::addChild(Component* component)
     return childs.back();
 }
 
-void
-Component::resetChild(Child& child, Component* component)
+void Component::resetChild(Child &child, Component *component)
 {
     assert(child.component != component);
 
     delete child.component;
     child.component = component;
-    if(component != 0) {
+    if (component != 0)
+    {
         component->parent = this;
         component->desktop = this->desktop;
         component->setDirty();
@@ -180,37 +162,36 @@ Component::resetChild(Child& child, Component* component)
     }
 }
 
-void
-Component::resize(float , float )
+void Component::resize(float, float)
 {
 }
 
-void
-Component::setDirty(const Rect2D& rect)
+void Component::setDirty(const Rect2D &rect)
 {
-    if(parent)
+    if (parent)
         parent->setChildDirty(this, rect);
 }
 
-Child&
-Component::findChild(Component* component)
+Child &
+Component::findChild(Component *component)
 {
-    for(Childs::iterator i = childs.begin(); i != childs.end(); ++i) {
-        Child& child = *i;
-        if(child.getComponent() == component)
+    for (Childs::iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        Child &child = *i;
+        if (child.getComponent() == component)
             return child;
     }
     throw std::runtime_error("Child not found");
 }
 
-void
-Component::setChildDirty(Component* childComponent, const Rect2D& area)
+void Component::setChildDirty(Component *childComponent, const Rect2D &area)
 {
-    for(Childs::const_iterator i = childs.begin(); i != childs.end(); ++i) {
-        const Child& child = *i;
-        if(child.getComponent() != childComponent)
+    for (Childs::const_iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        const Child &child = *i;
+        if (child.getComponent() != childComponent)
             continue;
-        if(!child.enabled)
+        if (!child.enabled)
             return;
         Rect2D rect = area;
         rect.move(child.position);
@@ -220,6 +201,3 @@ Component::setChildDirty(Component* childComponent, const Rect2D& area)
 
     assert(false);
 }
-
-
-/** @file gui/Component.cpp */

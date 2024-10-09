@@ -1,16 +1,9 @@
-/* ---------------------------------------------------------------------- *
- * engglobs.h
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
 #ifndef __engglobs_h__
 #define __engglobs_h__
 
-#include "ConstructionCount.h"  // for ConstructionCount
-#include "lin-city.h"           // for NUMOF_DISCOUNT_TRIGGERS
-#include "world.h"              // for World
-// Use permutator to shuffle the simulation order
-//#include "lincity-ng/Permutator.hpp"
+#include "ConstructionCount.h"
+#include "lin-city.h"
+#include "world.h"
 
 class UserOperation;
 
@@ -21,12 +14,12 @@ extern int use_waterwell, ldsv_version;
 extern ConstructionCount constructionCount;
 extern World world;
 extern int world_id;
-extern UserOperation* userOperation;
+extern UserOperation *userOperation;
 
 /* Vector for visiting neigbours = ( dx[k] , dy[k] )  ; ordered so that diagonal moves are the last 4 */
 extern const int dx[8];
 extern const int dy[8];
-//anti clockwise ordering
+// anti clockwise ordering
 extern const int dxo[8];
 extern const int dyo[8];
 
@@ -42,9 +35,9 @@ extern int sust_dig_ore_coal_count, sust_port_count, sust_old_money;
 extern int sust_old_money_count, sust_old_population, sust_old_population_count;
 extern int sust_old_tech, sust_old_tech_count, sust_fire_count;
 
-extern int total_time;  // game time
-extern int deadline;    // + 10 years to upgrade with waterwell everywhere
-extern int flag_warning;// flag to send a message to player.
+extern int total_time;   // game time
+extern int deadline;     // + 10 years to upgrade with waterwell everywhere
+extern int flag_warning; // flag to send a message to player.
 
 extern int population, starving_population;
 extern int housed_population, total_housing, housing;
@@ -63,7 +56,7 @@ extern int total_unemployed_years;
 extern float pollution_deaths_history, starve_deaths_history;
 extern float unemployed_history;
 
-//extern int university_intake_rate;
+// extern int university_intake_rate;
 extern int power_made, power_used, coal_made, coal_used;
 extern int goods_made, goods_used, ore_made, ore_used;
 extern int rockets_launched, rockets_launched_success;
@@ -76,5 +69,3 @@ extern int ex_tax_dis[NUMOF_DISCOUNT_TRIGGERS];
 extern int fast_time_for_year;
 
 #endif /* __engglobs_h__ */
-
-/** @file lincity/engglobs.h */

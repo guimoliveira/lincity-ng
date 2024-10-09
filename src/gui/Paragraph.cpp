@@ -1,48 +1,24 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Paragraph.cpp
- */
-
 #include "Paragraph.hpp"
 
-#include <SDL.h>                 // for SDL_Surface, SDL_FreeSurface, Sint16
-#include <SDL_ttf.h>             // for TTF_FontHeight, TTF_FontAscent, TTF_...
-#include <ctype.h>               // for isspace
-#include <libxml/xmlreader.h>    // for XML_READER_TYPE_ELEMENT, XML_READER_...
-#include <string.h>              // for strcmp, size_t, NULL
-#include <iostream>              // for basic_ostream, operator<<, cerr, str...
-#include <map>                   // for map, _Rb_tree_iterator, operator==
-#include <sstream>               // for basic_stringstream
-#include <stdexcept>             // for runtime_error
-#include <utility>               // for pair
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <ctype.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <stdexcept>
+#include <utility>
 
-#include "Color.hpp"             // for Color
-#include "ComponentFactory.hpp"  // for GUI_TRANSLATE, IMPLEMENT_COMPONENT_F...
-#include "Event.hpp"             // for Event
-#include "FontManager.hpp"       // for FontManager, fontManager
-#include "Painter.hpp"           // for Painter
-#include "Texture.hpp"           // for Texture
-#include "TextureManager.hpp"    // for TextureManager, texture_manager
-#include "Vector2.hpp"           // for Vector2
-#include "XmlReader.hpp"         // for XmlReader
+#include "Color.hpp"
+#include "ComponentFactory.hpp"
+#include "Event.hpp"
+#include "FontManager.hpp"
+#include "Painter.hpp"
+#include "Texture.hpp"
+#include "TextureManager.hpp"
+#include "Vector2.hpp"
+#include "XmlReader.hpp"
 
 Paragraph::Paragraph()
     : texture(0)
@@ -52,30 +28,28 @@ Paragraph::Paragraph()
 
 Paragraph::~Paragraph()
 {
-    for(TextSpans::iterator i = textspans.begin(); i != textspans.end(); ++i)
+    for (TextSpans::iterator i = textspans.begin(); i != textspans.end(); ++i)
         delete *i;
     delete texture;
 }
 
-void
-Paragraph::parse(XmlReader& reader)
+void Paragraph::parse(XmlReader &reader)
 {
     parse(reader, style);
 }
 
-void
-Paragraph::parseList(XmlReader& reader, const Style& )
+void Paragraph::parseList(XmlReader &reader, const Style &)
 {
     // query for "list" style
-    std::map<std::string, Style>::iterator i
-        = styleRegistry.find("list");
-    if(i == styleRegistry.end()) {
+    std::map<std::string, Style>::iterator i = styleRegistry.find("list");
+    if (i == styleRegistry.end())
+    {
         throw std::runtime_error("<li> element used but no"
-                " list style defined");
+                                 " list style defined");
     }
 
     // add a bullet char at the front of the text
-    TextSpan* currentspan = new TextSpan();
+    TextSpan *currentspan = new TextSpan();
     currentspan->style = i->second;
     currentspan->text = " \342\200\242 ";
     textspans.push_back(currentspan);
@@ -83,39 +57,46 @@ Paragraph::parseList(XmlReader& reader, const Style& )
     parse(reader, i->second);
 }
 
-void
-Paragraph::commit_changes(TextSpan* &currentspan, bool translatable)
+void Paragraph::commit_changes(TextSpan *&currentspan, bool translatable)
 {
-  if (currentspan != 0) {
-    if (translatable) {
-      currentspan->text
-        = GUI_TRANSLATE(currentspan->text);
+    if (currentspan != 0)
+    {
+        if (translatable)
+        {
+            currentspan->text = GUI_TRANSLATE(currentspan->text);
+        }
+        textspans.push_back(currentspan);
+        // std::cout << "new span: " << currentspan->text << std::endl;
+        currentspan = 0;
     }
-    textspans.push_back(currentspan);
-    //std::cout << "new span: " << currentspan->text << std::endl;
-    currentspan = 0;
-  }
 }
 
-void
-Paragraph::parse(XmlReader& reader, const Style& parentstyle)
+void Paragraph::parse(XmlReader &reader, const Style &parentstyle)
 {
     bool translatable = false;
 
     style = parentstyle;
 
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(parseAttribute(attribute, value)) {
+        if (parseAttribute(attribute, value))
+        {
             continue;
-        } else if(style.parseAttribute(attribute, value)) {
+        }
+        else if (style.parseAttribute(attribute, value))
+        {
             continue;
-        } else if(strcmp(attribute, "translatable") == 0) {
+        }
+        else if (attribute == "translatable")
+        {
             translatable = true;
-        } else {
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribut '" << attribute << "'.\n";
         }
     }
@@ -124,107 +105,135 @@ Paragraph::parse(XmlReader& reader, const Style& parentstyle)
     stylestack.push_back(style);
     stylestack.back().toSpan();
 
-    TextSpan* currentspan = 0;
+    TextSpan *currentspan = 0;
 
-    try {
+    try
+    {
         std::string currenthref;
+        std::string node;
         int depth = reader.getDepth();
-        while(reader.read() && reader.getDepth() > depth) {
-          switch(reader.getNodeType()) {
+        int lastDepth = depth;
+        while (reader.read() && reader.getDepth() > depth)
+        {
+            switch (reader.getNodeType())
+            {
             case XML_READER_TYPE_ELEMENT:
             {
-              std::string node((const char*) reader.getName());
-              if(node == "span" || node == "i" || node == "b"
-                  || node == "a") {
-                commit_changes(currentspan,translatable);
+                node = reader.getName();
+                if (node == "span" || node == "i" || node == "b" || node == "a")
+                {
+                    commit_changes(currentspan, translatable);
 
-                Style style(stylestack.back());
-                if (node == "a") {
-                  style.text_color.parse("blue");
-                } else if(node == "i") {
-                  style.italic = true;
-                } else if(node == "b") {
-                  style.bold = true;
-                }
+                    Style style(stylestack.back());
+                    if (node == "a")
+                    {
+                        style.text_color.parse("blue");
+                    }
+                    else if (node == "i")
+                    {
+                        style.italic = true;
+                    }
+                    else if (node == "b")
+                    {
+                        style.bold = true;
+                    }
 
-                currenthref = "";
-                XmlReader::AttributeIterator iter(reader);
-                while(iter.next()) {
-                  const char* attribute = (const char*) iter.getName();
-                  const char* value = (const char*) iter.getValue();
-                  if(style.parseAttribute(attribute, value))
-                    continue;
-                  else if(strcmp(attribute, "href") == 0) {
-                    currenthref = value;
-                  } else {
-                    std::cerr << "Unknown attribute '" << attribute
-                      << "' in textspan node.\n";
-                  }
+                    currenthref = "";
+                    XmlReader::AttributeIterator iter(reader);
+                    while (iter.next())
+                    {
+                        std::string attribute = iter.getName();
+                        std::string value = iter.getValue();
+                        if (style.parseAttribute(attribute, value))
+                            continue;
+                        else if (attribute == "href")
+                        {
+                            currenthref = value;
+                        }
+                        else
+                        {
+                            std::cerr << "Unknown attribute '" << attribute
+                                      << "' in textspan node.\n";
+                        }
+                    }
+                    style.parseAttributes(reader);
+                    // TODO parse style attributes...
+                    stylestack.push_back(style);
                 }
-                style.parseAttributes(reader);
-                // TODO parse style attributes...
-                stylestack.push_back(style);
-              } else {
-                std::cerr << "Skipping unknown node '" << node << "'.\n";
-                reader.nextNode();
-              }
+                else
+                {
+                    std::cerr << "Skipping unknown node '" << node << "'.\n";
+                    reader.nextNode();
+                }
             }
             break;
             case XML_READER_TYPE_TEXT:
             {
-              if(currentspan == 0) {
-                currentspan = new TextSpan();
-                currentspan->style = stylestack.back();
-              }
-
-              const char* p = (const char*) reader.getValue();
-              // skip leading spaces...
-              // while(*p != 0 && isspace(static_cast<unsigned char>(*p)))
-              //   ++p;
-
-              bool lastspace = false;
-              for( ; *p != 0; ++p) {
-                if(isspace(static_cast<unsigned char>(*p))) {
-                  if(!lastspace) {
-                    lastspace = true;
-                    currentspan->text += ' ';
-                  }
-                } else {
-                  lastspace = false;
-                  currentspan->text += *p;
-                  //std::cout << "growing span: " << currentspan->text << std::endl;
+                if (currentspan == 0)
+                {
+                    currentspan = new TextSpan();
+                    currentspan->style = stylestack.back();
                 }
-              }
 
+                std::string value = reader.getValue();
+                const char *p = value.c_str();
+                // skip leading spaces...
+                // while(*p != 0 && isspace(static_cast<unsigned char>(*p)))
+                //   ++p;
+
+                bool lastspace = false;
+                for (; *p != 0; ++p)
+                {
+                    if (isspace(static_cast<unsigned char>(*p)))
+                    {
+                        if (!lastspace)
+                        {
+                            lastspace = true;
+                            currentspan->text += ' ';
+                        }
+                    }
+                    else
+                    {
+                        lastspace = false;
+                        currentspan->text += *p;
+                        // std::cout << "growing span: " << currentspan->text << std::endl;
+                    }
+                }
             }
             break;
             case XML_READER_TYPE_END_ELEMENT:
             {
-              std::string node((const char*) reader.getName());
-              if(node == "span" || node == "b" || node == "i"
-                  || node == "a") {
-                commit_changes(currentspan,translatable);
-                stylestack.pop_back();
-              } else {
-                std::cerr << "Internal error: unknown node end: '" <<
-                  node << "'.\n";
-              }
+                std::string node = reader.getName();
+                if (node == "span" || node == "b" || node == "i" || node == "a")
+                {
+                    commit_changes(currentspan, translatable);
+                    stylestack.pop_back();
+                }
+                else
+                {
+                    std::cerr << "Internal error: unknown node end: '" << node << "'.\n";
+                }
             }
             break;
-          }
+            }
+
+            lastDepth = reader.getDepth();
         }
 
-        if(currentspan != 0) {
-            if(translatable) {
-                currentspan->text
-                    = GUI_TRANSLATE(currentspan->text);
+        if (currentspan != 0)
+        {
+            if (translatable)
+            {
+                currentspan->text = GUI_TRANSLATE(currentspan->text);
             }
-            //std::cout << "completed span: " << currentspan->text << std::endl;
+            // std::cout << "completed span: " << currentspan->text << std::endl;
             textspans.push_back(currentspan);
-            currentspan = 0; //added CK
+            currentspan = 0; // added CK
         }
-    } catch(...) {
-        if(currentspan != 0)
+    }
+    catch (...)
+    {
+        if (currentspan != 0)
             delete currentspan;
         throw;
     }
@@ -235,17 +244,16 @@ Paragraph::parse(XmlReader& reader, const Style& parentstyle)
  * Cleaning this big code up a bit more is always nice. However be very careful
  * when doing so and test it alot, as the code very easily breaks...
  */
-void
-Paragraph::resize(float width, float height)
+void Paragraph::resize(float width, float height)
 {
     // free old texture
-    if(texture)
+    if (texture)
     {
         delete texture;
         texture = 0;
     }
 
-    if( (width == 0) || textspans.empty() )
+    if ((width == 0) || textspans.empty())
     {
         this->width = 0;
         this->height = 0;
@@ -256,21 +264,20 @@ Paragraph::resize(float width, float height)
     // y coordinates for all the lines
     std::vector<int> ycoords;
     // surfaces of all the lines rendered
-    std::vector<SDL_Surface*> lineimages;
+    std::vector<SDL_Surface *> lineimages;
     // surfaces for the current line
-    std::vector<SDL_Surface*> spanimages;
+    std::vector<SDL_Surface *> spanimages;
     std::vector<float> spanxoffset;
     std::vector<LinkRectangle> linerectangles;
     std::vector<int> spanbaselines;
     int lineheight = 0;
     int baseline = 0;
 
-
     TextSpans::iterator i = textspans.begin();
 
-    const TextSpan* span = *i;
-    const std::string* text = &(span->text);
-    TTF_Font* font = fontManager->getFont(span->style);
+    const TextSpan *span = *i;
+    const std::string *text = &(span->text);
+    TTF_Font *font = fontManager->getFont(span->style);
     std::string::size_type p = 0;
     std::string::size_type linestart = 0;
     lineheight = TTF_FontHeight(font);
@@ -278,13 +285,16 @@ Paragraph::resize(float width, float height)
     std::string line;
     // current rendering position
     Vector2 pos;
-    while(1) {
+    while (1)
+    {
         std::string::size_type lastp = p;
-        if( (*text) [p] == ' ')
+        if ((*text)[p] == ' ')
         {
             // we don't need the space at the beginning of the line
-            if(p-linestart != 0 || pos.x != 0)
-            {   line += ' ';}
+            if (p - linestart != 0 || pos.x != 0)
+            {
+                line += ' ';
+            }
             else
             {
                 lastp++;
@@ -294,9 +304,12 @@ Paragraph::resize(float width, float height)
         }
 
         // take a word
-        for( ; p < text->size() &&
-            !( ((*text) [p] == ' ') /*|| ((*text) [p] == '\t')*/ ); ++p)
-        {   line += (*text) [p];}
+        for (; p < text->size() &&
+               !(((*text)[p] == ' ') /*|| ((*text) [p] == '\t')*/);
+             ++p)
+        {
+            line += (*text)[p];
+        }
 
         // check line size...
         int render_width, render_height;
@@ -305,13 +318,14 @@ Paragraph::resize(float width, float height)
         bool render = false;
         bool linefeed = false;
         // we need a linefeed if width isn't enough for current span
-        if(width > 0 && pos.x + render_width >= width - style.margin_left - style.margin_right)
+        if (width > 0 && pos.x + render_width >= width - style.margin_left - style.margin_right)
         {
             render = true;
             linefeed = true;
             // we have to leave out the last word (which made it too width)
-            if(lastp-linestart > 0 || pos.x != 0) {
-                line = std::string(*text, linestart, lastp-linestart);
+            if (lastp - linestart > 0 || pos.x != 0)
+            {
+                line = std::string(*text, linestart, lastp - linestart);
                 // set new linestart and set p back
                 p = lastp;
             }
@@ -321,99 +335,118 @@ Paragraph::resize(float width, float height)
         /* span is over, so we need to render now (and if it was the last span,
          * we need a linefeed too)
          */
-        if(p >= text->size())
+        if (p >= text->size())
         {
             render = true;
             ++i;
-            if(i == textspans.end())
-            {   linefeed = true;}
+            if (i == textspans.end())
+            {
+                linefeed = true;
+            }
         }
 
-        if(render && line != "")
+        if (render && line != "")
         {
-            if(TTF_FontHeight(font) > lineheight)
+            if (TTF_FontHeight(font) > lineheight)
             {
                 lineheight = TTF_FontHeight(font);
                 baseline = TTF_FontAscent(font);
             }
 
             // render span
-            //printf("Rendering: '%s'.\n", line.c_str());
-            SDL_Surface* spansurface = TTF_RenderUTF8_Blended(font,
-                    line.c_str(), span->style.text_color.getSDLColor());
-            if(spansurface == 0) {
+            // printf("Rendering: '%s'.\n", line.c_str());
+            SDL_Surface *spansurface = TTF_RenderUTF8_Blended(font,
+                                                              line.c_str(), span->style.text_color.getSDLColor());
+            if (spansurface == 0)
+            {
                 std::stringstream msg;
                 msg << "Error rendering text: " << SDL_GetError();
                 throw std::runtime_error(msg.str());
             }
             SDL_SetSurfaceAlphaMod(spansurface, 255);
-            //remember individual margins of spans
+            // remember individual margins of spans
             float xoffset;
             bool new_column = false;
-            if(span->style.alignment == Style::ALIGN_LEFT)
+            if (span->style.alignment == Style::ALIGN_LEFT)
             {
                 xoffset = span->style.margin_left;
-                new_column = (xoffset!=0);
+                new_column = (xoffset != 0);
             }
-            else if(span->style.alignment == Style::ALIGN_CENTER)
+            else if (span->style.alignment == Style::ALIGN_CENTER)
             {
-                new_column = (span->style.margin_left!=0);
+                new_column = (span->style.margin_left != 0);
                 if (new_column)
-                {   xoffset = (width + span->style.margin_left - span->style.margin_right - spansurface->w)/2;}
+                {
+                    xoffset = (width + span->style.margin_left - span->style.margin_right - spansurface->w) / 2;
+                }
                 else
-                {   xoffset = 0;}
+                {
+                    xoffset = 0;
+                }
             }
             else
             {
-                new_column = true; //always new column for right adjustment
+                new_column = true; // always new column for right adjustment
                 xoffset = (width - spansurface->w - span->style.margin_right);
             }
             float yoffset = span->style.margin_top;
             if (new_column)
-            {   pos.x = xoffset;}//fixed columns
+            {
+                pos.x = xoffset;
+            } // fixed columns
             else
-            {   pos.x += xoffset;}
+            {
+                pos.x += xoffset;
+            }
             pos.y += yoffset;
             spanxoffset.push_back(pos.x);
             spanimages.push_back(spansurface);
             spanbaselines.push_back(TTF_FontAscent(font));
 
             // remember span position if it is a link
-            if(span->style.href != "") {
+            if (span->style.href != "")
+            {
                 LinkRectangle link;
-                link.rect = Rect2D (pos.x , pos.y,
-                                    pos.x + spansurface->w,
-                                    pos.y + spansurface->h);
+                link.rect = Rect2D(pos.x, pos.y,
+                                   pos.x + spansurface->w,
+                                   pos.y + spansurface->h);
                 link.span = span;
                 linerectangles.push_back(link);
             }
-
 
             pos.x += spansurface->w;
             line = "";
         }
 
         // linefeed: compose all span images to line image
-        if(linefeed) {
+        if (linefeed)
+        {
             // compose all spanimages into a line surface
-            if(spanimages.size() == 1) {
+            if (spanimages.size() == 1)
+            {
                 lineimages.push_back(spanimages.back());
-            } else {
-                SDL_Surface* lineimage = SDL_CreateRGBSurface(0, (int) pos.x,
-                        (int) lineheight, 32,
-                        0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-                if(lineimage == 0) {
+            }
+            else
+            {
+                SDL_Surface *lineimage = SDL_CreateRGBSurface(0, (int)pos.x,
+                                                              (int)lineheight, 32,
+                                                              0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+                if (lineimage == 0)
+                {
                     throw std::runtime_error(
-                            "Out of memory when composing line image");
+                        "Out of memory when composing line image");
                 }
                 SDL_SetSurfaceAlphaMod(lineimage, 255);
 
                 SDL_Rect rect;
-                for(size_t i = 0; i < spanimages.size(); ++i) {
-                    rect.x = (Sint16) spanxoffset[i];
+                for (size_t i = 0; i < spanimages.size(); ++i)
+                {
+                    rect.x = (Sint16)spanxoffset[i];
                     rect.y = baseline - spanbaselines[i] + textspans[i]->style.margin_top;
-                    if(rect.y < 0)
-                    {   rect.y = 0;}
+                    if (rect.y < 0)
+                    {
+                        rect.y = 0;
+                    }
 
                     SDL_BlitSurface(spanimages[i], 0, lineimage, &rect);
                     SDL_FreeSurface(spanimages[i]);
@@ -426,15 +459,21 @@ Paragraph::resize(float width, float height)
 
             // adjust link rectangles for alignment and add them to the list
             float xoffset;
-            if(style.alignment == Style::ALIGN_LEFT) {
+            if (style.alignment == Style::ALIGN_LEFT)
+            {
                 xoffset = style.margin_left;
-            } else if(style.alignment == Style::ALIGN_CENTER) {
-                xoffset = (width + style.margin_left - style.margin_right - lineimages.back()->w)/2;
-            } else {
-                xoffset = (width - lineimages.back()->w  - style.margin_right);
             }
-            for(std::vector<LinkRectangle>::iterator i =linerectangles.begin();
-                i != linerectangles.end(); ++i) {
+            else if (style.alignment == Style::ALIGN_CENTER)
+            {
+                xoffset = (width + style.margin_left - style.margin_right - lineimages.back()->w) / 2;
+            }
+            else
+            {
+                xoffset = (width - lineimages.back()->w - style.margin_right);
+            }
+            for (std::vector<LinkRectangle>::iterator i = linerectangles.begin();
+                 i != linerectangles.end(); ++i)
+            {
                 i->rect.move(Vector2(xoffset, style.margin_top));
                 linkrectangles.push_back(*i);
             }
@@ -443,7 +482,7 @@ Paragraph::resize(float width, float height)
             line = "";
             pos.x = 0;
 
-            ycoords.push_back(static_cast<int> (pos.y + style.margin_top));
+            ycoords.push_back(static_cast<int>(pos.y + style.margin_top));
             pos.y += lineheight;
 
             lineheight = TTF_FontHeight(font);
@@ -451,10 +490,12 @@ Paragraph::resize(float width, float height)
         }
 
         // advance to next span if necessary
-        if(p >= text->size())
+        if (p >= text->size())
         {
-            if(i == textspans.end())
-            {   break;}
+            if (i == textspans.end())
+            {
+                break;
+            }
             span = *i;
             text = &(span->text);
             font = fontManager->getFont(span->style);
@@ -464,46 +505,59 @@ Paragraph::resize(float width, float height)
     }
 
     height = pos.y + style.margin_top + style.margin_bottom;
-    if(height < style.min_height)
-    {   height = style.min_height;}
+    if (height < style.min_height)
+    {
+        height = style.min_height;
+    }
 
     // check height defined in style
-    if(height == 0) {
+    if (height == 0)
+    {
         this->width = this->height = 0;
-        for(std::vector<SDL_Surface*>::iterator i = lineimages.begin();
-                i != lineimages.end(); ++i)
+        for (std::vector<SDL_Surface *>::iterator i = lineimages.begin();
+             i != lineimages.end(); ++i)
             SDL_FreeSurface(*i);
         return;
     }
 
     /* Step2: compose all lines to the final image */
-    if(width < 0) {
+    if (width < 0)
+    {
         width = lineimages[0]->w;
     }
-    SDL_Surface* result = SDL_CreateRGBSurface(0, (int) width, (int) height,
-            32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-    if(result == 0) {
+    SDL_Surface *result = SDL_CreateRGBSurface(0, (int)width, (int)height,
+                                               32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+    if (result == 0)
+    {
         throw std::runtime_error("Out of memory when creating text image");
     }
-    //apply margins of paragraph
-    for(size_t i = 0; i < lineimages.size(); ++i) {
+    // apply margins of paragraph
+    for (size_t i = 0; i < lineimages.size(); ++i)
+    {
         SDL_Rect rect;
 
-        if(style.alignment == Style::ALIGN_LEFT) {
-            rect.x = (Sint16) style.margin_left;
-        } else if(style.alignment == Style::ALIGN_CENTER) {
-            rect.x = (Sint16) (width + style.margin_left - style.margin_right - lineimages[i]->w) / 2;
-        } else {
-            rect.x = (Sint16) (width - lineimages[i]->w - style.margin_right);
+        if (style.alignment == Style::ALIGN_LEFT)
+        {
+            rect.x = (Sint16)style.margin_left;
         }
-        rect.y = (Sint16) ycoords[i];
+        else if (style.alignment == Style::ALIGN_CENTER)
+        {
+            rect.x = (Sint16)(width + style.margin_left - style.margin_right - lineimages[i]->w) / 2;
+        }
+        else
+        {
+            rect.x = (Sint16)(width - lineimages[i]->w - style.margin_right);
+        }
+        rect.y = (Sint16)ycoords[i];
         SDL_BlitSurface(lineimages[i], 0, result, &rect);
         SDL_FreeSurface(lineimages[i]);
     }
-    SDL_Surface* surface = SDL_ConvertSurfaceFormat(result, SDL_PIXELFORMAT_RGBA8888, 0);
+    SDL_Surface *surface = SDL_ConvertSurfaceFormat(result, SDL_PIXELFORMAT_RGBA8888, 0);
     SDL_FreeSurface(result);
-    if(surface == NULL)
-    {   throw std::runtime_error("Out of memory when creating text image(d)");}
+    if (surface == NULL)
+    {
+        throw std::runtime_error("Out of memory when creating text image(d)");
+    }
 
     texture = texture_manager->create(surface);
     this->width = width;
@@ -512,36 +566,40 @@ Paragraph::resize(float width, float height)
     setDirty();
 }
 
-void
-Paragraph::draw(Painter& painter)
+void Paragraph::draw(Painter &painter)
 {
-    if(!texture)
-    {   return;}
+    if (!texture)
+    {
+        return;
+    }
     painter.drawTexture(texture, Vector2(0, 0));
 }
 
-void
-Paragraph::event(const Event& event)
+void Paragraph::event(const Event &event)
 {
-    if(event.type != Event::MOUSEMOTION &&
-       event.type != Event::MOUSEBUTTONDOWN)
+    if (event.type != Event::MOUSEMOTION &&
+        event.type != Event::MOUSEBUTTONDOWN)
         return;
-    if(!event.inside)
+    if (!event.inside)
         return;
-    for(LinkRectangles::iterator i = linkrectangles.begin();
-        i != linkrectangles.end(); ++i) {
-        if(i->rect.inside(event.mousepos)) {
-            if(event.type == Event::MOUSEMOTION) {
+    for (LinkRectangles::iterator i = linkrectangles.begin();
+         i != linkrectangles.end(); ++i)
+    {
+        if (i->rect.inside(event.mousepos))
+        {
+            if (event.type == Event::MOUSEMOTION)
+            {
                 // TODO change mouse cursor
-            } else if(event.type == Event::MOUSEBUTTONDOWN) {
+            }
+            else if (event.type == Event::MOUSEBUTTONDOWN)
+            {
                 linkClicked(this, i->span->style.href);
             }
         }
     }
 }
 
-void
-Paragraph::setText(const std::string& newtext)
+void Paragraph::setText(const std::string &newtext)
 {
     Style spanStyle = style;
     spanStyle.toSpan();
@@ -550,34 +608,33 @@ Paragraph::setText(const std::string& newtext)
 
 std::string Paragraph::getText() const
 {
-  std::string t;
-  for(TextSpans::const_iterator i = textspans.begin(); i != textspans.end(); ++i)
-    t+=(*i)->text;
-  return t;
+    std::string t;
+    for (TextSpans::const_iterator i = textspans.begin(); i != textspans.end(); ++i)
+        t += (*i)->text;
+    return t;
 }
 
-void
-Paragraph::setText(const std::string& newtext, const Style& style)
+void Paragraph::setText(const std::string &newtext, const Style &style)
 {
-/*
-    for(TextSpans::iterator i = textspans.begin(); i != textspans.end(); ++i)
-        delete *i;
-*/
+    /*
+        for(TextSpans::iterator i = textspans.begin(); i != textspans.end(); ++i)
+            delete *i;
+    */
     textspans.clear();
 
-    size_t span_end = newtext.find_first_of('\t',0);
-    if(span_end != newtext.npos) // we have a tab
+    size_t span_end = newtext.find_first_of('\t', 0);
+    if (span_end != newtext.npos) // we have a tab
     {
         int tabcount = 0;
         std::string mytext = newtext;
         std::string spantext;
-        while(mytext.size())
+        while (mytext.size())
         {
-            spantext = mytext.substr(0,span_end);//skip the first tab
-            mytext.erase(0,span_end);//drop first span
-            mytext.erase(0,1);//kill the first tab
-            span_end = mytext.find_first_of('\t',0); // next tab
-            TextSpan* span = new TextSpan();
+            spantext = mytext.substr(0, span_end);    // skip the first tab
+            mytext.erase(0, span_end);                // drop first span
+            mytext.erase(0, 1);                       // kill the first tab
+            span_end = mytext.find_first_of('\t', 0); // next tab
+            TextSpan *span = new TextSpan();
             span->style = style;
             span->style.toSpan();
             span->text = spantext;
@@ -599,7 +656,7 @@ Paragraph::setText(const std::string& newtext, const Style& style)
     }
     else // simple string to parse
     {
-        TextSpan* span = new TextSpan();
+        TextSpan *span = new TextSpan();
         span->style = style;
         span->style.toSpan();
         span->text = newtext;
@@ -611,14 +668,13 @@ Paragraph::setText(const std::string& newtext, const Style& style)
     // rerender text
     resize(width, height);
     // eventually trigger resize/relayout of parent component
-    if(width == 0 || width != oldWidth || height == 0 || height != oldHeight)
+    if (width == 0 || width != oldWidth || height == 0 || height != oldHeight)
     {
-        if(getParent())
-        {   getParent()->reLayout();}
+        if (getParent())
+        {
+            getParent()->reLayout();
+        }
     }
 }
 
 IMPLEMENT_COMPONENT_FACTORY(Paragraph)
-
-
-/** @file gui/Paragraph.cpp */

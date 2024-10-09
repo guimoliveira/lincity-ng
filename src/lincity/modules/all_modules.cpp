@@ -1,13 +1,14 @@
 #include "all_modules.h"
 
-#include <map>                      // for map
-#include <string>                   // for basic_string, operator<
+#include <map>
+#include <string>
 
-#include "lincity/all_buildings.h"  // for TileConstructionGroup, bareConstr...
-#include "lincity/lintypes.h"       // for ConstructionGroup
-#include "lincity/resources.hpp"    // for ResourceGroup
+#include "lincity/all_buildings.h"
+#include "lincity/lintypes.h"
+#include "lincity/resources.hpp"
 
-void initializeModules() {
+void initializeModules()
+{
     ConstructionGroup::clearGroupMap();
     ConstructionGroup::addConstructionGroup(&fireStationConstructionGroup);
     ConstructionGroup::addConstructionGroup(&healthCentreConstructionGroup);
@@ -53,7 +54,6 @@ void initializeModules() {
     ConstructionGroup::addConstructionGroup(&rocketPadConstructionGroup);
     ConstructionGroup::addConstructionGroup(&shantyConstructionGroup);
 
-
     ConstructionGroup::clearResourcepMap();
     ConstructionGroup::addResourceID("Water", &waterConstructionGroup);
     ConstructionGroup::addResourceID("Green", &bareConstructionGroup);
@@ -67,7 +67,6 @@ void initializeModules() {
     ConstructionGroup::addResourceID("Health", &healthCentreConstructionGroup);
     ConstructionGroup::addResourceID("SportsCroud", &cricketConstructionGroup);
     ConstructionGroup::addResourceID("Pottery", &potteryConstructionGroup);
-    //ConstructionGroup::addResourceID("Monument", &monumentFinishedConstructionGroup);
     ConstructionGroup::addResourceID("MonumentConstruction", &monumentConstructionGroup);
     new ResourceGroup("Monument");
     ConstructionGroup::addResourceID("Waterwell", &waterwellConstructionGroup);
@@ -76,21 +75,14 @@ void initializeModules() {
     ConstructionGroup::addResourceID("WindMillHTech", &windpowerConstructionGroup);
     new ResourceGroup("WindMillHTechRG");
     new ResourceGroup("WindMillHTechG");
-//  ConstructionGroup::addResourceID("WindMillHTechRG", &windpower_RG_ConstructionGroup);
-//  ConstructionGroup::addResourceID("WindMillHTechG", &windpower_G_ConstructionGroup);
     ConstructionGroup::addResourceID("PowerCoalEmpty", &coal_powerConstructionGroup);
     new ResourceGroup("PowerCoalLow");
     new ResourceGroup("PowerCoalMed");
     new ResourceGroup("PowerCoalFull");
-    //ConstructionGroup::addResourceID("PowerCoalLow", &coal_power_low_ConstructionGroup);
-    //ConstructionGroup::addResourceID("PowerCoalMed", &coal_power_med_ConstructionGroup);
-    //ConstructionGroup::addResourceID("PowerCoalFull", &coal_power_full_ConstructionGroup);
     ConstructionGroup::addResourceID("PowerSolar", &solarPowerConstructionGroup);
     new ResourceGroup("Substation");
     ConstructionGroup::addResourceID("SubstationOff", &substationConstructionGroup);
-    //ConstructionGroup::addResourceID("Substation", &substation_RG_ConstructionGroup);
     new ResourceGroup("SubstationOn");
-    //ConstructionGroup::addResourceID("SubstationOn", &substation_G_ConstructionGroup);
     ConstructionGroup::addResourceID("Mill", &millConstructionGroup);
     ConstructionGroup::addResourceID("Farm", &organic_farmConstructionGroup);
     ConstructionGroup::addResourceID("ResidentialLowLow", &residenceLLConstructionGroup);
@@ -115,49 +107,51 @@ void initializeModules() {
     new ResourceGroup("CoalMineLow");
     new ResourceGroup("CoalMineMed");
     new ResourceGroup("CoalMineFull");
-    //ConstructionGroup::addResourceID("CoalMineLow", &coalmine_L_ConstructionGroup);
-    //ConstructionGroup::addResourceID("CoalMineMed", &coalmine_M_ConstructionGroup);
-    //ConstructionGroup::addResourceID("CoalMineFull", &coalmine_H_ConstructionGroup);
     ConstructionGroup::addResourceID("Tip", &tipConstructionGroup);
     ConstructionGroup::addResourceID("Recycle", &recycleConstructionGroup);
     ConstructionGroup::addResourceID("Harbor", &portConstructionGroup);
     ConstructionGroup::addResourceID("Fire", &fireConstructionGroup);
     new ResourceGroup("FireWasteLand");
-    //ConstructionGroup::addResourceID("FireWasteLand", &fireWasteLandConstructionGroup);
     ConstructionGroup::addResourceID("IndustryLight", &industryLightConstructionGroup);
     new ResourceGroup("IndustryLightQ");
     new ResourceGroup("IndustryLightL");
     new ResourceGroup("IndustryLightM");
     new ResourceGroup("IndustryLightH");
-    //ConstructionGroup::addResourceID("IndustryLightQ", &industryLight_Q_ConstructionGroup);
-    //ConstructionGroup::addResourceID("IndustryLightL", &industryLight_L_ConstructionGroup);
-    //ConstructionGroup::addResourceID("IndustryLightM", &industryLight_M_ConstructionGroup);
-    //ConstructionGroup::addResourceID("IndustryLightH", &industryLight_H_ConstructionGroup);
     ConstructionGroup::addResourceID("IndustryHigh", &industryHeavyConstructionGroup);
     new ResourceGroup("IndustryHighL");
     new ResourceGroup("IndustryHighM");
     new ResourceGroup("IndustryHighH");
-    //ConstructionGroup::addResourceID("IndustryHighL", &industryHeavy_L_ConstructionGroup);
-    //ConstructionGroup::addResourceID("IndustryHighM", &industryHeavy_M_ConstructionGroup);
-    //ConstructionGroup::addResourceID("IndustryHighH", &industryHeavy_H_ConstructionGroup);
     ConstructionGroup::addResourceID("MarketEmpty", &marketConstructionGroup);
     new ResourceGroup("MarketLow");
     new ResourceGroup("MarketMed");
     new ResourceGroup("MarketFull");
-    //ConstructionGroup::addResourceID("MarketLow", &market_low_ConstructionGroup);
-    //ConstructionGroup::addResourceID("MarketMed", &market_med_ConstructionGroup);
-    //ConstructionGroup::addResourceID("MarketFull", &market_full_ConstructionGroup);
     ConstructionGroup::addResourceID("Rocket", &rocketPadConstructionGroup);
     ConstructionGroup::addResourceID("Shanty", &shantyConstructionGroup);
 
-    //resources for extra sprites
-    new ResourceGroup("ChildOnSwing"); //used at School
-    new ResourceGroup("BlackSmoke");   //used at Coalpower Station
-    new ResourceGroup("GraySmoke");    //used at light Industry
+    // resources for extra sprites
+    new ResourceGroup("ChildOnSwing"); // used at School
+    new ResourceGroup("BlackSmoke");   // used at Coalpower Station
+    new ResourceGroup("GraySmoke");    // used at light Industry
 
-    //resources for vehicles
-    new ResourceGroup("Bluecar");
-    ResourceGroup::resMap["Bluecar"]->is_vehicle = true;
-
-
+    // resources for vehicles
+    new ResourceGroup("BlueCar");
+    new ResourceGroup("RedCar");
+    new ResourceGroup("YellowCar");
+    new ResourceGroup("GreenCar");
+    new ResourceGroup("GrayCar");
+    new ResourceGroup("RedTruck");
+    new ResourceGroup("GreenTruck");
+    new ResourceGroup("WhiteTruck");
+    new ResourceGroup("YellowTruck");
+    new ResourceGroup("BlueTruck");
+    ResourceGroup::resMap["BlueCar"]->is_vehicle = true;
+    ResourceGroup::resMap["RedCar"]->is_vehicle = true;
+    ResourceGroup::resMap["YellowCar"]->is_vehicle = true;
+    ResourceGroup::resMap["GreenCar"]->is_vehicle = true;
+    ResourceGroup::resMap["GrayCar"]->is_vehicle = true;
+    ResourceGroup::resMap["RedTruck"]->is_vehicle = true;
+    ResourceGroup::resMap["GreenTruck"]->is_vehicle = true;
+    ResourceGroup::resMap["WhiteTruck"]->is_vehicle = true;
+    ResourceGroup::resMap["YellowTruck"]->is_vehicle = true;
+    ResourceGroup::resMap["BlueTruck"]->is_vehicle = true;
 }

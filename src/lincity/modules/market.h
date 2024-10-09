@@ -1,9 +1,3 @@
-/* ---------------------------------------------------------------------- *
- * market.h
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
-
 #define GROUP_MARKET_COLOUR (blue(28))
 #define GROUP_MARKET_COST 100
 #define GROUP_MARKET_COST_MUL 25
@@ -13,22 +7,21 @@
 #define GROUP_MARKET_RANGE 9
 #define GROUP_MARKET_SIZE 2
 
-//#define MARKET_ANIM_SPEED 750
+#define LABOR_MARKET_EMPTY 1
+#define LABOR_MARKET_LOW 5
+#define LABOR_MARKET_MED 12
+#define LABOR_MARKET_FULL 28
 
-#define LABOR_MARKET_EMPTY   1
-#define LABOR_MARKET_LOW     5
-#define LABOR_MARKET_MED    12
-#define LABOR_MARKET_FULL   28
+#include <array>
+#include <list>
+#include <map>
+#include <string>
 
-#include <array>                // for array
-#include <list>                 // for _List_iterator, list
-#include <map>                  // for map
-#include <string>               // for basic_string, operator<
+#include "lincity/transport.h"
+#include "modules.h"
 
-#include "lincity/transport.h"  // for MAX_WASTE_IN_MARKET, MAX_COAL_IN_MARKET
-#include "modules.h"            // for CommodityRule, Commodity, Constructio...
-
-class MarketConstructionGroup: public ConstructionGroup {
+class MarketConstructionGroup : public ConstructionGroup
+{
 public:
     MarketConstructionGroup(
         const char *name,
@@ -36,11 +29,10 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int market_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, market_chance,
-        cost, tech, range, 2/*mps_pages*/
-    ) {
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, market_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
+    {
         commodityRuleCount[STUFF_FOOD].maxload = MAX_FOOD_IN_MARKET;
         commodityRuleCount[STUFF_FOOD].take = true;
         commodityRuleCount[STUFF_FOOD].give = true;
@@ -71,13 +63,11 @@ public:
 };
 
 extern MarketConstructionGroup marketConstructionGroup;
-//extern MarketConstructionGroup market_low_ConstructionGroup;
-//extern MarketConstructionGroup market_med_ConstructionGroup;
-//extern MarketConstructionGroup market_full_ConstructionGroup;
 
-class Market: public RegisteredConstruction<Market> { // Market inherits from Construction
+class Market : public RegisteredConstruction<Market>
+{ // Market inherits from Construction
 public:
-    Market(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Market>(x, y)
+    Market(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Market>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -86,7 +76,7 @@ public:
         waste_fire_frit->move_x = 0;
         waste_fire_frit->move_y = 0;
         waste_fire_frit->frame = -1;
-        //local copy of commodityRuCount
+        // local copy of commodityRuCount
         commodityRuleCount = constructionGroup->commodityRuleCount;
         setCommodityRulesSaved(&commodityRuleCount);
         initialize_commodities();
@@ -97,24 +87,25 @@ public:
         this->market_ratio = 0;
         this->start_burning_waste = false;
         this->waste_fire_anim = 0;
-        //set the Searchrange of this Market
+        // set the Searchrange of this Market
         int tmp;
-        int lenm1 = world.len()-1;
+        int lenm1 = world.len() - 1;
         tmp = x - constructionGroup->range;
         this->xs = (tmp < 1) ? 1 : tmp;
         tmp = y - constructionGroup->range;
-        this->ys = (tmp < 1)? 1 : tmp;
+        this->ys = (tmp < 1) ? 1 : tmp;
         tmp = x + constructionGroup->range + constructionGroup->size;
         this->xe = (tmp > lenm1) ? lenm1 : tmp;
         tmp = y + constructionGroup->range + constructionGroup->size;
-        this->ye = (tmp > lenm1)? lenm1 : tmp;
+        this->ye = (tmp > lenm1) ? lenm1 : tmp;
         this->cover();
 
         commodityMaxCons[STUFF_LABOR] = 100 * LABOR_MARKET_FULL;
         commodityMaxCons[STUFF_WASTE] = 100 * ((7 * MAX_WASTE_IN_MARKET) / 10);
     }
-    virtual ~Market() {
-        world(x,y)->killframe(waste_fire_frit);
+    virtual ~Market()
+    {
+        world(x, y)->killframe(waste_fire_frit);
     }
 
     virtual void update() override;
@@ -133,5 +124,3 @@ public:
     std::list<ExtraFrame>::iterator waste_fire_frit;
     int waste_fire_anim;
 };
-
-/** @file lincity/modules/market.h */

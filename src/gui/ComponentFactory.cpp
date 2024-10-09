@@ -1,53 +1,29 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file ComponentFactory.cpp
- */
-
 #include "ComponentFactory.hpp"
 
-#include <string.h>                     // for strcmp
+#include <string.h>
 
-#include "ComponentLoader.hpp"          // for createComponent
-#include "XmlReader.hpp"                // for XmlReader
-#include "tinygettext/tinygettext.hpp"  // for DictionaryManager, Dictionary
-//#include "../lincity-ng/CheckButton.hpp" //FIXME will that help?
+#include "ComponentLoader.hpp"
+#include "XmlReader.hpp"
+#include "tinygettext/tinygettext.hpp"
 
-#include <iostream>                     // for operator<<, basic_ostream, cerr
-#include <stdexcept>                    // for runtime_error
+#include <iostream>
+#include <stdexcept>
 
-tinygettext::DictionaryManager* dictionaryGUIManager = 0;
+tinygettext::DictionaryManager *dictionaryGUIManager = 0;
 
 const char *
-GUI_TRANSLATE(const char * msgid)
+GUI_TRANSLATE(const char *msgid)
 {
     return dictionaryGUIManager->get_dictionary().translate(msgid);
 }
 
 std::string
-GUI_TRANSLATE(const std::string& msgid)
+GUI_TRANSLATE(const std::string &msgid)
 {
     return dictionaryGUIManager->get_dictionary().translate(msgid);
 }
 
-ComponentFactories* component_factories = 0;
+ComponentFactories *component_factories = 0;
 
 // import factory
 /**
@@ -58,38 +34,42 @@ class ImportFactory : public Factory
 public:
     ImportFactory()
     {
-        if(component_factories == 0)
+        if (component_factories == 0)
             component_factories = new ComponentFactories;
 
         component_factories->insert(std::make_pair("Import", this));
     }
 
-    Component* createComponent(XmlReader& reader);
+    Component *createComponent(XmlReader &reader);
 };
-//static ImportFactory factory_Import;
+// static ImportFactory factory_Import;
 
-Component*
-ImportFactory::createComponent(XmlReader& reader)
+Component *
+ImportFactory::createComponent(XmlReader &reader)
 {
     std::string importfile;
 
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(strcmp(attribute, "src") == 0) {
-            importfile = value;
-        } else {
+        if (attribute == "src")
+        {
+            importfile = "/data/" + value;
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribute '" << attribute << "'.\n";
         }
     }
 
-    if(importfile == "")
+    if (importfile == "")
         throw std::runtime_error("No src attribute specified.");
     XmlReader nreader(importfile);
-    //std::cout << "importing Factory: " << importfile << std::endl;
-    return ::createComponent((const char*) nreader.getName(), nreader);
+    // std::cout << "importing Factory: " << importfile << std::endl;
+    return ::createComponent(nreader.getName(), nreader);
 }
 
 //---------------------------------------------------------------------------
@@ -99,25 +79,25 @@ ImportFactory::createComponent(XmlReader& reader)
  * some reasons also global constructor seems to be considered unused if noone
  * uses the global object. So can't use our slick component factory registration
  * tricks :-/ And have to fill in the list manually here
-**/
+ **/
 
-#include "Button.hpp"                   // for Button
-#include "Desktop.hpp"                  // for Desktop
-#include "Document.hpp"                 // for Document
-#include "FilledRectangle.hpp"          // for FilledRectangle
-#include "Gradient.hpp"                 // for Gradient
-#include "Image.hpp"                    // for Image
-#include "Panel.hpp"                    // for Panel
-#include "Paragraph.hpp"                // for Paragraph
-#include "ScrollBar.hpp"                // for ScrollBar
-#include "ScrollView.hpp"               // for ScrollView
-#include "SwitchComponent.hpp"          // for SwitchComponent
-#include "TableLayout.hpp"              // for TableLayout
-#include "TooltipManager.hpp"           // for TooltipManager
-#include "Window.hpp"                   // for Window
-#include "WindowManager.hpp"            // for WindowManager
+#include "Button.hpp"
+#include "Desktop.hpp"
+#include "Document.hpp"
+#include "FilledRectangle.hpp"
+#include "Gradient.hpp"
+#include "Image.hpp"
+#include "Panel.hpp"
+#include "Paragraph.hpp"
+#include "ScrollBar.hpp"
+#include "ScrollView.hpp"
+#include "SwitchComponent.hpp"
+#include "TableLayout.hpp"
+#include "TooltipManager.hpp"
+#include "Window.hpp"
+#include "WindowManager.hpp"
 
-//DECLARE_COMPONENT_FACTORY(CheckButton); //FIXME will this help?
+// DECLARE_COMPONENT_FACTORY(CheckButton); //FIXME will this help?
 DECLARE_COMPONENT_FACTORY(Button)
 DECLARE_COMPONENT_FACTORY(Desktop)
 DECLARE_COMPONENT_FACTORY(Document)
@@ -138,10 +118,10 @@ void initFactories()
 {
 #ifdef DEBUG
     static bool initialized = false;
-    if(!initialized)
+    if (!initialized)
     {
 #endif
-        //new INTERN_CheckButtonFactory(); //FIXME will this help?
+        // new INTERN_CheckButtonFactory(); //FIXME will this help?
         new INTERN_ButtonFactory();
         new INTERN_DesktopFactory();
         new INTERN_DocumentFactory();
@@ -168,6 +148,3 @@ void initFactories()
     }
 #endif
 }
-
-
-/** @file gui/ComponentFactory.cpp */

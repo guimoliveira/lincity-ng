@@ -1,33 +1,32 @@
-#define GROUP_RECYCLE_COLOUR   (green(28))
-#define GROUP_RECYCLE_COST    100000
+#define GROUP_RECYCLE_COLOUR (green(28))
+#define GROUP_RECYCLE_COST 100000
 #define GROUP_RECYCLE_COST_MUL 5
-#define GROUP_RECYCLE_BUL_COST    1000
-#define GROUP_RECYCLE_TECH    232
+#define GROUP_RECYCLE_BUL_COST 1000
+#define GROUP_RECYCLE_TECH 232
 #define GROUP_RECYCLE_FIREC 10
 #define GROUP_RECYCLE_RANGE 0
 #define GROUP_RECYCLE_SIZE 2
 
-#define WASTE_RECYCLED       500
-#define RECYCLE_LABOR   (WASTE_RECYCLED/50 + LABOR_LOAD_ORE + LABOR_LOAD_STEEL)
+#define WASTE_RECYCLED 500
+#define RECYCLE_LABOR (WASTE_RECYCLED / 50 + LABOR_LOAD_ORE + LABOR_LOAD_STEEL)
 #define RECYCLE_RUNNING_COST 3
-#define LOVOLT_RECYCLE_WASTE (WASTE_RECYCLED/2)
+#define LOVOLT_RECYCLE_WASTE (WASTE_RECYCLED / 2)
 
 #define MAX_LABOR_AT_RECYCLE (20 * RECYCLE_LABOR)
 #define MAX_WASTE_AT_RECYCLE (20 * WASTE_RECYCLED)
 #define MAX_ORE_AT_RECYCLE (16 * WASTE_RECYCLED)
-#define MAX_LOVOLT_AT_RECYCLE   (20 * LOVOLT_RECYCLE_WASTE)
-#define MAX_STEEL_AT_RECYCLE (16 * WASTE_RECYCLED/50)
+#define MAX_LOVOLT_AT_RECYCLE (20 * LOVOLT_RECYCLE_WASTE)
+#define MAX_STEEL_AT_RECYCLE (16 * WASTE_RECYCLED / 50)
 
-#define BURN_WASTE_AT_RECYCLE (MAX_WASTE_AT_RECYCLE/200)
+#define BURN_WASTE_AT_RECYCLE (MAX_WASTE_AT_RECYCLE / 200)
 
-
-
-#include <array>                    // for array
-#include <string>                   // for basic_string
+#include <array>
+#include <string>
 
 #include "modules.h"
 
-class RecycleConstructionGroup: public ConstructionGroup {
+class RecycleConstructionGroup : public ConstructionGroup
+{
 public:
     RecycleConstructionGroup(
         const char *name,
@@ -35,11 +34,9 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         commodityRuleCount[STUFF_LABOR].maxload = MAX_LABOR_AT_RECYCLE;
         commodityRuleCount[STUFF_LABOR].take = true;
@@ -63,9 +60,10 @@ public:
 
 extern RecycleConstructionGroup recycleConstructionGroup;
 
-class Recycle: public RegisteredConstruction<Recycle> { // Recycle inherits from Construction
+class Recycle : public RegisteredConstruction<Recycle>
+{ // Recycle inherits from Construction
 public:
-    Recycle(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Recycle>(x, y)
+    Recycle(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Recycle>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -86,19 +84,21 @@ public:
         commodityMaxCons[STUFF_LABOR] = 100 * RECYCLE_LABOR;
         commodityMaxCons[STUFF_LOVOLT] = 100 * LOVOLT_RECYCLE_WASTE;
         commodityMaxCons[STUFF_WASTE] = 100 *
-          (WASTE_RECYCLED + BURN_WASTE_AT_RECYCLE);
+                                        (WASTE_RECYCLED + BURN_WASTE_AT_RECYCLE);
         // commodityMaxProd[STUFF_ORE] = 100 * make_ore;
         // commodityMaxProd[STUFF_STEEL] = 100 * make_steel;
     }
 
-    virtual void initialize() override {
+    virtual void initialize() override
+    {
         RegisteredConstruction::initialize();
 
-
         int efficiency =
-          (WASTE_RECYCLED * (10 + ((50 * tech) / MAX_TECH_LEVEL))) / 100;
+            (WASTE_RECYCLED * (10 + ((50 * tech) / MAX_TECH_LEVEL))) / 100;
         if (efficiency > (WASTE_RECYCLED * 8) / 10)
-        {   efficiency = (WASTE_RECYCLED * 8) / 10;}
+        {
+            efficiency = (WASTE_RECYCLED * 8) / 10;
+        }
         this->make_ore = efficiency;
         this->make_steel = efficiency / 50;
 
@@ -106,14 +106,12 @@ public:
         commodityMaxProd[STUFF_STEEL] = 100 * make_steel;
     }
 
-    virtual ~Recycle() { }
+    virtual ~Recycle() {}
     virtual void update() override;
     virtual void report() override;
 
-    int  tech;
-    int  make_ore;
-    int  make_steel;
-    int  working_days, busy;
+    int tech;
+    int make_ore;
+    int make_steel;
+    int working_days, busy;
 };
-
-/** @file lincity/modules/recycle.h */

@@ -19,8 +19,7 @@
         <colsize col="4" fixed="16"/>
 
         <cell row="1" col="1" halign="left">
-          <Paragraph name="pbar_title1" style="ptitle" translatable="yes">
-          Population</Paragraph>
+          <Paragraph name="pbar_title1" style="ptitle" translatable="yes">Population</Paragraph>
         </cell>
         <cell row="1" col="2" halign="right">
           <BarView name="pbar_barview1a" width="16" height="16" dir="-1"/>
@@ -33,8 +32,7 @@
         </cell>
 
         <cell row="2" col="1" halign="left">
-          <Paragraph name="pbar_title2" style="ptitle" translatable="yes">
-          Tech Level</Paragraph>
+          <Paragraph name="pbar_title2" style="ptitle" translatable="yes">Tech Level</Paragraph>
         </cell>
         <cell row="2" col="2" halign="right">
           <BarView name="pbar_barview2a" width="16" height="16" dir="-1"/>
@@ -47,8 +45,7 @@
         </cell>
 
         <cell row="3" col="1" halign="left">
-          <Paragraph name="pbar_title3" style="ptitle" translatable="yes">
-         Money</Paragraph>
+          <Paragraph name="pbar_title3" style="ptitle" translatable="yes">Money</Paragraph>
         </cell>
         <cell row="3" col="2" halign="right">
           <BarView name="pbar_barview3a" width="16" height="16" dir="-1"/>
@@ -61,8 +58,7 @@
         </cell>
 
         <cell row="4" col="1" halign="left">
-          <Paragraph name="pbar_title4" style="ptitle" translatable="yes">
-          Food</Paragraph>
+          <Paragraph name="pbar_title4" style="ptitle" translatable="yes">Food</Paragraph>
         </cell>
         <cell row="4" col="2" halign="right">
           <BarView name="pbar_barview4a" width="16" height="16" dir="-1"/>
@@ -75,8 +71,7 @@
         </cell>
 
         <cell row="5" col="1" halign="left">
-          <Paragraph name="pbar_title5" style="ptitle" translatable="yes">
-          Labor</Paragraph>
+          <Paragraph name="pbar_title5" style="ptitle" translatable="yes">Labor</Paragraph>
         </cell>
         <cell row="5" col="2" halign="right">
           <BarView name="pbar_barview5a" width="16" height="16" dir="-1"/>
@@ -89,8 +84,7 @@
         </cell>
 
         <cell row="6" col="1" halign="left">
-          <Paragraph name="pbar_title6" style="ptitle" translatable="yes">
-          Goods</Paragraph>
+          <Paragraph name="pbar_title6" style="ptitle" translatable="yes">Goods</Paragraph>
         </cell>
         <cell row="6" col="2" halign="right">
           <BarView name="pbar_barview6a" width="16" height="16" dir="-1"/>
@@ -103,8 +97,7 @@
         </cell>
 
         <cell row="7" col="1" halign="left">
-          <Paragraph name="pbar_title7" style="ptitle" translatable="yes">
-          Coal</Paragraph>
+          <Paragraph name="pbar_title7" style="ptitle" translatable="yes">Coal</Paragraph>
         </cell>
         <cell row="7" col="2" halign="right">
           <BarView name="pbar_barview7a" width="16" height="16" dir="-1"/>
@@ -117,8 +110,7 @@
         </cell>
 
         <cell row="8" col="1" halign="left">
-          <Paragraph name="pbar_title8" style="ptitle" translatable="yes">
-          Ore</Paragraph>
+          <Paragraph name="pbar_title8" style="ptitle" translatable="yes">Ore</Paragraph>
         </cell>
         <cell row="8" col="2" halign="right">
           <BarView name="pbar_barview8a" width="16" height="16" dir="-1"/>
@@ -131,8 +123,7 @@
         </cell>
 
         <cell row="9" col="1" halign="left">
-          <Paragraph name="pbar_title9" style="ptitle" translatable="yes">
-          Steel</Paragraph>
+          <Paragraph name="pbar_title9" style="ptitle" translatable="yes">Steel</Paragraph>
         </cell>
         <cell row="9" col="2" halign="right">
           <BarView name="pbar_barview9a" width="16" height="16" dir="-1"/>

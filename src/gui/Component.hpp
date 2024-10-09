@@ -1,36 +1,17 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 #ifndef __COMPONENT_H__
 #define __COMPONENT_H__
 
-#include <string>       // for string, basic_string
+#include <string>
 
-#include "Child.hpp"    // for Child (ptr only), Childs
-#include "Rect2D.hpp"   // for Rect2D
-#include "Vector2.hpp"  // for Vector2
+#include "Child.hpp"
+#include "Rect2D.hpp"
+#include "Vector2.hpp"
 
 class Desktop;
 class Event;
 class Painter;
 
 /**
- * @author Matthias Braun.
- * @file Component.hpp
  * @class Component
  * @brief Implementation of blocks which are a rectangular area on screen.
  *
@@ -59,17 +40,18 @@ class Component
 {
 public:
     /** Values for the flags bitfield. */
-    enum {
+    enum
+    {
         FLAG_RESIZABLE = 0x00000001
     };
 
     Component();
     virtual ~Component();
 
-    virtual void draw(Painter& painter);
-    virtual void event(const Event& event);
+    virtual void draw(Painter &painter);
+    virtual void event(const Event &event);
     virtual void resize(float width, float height);
-    void resize(Vector2 newSize) {resize(newSize.x, newSize.y);}
+    void resize(Vector2 newSize) { resize(newSize.x, newSize.y); }
 
     /** Causes the component to layout it's child components again */
     virtual void reLayout();
@@ -77,9 +59,9 @@ public:
     /**
      * @return true if the component is opaque at this place.
      */
-    virtual bool opaque(const Vector2& pos) const
+    virtual bool opaque(const Vector2 &pos) const
     {
-        if(pos.x >= 0 && pos.y >= 0 && pos.x < width && pos.y < height)
+        if (pos.x >= 0 && pos.y >= 0 && pos.x < width && pos.y < height)
             return true;
 
         return false;
@@ -95,16 +77,17 @@ public:
         return height;
     }
 
-    Vector2 getSize() const {
+    Vector2 getSize() const
+    {
         return size;
     }
 
-    const std::string& getName() const
+    const std::string &getName() const
     {
         return name;
     }
 
-    void setName(const std::string& name)
+    void setName(const std::string &name)
     {
         this->name = name;
     }
@@ -118,42 +101,56 @@ public:
     /**
      * Get the current component parent.
      * @return The parent component or 0 if the component has no parent. */
-    Component* getParent() const
+    Component *getParent() const
     {
         return parent;
     }
-    Component* findComponent(const std::string& name);
-    Desktop* getDesktop() const {
+    Component *findComponent(const std::string &name);
+    Desktop *getDesktop() const
+    {
         return desktop;
     }
 
     /**
      * Maps a relative coordinate from this component to a global one.
      */
-    Vector2 relative2Global(const Vector2& pos);
+    Vector2 relative2Global(const Vector2 &pos);
 
 protected:
     Childs childs;
 
-    Child& addChild(Component* component);
-    void resetChild(Child& child, Component* component);
-    void drawChild(Child& child, Painter& painter);
-    bool eventChild(Child& child, const Event& event, bool visible = false);
-    void setChildDirty(Component* child, const Rect2D& area);
-    Child& findChild(Component* component);
+    Child &addChild(Component *component);
+    void resetChild(Child &child, Component *component);
+    void drawChild(Child &child, Painter &painter);
+    bool eventChild(Child &child, const Event &event, bool visible = false);
+    void setChildDirty(Component *child, const Rect2D &area);
+    Child &findChild(Component *component);
 
     void setDirty()
     {
         setDirty(Rect2D(0, 0, width, height));
     }
-    virtual void setDirty(const Rect2D& area);
+    virtual void setDirty(const Rect2D &area);
 
     /**
      * Used to parse attributes (from an xml stream for example). Currently
      * parses only the name attribute.
      * @return True if the attribute has been used, false else.
      */
-    virtual bool parseAttribute(const char* attribute, const char* value);
+    virtual bool parseAttribute(const char *attribute, const char *value);
+
+    bool parseAttribute(const char *attribute, const std::string& value) 
+    {
+        return parseAttribute(attribute, value.c_str());
+    }
+    bool parseAttribute(const std::string& attribute, const char * value)
+    {
+        return parseAttribute(attribute.c_str(), value);
+    }
+    bool parseAttribute(const std::string& attribute, const std::string& value)
+    {
+        return parseAttribute(attribute.c_str(), value.c_str());
+    }
 
     void setFlags(int flags)
     {
@@ -165,7 +162,7 @@ protected:
         this->flags &= ~flags;
     }
 
-    Component* parent;
+    Component *parent;
     Desktop *desktop;
     int flags;
     Vector2 size;
@@ -177,5 +174,3 @@ protected:
 };
 
 #endif
-
-/** @file gui/Component.hpp */

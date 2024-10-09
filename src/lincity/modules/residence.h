@@ -1,9 +1,3 @@
-/* ---------------------------------------------------------------------- *
- * residence.h
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
-
 #ifndef __residence_h__
 #define __residence_h__
 
@@ -18,18 +12,18 @@
 #define DAYS_PER_STARVE 20
 
 /* RESIDENCE?_BRM is the birth rate modifier */
-#define RESIDENCE_BASE_BR     100
-#define RESIDENCE_BASE_DR     (68*12)
-#define RESIDENCE_BRM_HEALTH  300
-#define RESIDENCE_LL_BRM (RESIDENCE_BASE_BR*12)
+#define RESIDENCE_BASE_BR 100
+#define RESIDENCE_BASE_DR (68 * 12)
+#define RESIDENCE_BRM_HEALTH 300
+#define RESIDENCE_LL_BRM (RESIDENCE_BASE_BR * 12)
 #define RESIDENCE_ML_BRM 0
-#define RESIDENCE_HL_BRM (RESIDENCE_BASE_BR+RESIDENCE_BASE_BR/4)
-#define RESIDENCE_LH_BRM (RESIDENCE_BASE_BR*18)
-#define RESIDENCE_MH_BRM (RESIDENCE_BASE_BR/2)
+#define RESIDENCE_HL_BRM (RESIDENCE_BASE_BR + RESIDENCE_BASE_BR / 4)
+#define RESIDENCE_LH_BRM (RESIDENCE_BASE_BR * 18)
+#define RESIDENCE_MH_BRM (RESIDENCE_BASE_BR / 2)
 #define RESIDENCE_HH_BRM 0
 
 /* RESIDENCE_PPM is the people_pool mobitily. Higher number=less mobile. */
-#define RESIDENCE_PPM   20
+#define RESIDENCE_PPM 20
 
 #define GROUP_RESIDENCE_LL_COLOUR (cyan(24))
 #define GROUP_RESIDENCE_LL_COST 1000
@@ -82,16 +76,16 @@
 #define GROUP_RESIDENCE_RANGE 0
 #define GROUP_RESIDENCE_SIZE 3
 
-
 #endif /* __residence_h__ */
 
-#include <array>                    // for array
-#include <iostream>                 // for basic_ostream, operator<<, basic_...
-#include <string>                   // for char_traits, basic_string
+#include <array>
+#include <iostream>
+#include <string>
 
 #include "modules.h"
 
-class ResidenceConstructionGroup: public ConstructionGroup {
+class ResidenceConstructionGroup : public ConstructionGroup
+{
 public:
     ResidenceConstructionGroup(
         const char *name,
@@ -99,61 +93,59 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         switch (group)
         {
-            case GROUP_RESIDENCE_LL :
-                commodityRuleCount[STUFF_LOVOLT].maxload =   20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_LL_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_LL_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_LL_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_LL_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_LL_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_LL_MAX_POP;
+        case GROUP_RESIDENCE_LL:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_LL_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_LL_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_LL_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_LL_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_LL_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_LL_MAX_POP;
             break;
-            case GROUP_RESIDENCE_ML :
-                commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_ML_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_ML_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_ML_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_ML_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_ML_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_ML_MAX_POP;
+        case GROUP_RESIDENCE_ML:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_ML_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_ML_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_ML_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_ML_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_ML_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_ML_MAX_POP;
             break;
-            case GROUP_RESIDENCE_HL :
-                commodityRuleCount[STUFF_LOVOLT].maxload =  20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_HL_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_HL_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_HL_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_HL_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_HL_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_HL_MAX_POP;
+        case GROUP_RESIDENCE_HL:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_HL_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_HL_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_HL_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_HL_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_HL_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_HL_MAX_POP;
             break;
-            case GROUP_RESIDENCE_LH :
-                commodityRuleCount[STUFF_LOVOLT].maxload =   20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_LH_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_LH_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_LH_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_LH_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_LH_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_LH_MAX_POP;
+        case GROUP_RESIDENCE_LH:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_LH_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_LH_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_LH_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_LH_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_LH_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_LH_MAX_POP;
             break;
-            case GROUP_RESIDENCE_MH :
-                commodityRuleCount[STUFF_LOVOLT].maxload =   20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_MH_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_MH_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_MH_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_MH_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_MH_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_MH_MAX_POP;
+        case GROUP_RESIDENCE_MH:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_MH_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_MH_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_MH_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_MH_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_MH_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_MH_MAX_POP;
             break;
-            case GROUP_RESIDENCE_HH :
-                commodityRuleCount[STUFF_LOVOLT].maxload =   20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_HH_MAX_POP * POWER_USE_PER_PERSON));
-                commodityRuleCount[STUFF_WASTE].maxload =  6 * GROUP_RESIDENCE_HH_MAX_POP;
-                commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_HH_MAX_POP;
-                commodityRuleCount[STUFF_LABOR].maxload =  20 * GROUP_RESIDENCE_HH_MAX_POP;
-                commodityRuleCount[STUFF_FOOD].maxload =  20 * GROUP_RESIDENCE_HH_MAX_POP;
-                commodityRuleCount[STUFF_WATER].maxload =  20 * GROUP_RESIDENCE_HH_MAX_POP;
+        case GROUP_RESIDENCE_HH:
+            commodityRuleCount[STUFF_LOVOLT].maxload = 20 * (POWER_RES_OVERHEAD + (GROUP_RESIDENCE_HH_MAX_POP * POWER_USE_PER_PERSON));
+            commodityRuleCount[STUFF_WASTE].maxload = 6 * GROUP_RESIDENCE_HH_MAX_POP;
+            commodityRuleCount[STUFF_GOODS].maxload = 10 * GROUP_RESIDENCE_HH_MAX_POP;
+            commodityRuleCount[STUFF_LABOR].maxload = 20 * GROUP_RESIDENCE_HH_MAX_POP;
+            commodityRuleCount[STUFF_FOOD].maxload = 20 * GROUP_RESIDENCE_HH_MAX_POP;
+            commodityRuleCount[STUFF_WATER].maxload = 20 * GROUP_RESIDENCE_HH_MAX_POP;
             break;
         }
         commodityRuleCount[STUFF_FOOD].take = true;
@@ -176,30 +168,43 @@ public:
 extern ResidenceConstructionGroup residenceLLConstructionGroup, residenceMLConstructionGroup, residenceHLConstructionGroup;
 extern ResidenceConstructionGroup residenceLHConstructionGroup, residenceMHConstructionGroup, residenceHHConstructionGroup;
 
-class Residence: public RegisteredConstruction<Residence> { // Residence inherits from its own RegisteredConstruction
+class Residence : public RegisteredConstruction<Residence>
+{ // Residence inherits from its own RegisteredConstruction
 public:
-    Residence(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Residence>(x, y)
+    Residence(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Residence>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
         this->local_population = 0;
-        setMemberSaved(&(this->local_population),"local_population");
+        setMemberSaved(&(this->local_population), "local_population");
         this->desireability = 0;
         this->births = 120000;
         this->deaths = 120000;
         this->pol_deaths = 0;
         if (cstgrp == &residenceLLConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_LL_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_LL_MAX_POP;
+        }
         else if (cstgrp == &residenceMLConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_ML_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_ML_MAX_POP;
+        }
         else if (cstgrp == &residenceHLConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_HL_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_HL_MAX_POP;
+        }
         else if (cstgrp == &residenceLHConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_LH_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_LH_MAX_POP;
+        }
         else if (cstgrp == &residenceMHConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_MH_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_MH_MAX_POP;
+        }
         else if (cstgrp == &residenceHHConstructionGroup)
-        {   this->max_population = GROUP_RESIDENCE_HH_MAX_POP;}
+        {
+            this->max_population = GROUP_RESIDENCE_HH_MAX_POP;
+        }
         else
         {
             this->max_population = 50;
@@ -210,18 +215,14 @@ public:
         commodityMaxCons[STUFF_FOOD] = 100 * max_population;
         commodityMaxCons[STUFF_WATER] = 100 * max_population;
         commodityMaxCons[STUFF_LOVOLT] = 100 * (POWER_RES_OVERHEAD +
-          (POWER_USE_PER_PERSON * max_population) + max_population/2);
-        commodityMaxProd[STUFF_LABOR] = 100 * (max_population * (
-            WORKING_POP_PERCENT + JOB_SWING +
-            HC_WORKING_POP + HC_JOB_SWING +
-            CRICKET_WORKING_POP + CRICKET_JOB_SWING)
-          / 100);
+                                                (POWER_USE_PER_PERSON * max_population) + max_population / 2);
+        commodityMaxProd[STUFF_LABOR] = 100 * (max_population * (WORKING_POP_PERCENT + JOB_SWING + HC_WORKING_POP + HC_JOB_SWING + CRICKET_WORKING_POP + CRICKET_JOB_SWING) / 100);
         commodityMaxCons[STUFF_GOODS] = 100 * (max_population / 4) * 2;
         commodityMaxProd[STUFF_WASTE] = 100 * (max_population / 12) * 2;
     }
     virtual ~Residence()
     {
-        //everyone survives demolition
+        // everyone survives demolition
         people_pool += local_population;
     }
     virtual void update();
@@ -232,6 +233,3 @@ public:
     int desireability;
     int births, deaths, pol_deaths;
 };
-
-
-/** @file lincity/modules/residence.h */

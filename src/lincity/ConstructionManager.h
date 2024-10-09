@@ -1,18 +1,20 @@
 #ifndef CONSTRUCTION_MANAGER_H__
 #define CONSTRUCTION_MANAGER_H__
 
-#include <map>  // for map
+#include <map> // for map
 
 class Construction;
 class ConstructionRequest;
 
-class ConstructionManager {
+class ConstructionManager
+{
 public:
     // NOTE: no synchronization is performed
     static void submitRequest(ConstructionRequest *request);
     static void executeRequest(ConstructionRequest *request);
     static void executePendingRequests();
     static void clearRequests();
+
 private:
     static std::map<Construction *, ConstructionRequest *> pendingRequests;
 };

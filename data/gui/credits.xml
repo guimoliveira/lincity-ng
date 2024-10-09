@@ -10,28 +10,28 @@
         margin-top="5"/>
     <DefineStyle name="button" color="blue" font-size="30" margin-left="20"
         margin-right="20"/>
-    <Image src="images/mainmenu/credits_back.png" resizable="yes"/>
+    <Image src="images/mainmenu/background.png" resizable="yes"/>
     <TableLayout rows="2" cols="1">
-        <rowsize row="2" relative=".1"/>
+        <rowsize row="2" fixed="80"/>
         <cell row="1" col="1" valign="top" halign="left">
             <ScrollView name="CreditsHelpScrollView">
-            <scrollbar width="20">
+            <scrollbar width="30">
                     <button1>
-                            <image src="images/gui/buttons/round/button-round-20.png"/>
-                            <image-hover src="images/gui/buttons/round/button-round-hover-20.png"/>
-                            <image-clicked src="images/gui/buttons/round/button-round-checked-20.png"/>
+                            <image src="images/gui/buttons/round/button-round-30.png"/>
+                            <image-hover src="images/gui/buttons/round/button-round-hover-30.png"/>
+                            <image-clicked src="images/gui/buttons/round/button-round-checked-30.png"/>
                             <image-caption src="images/gui/scrollbar/arrow_up.png"/>
                     </button1>
                     <button2>
-                            <image src="images/gui/buttons/round/button-round-20.png"/>
-                            <image-hover src="images/gui/buttons/round/button-round-hover-20.png"/>
-                            <image-clicked src="images/gui/buttons/round/button-round-checked-20.png"/>
+                            <image src="images/gui/buttons/round/button-round-30.png"/>
+                            <image-hover src="images/gui/buttons/round/button-round-hover-30.png"/>
+                            <image-clicked src="images/gui/buttons/round/button-round-checked-30.png"/>
                             <image-caption src="images/gui/scrollbar/arrow_down.png"/>
                     </button2>
                     <scroller>
-                            <image src="images/gui/buttons/round/button-round-20.png"/>
-                            <image-hover src="images/gui/buttons/round/button-round-hover-20.png"/>
-                            <image-clicked src="images/gui/buttons/round/button-round-checked-20.png"/>
+                            <image src="images/gui/buttons/round/button-round-30.png"/>
+                            <image-hover src="images/gui/buttons/round/button-round-hover-30.png"/>
+                            <image-clicked src="images/gui/buttons/round/button-round-checked-30.png"/>
                     </scroller>
             </scrollbar>
             <contents>

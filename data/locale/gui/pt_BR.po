@@ -70,7 +70,7 @@ msgstr "Nova Invenção"
 #: data/gui/schoolup.xml data/gui/solarpowerup.xml data/gui/universityup.xml
 #: data/gui/windmillup.xml
 msgid "See the help screen for more information."
-msgstr "Veja a tela de ajuda para maiores informações."
+msgstr "Veja a tela de ajuda para mais informações."
 
 #: data/gui/blacksmithup.xml
 msgid ""
@@ -78,7 +78,7 @@ msgid ""
 "Blacksmiths use jobs and steel to make goods."
 msgstr ""
 "Você alcançou o nível tecnológico que habilita a construir ferreiros. "
-"Ferreiros utilizam a empregos e aço para produzir bens."
+"Ferreiros utilizam empregos e aço para produzir bens."
 
 #: data/gui/bulldoze_monument_yn.xml
 msgid "Bulldozing a monument costs a lot of money."
@@ -176,7 +176,11 @@ msgstr ""
 #: data/gui/credits.xml data/gui/loadgame.xml data/gui/newgame.xml
 #: data/gui/savegame.xml
 msgid "Back"
-msgstr "Anterior"
+msgstr "Voltar"
+
+#: data/gui/creditslist.xml
+msgid "Web Porting"
+msgstr "Versão de Navegador"
 
 #: data/gui/creditslist.xml
 msgid "Code"
@@ -192,7 +196,7 @@ msgstr "Gráficos"
 
 #: data/gui/creditslist.xml
 msgid "Original Idea and Code"
-msgstr "Idéia original e Código"
+msgstr "Ideia Original e Código"
 
 #: data/gui/creditslist.xml
 msgid "Sound and Music"
@@ -213,7 +217,7 @@ msgid ""
 "direction) happier."
 msgstr ""
 "Seus habitantes inventaram o basquete. As quadras de basquete utilizam um "
-"pouca produção e bens e fazem as pessoas ao redor (mais ou menos 10 pessoas "
+"pouco de produção e bens e fazem as pessoas ao redor (mais ou menos 10 pessoas "
 "em cada direção) mais felizes."
 
 #: data/gui/fire.xml
@@ -222,7 +226,7 @@ msgstr "Começou um incêndio"
 
 #: data/gui/fire.xml
 msgid "You better go and look for it"
-msgstr "Você pode ir a procurar por isso"
+msgstr "Você pode ir procurar"
 
 #: data/gui/firestationup.xml
 msgid "Fire Stations available"
@@ -374,7 +378,7 @@ msgstr ""
 
 #: data/gui/mainmenu.xml
 msgid "Continue"
-msgstr "Prosseguir"
+msgstr "Continuar"
 
 #: data/gui/mainmenu.xml data/gui/newgame.xml
 msgid "New Game"
@@ -411,11 +415,11 @@ msgstr "$"
 
 #: data/gui/minimap.xml
 msgid "Eco"
-msgstr "Eco"
+msgstr "Eco."
 
 #: data/gui/minimap.xml
 msgid "Map"
-msgstr "Map"
+msgstr "Mapa"
 
 #: data/gui/minimap.xml
 msgid "Press this button to show statistics"
@@ -424,7 +428,7 @@ msgstr "Aperte este botão para mostrar as estatísticas"
 #: data/gui/minimap.xml
 msgid "Show Income and Expenses. Click this tab again to cycle through views."
 msgstr ""
-"Exibir Receitas e Despesas. Clique nesta tab novamente para circular entre "
+"Exibir Receitas e Despesas. Clique nesta aba novamente para circular entre "
 "as visualizações."
 
 #: data/gui/minimap.xml
@@ -432,8 +436,20 @@ msgid "Show economy graphs."
 msgstr "Exibir gráficos da economia."
 
 #: data/gui/minimap.xml
-msgid "Show resources."
-msgstr "Exibir recursos."
+msgid "Show resources. Use scroll buttons to cycle through views."
+msgstr "Exibir recursos. Use botões de rolagem para alternar entre as visualizações."
+
+#: data/gui/minimap.xml
+msgid "Show Income and Expenses. Use scroll buttons to cylce through views."
+msgstr "Exibir receitas e despesas. Use botões de rolagem para alternar entre as visualizações."
+
+#: data/gui/minimap.xml
+msgid "[m] Scroll up."
+msgstr "[m] Rolar para cima."
+
+#: data/gui/minimap.xml
+msgid "[n] Scroll down."
+msgstr "[n] Rolar para baixo."
 
 #: data/gui/minimap.xml
 msgid "Show the MiniMap"
@@ -441,7 +457,7 @@ msgstr "Exibir o Mini Mapa"
 
 #: data/gui/minimap.xml
 msgid "Stats"
-msgstr "Estat"
+msgstr "Estat."
 
 #: data/gui/minimap.xml
 msgid "[+] Zoom in view so that less buildings but more details are visible"
@@ -452,8 +468,12 @@ msgid "[-] Zoom out"
 msgstr "[-] Reduzir"
 
 #: data/gui/minimap.xml
+msgid "toggle terrain height rendering"
+msgstr "Ativar/desativar renderização com altura de terreno"
+
+#: data/gui/minimap.xml
 msgid "[F1] Press this button to get help"
-msgstr "[F1] Aperte este botão para ter ajuda"
+msgstr "[F1] Ajuda"
 
 #: data/gui/minimap.xml
 msgid "[h] Hide high buildings. "
@@ -477,11 +497,11 @@ msgstr "Exibir mapa plano"
 
 #: data/gui/minimapswitchbuttons.xml
 msgid "Show medical care"
-msgstr "Exibir área médica"
+msgstr "Exibir área com hospitais"
 
 #: data/gui/minimapswitchbuttons.xml
 msgid "Show nourishments"
-msgstr "Exibir alimentos"
+msgstr "Exibir área com alimentos"
 
 #: data/gui/minimapswitchbuttons.xml
 msgid "Show pollution density"
@@ -493,7 +513,7 @@ msgstr "Exibir área energizada"
 
 #: data/gui/minimapswitchbuttons.xml
 msgid "Show sport cover"
-msgstr "Exibir área de esportes"
+msgstr "Exibir área com esportes"
 
 #: data/gui/minimapswitchbuttons.xml
 msgid "Show traffic density"
@@ -597,6 +617,14 @@ msgstr "Tela cheia"
 msgid "Sound Effects"
 msgstr "Efeitos Sonoros"
 
+#: data/gui/options.xml
+msgid "Map Size"
+msgstr "Tamanho do Mapa"
+
+#: data/gui/options.xml
+msgid "Language"
+msgstr "Idioma"
+
 #: data/gui/parkup.xml
 msgid "Parks available"
 msgstr "Parque disponível"
@@ -625,6 +653,10 @@ msgstr "Bens"
 msgid "Jobs"
 msgstr "Empregos"
 
+#: data/gui/pbar.xml data/gui/tradedialog.xml
+msgid "Labor"
+msgstr "Empregos"
+
 #: data/gui/pbar.xml
 msgid "Money"
 msgstr "Dinheiro"
@@ -643,7 +675,25 @@ msgstr "Aço"
 
 #: data/gui/pbar.xml
 msgid "Tech Level"
-msgstr "Nível Tecnológico"
+msgstr "N. Tecnológico"
+
+msgid "High Voltage"
+msgstr "Alta V."
+
+msgid "Low Voltage"
+msgstr "Baixa V."
+
+msgid "Water"
+msgstr "Água"
+
+msgid "Waste"
+msgstr "Desperdício"
+
+msgid "Tenants"
+msgstr "Habitantes"
+
+msgid "Air Pollution"
+msgstr "Poluição do Ar"
 
 #: data/gui/portdialog.xml data/gui/tradedialog.xml
 msgid "Buy"
@@ -791,19 +841,19 @@ msgstr "Voltar ao Menu Principal"
 
 #: data/gui/speedpanel.xml
 msgid "Pause the game"
-msgstr "Pausar o jogo"
+msgstr "Pausar"
 
 #: data/gui/speedpanel.xml
 msgid "Run the simulation with fast speed"
-msgstr "Rodar a simulação na velocidade rápida"
+msgstr "Velocidade rápida"
 
 #: data/gui/speedpanel.xml
 msgid "Run the simulation with normal speed"
-msgstr "Rodar a simulação na velocidade normal"
+msgstr "Velocidade normal"
 
 #: data/gui/speedpanel.xml
 msgid "Run the simulation with very fast speed"
-msgstr "Rodar a simulação na velocidade muito rápida"
+msgstr "Velocidade muito rápida"
 
 #: data/gui/sustain.xml
 msgid "Economy Sustainable."
@@ -819,7 +869,7 @@ msgid ""
 "previous game."
 msgstr ""
 "Desculpe, mas o jogo que você quer é muito antigo. Impossível carregá-lo. "
-"Continue a jogar com o jogo antigo."
+"Continue jogando com o jogo antigo."
 
 #: data/gui/tradedialog.xml
 msgid "Trade Settings"
@@ -845,3 +895,9 @@ msgstr "Moinho de Vento disponível"
 msgid "You have reached the tech level which enables you to build windmills. "
 msgstr ""
 "Você alcançou o nível tecnológico que habilita a construir moinhos de vento."
+
+msgid "Village"
+msgstr "Vila inicial"
+
+msgid "Without trees"
+msgstr "Sem árvores"

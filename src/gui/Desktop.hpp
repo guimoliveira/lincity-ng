@@ -1,35 +1,12 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Desktop.hpp
- */
-
 #ifndef __DESKTOP_HPP__
 #define __DESKTOP_HPP__
 
 #include <SDL.h>
-#include <vector>         // for vector
+#include <vector>
 
-#include "Component.hpp"  // for Component
-#include "Rect2D.hpp"     // for Rect2D
-#include "Vector2.hpp"    // for Vector2
+#include "Component.hpp"
+#include "Rect2D.hpp"
+#include "Vector2.hpp"
 
 class Event;
 class Painter;
@@ -44,15 +21,15 @@ public:
     Desktop();
     virtual ~Desktop();
 
-    void parse(XmlReader& reader);
+    void parse(XmlReader &reader);
 
     void resize(float width, float height);
-    void event(const Event& event);
+    void event(const Event &event);
     bool needsRedraw() const;
-    void draw(Painter& painter);
-    bool opaque(const Vector2& pos) const;
+    void draw(Painter &painter);
+    bool opaque(const Vector2 &pos) const;
 
-    Vector2 getPos(Component* component);
+    Vector2 getPos(Component *component);
 
     void setCursor(Component *owner, SDL_Cursor *cursor);
     void setSystemCursor(Component *owner, SDL_SystemCursor id);
@@ -62,10 +39,9 @@ public:
     void freeAllSystemCursors();
 
 protected:
-    void setDirty(const Rect2D& rect);
+    void setDirty(const Rect2D &rect);
 
 private:
-
     typedef std::vector<Rect2D> DirtyRectangles;
     DirtyRectangles dirtyRectangles;
 
@@ -75,6 +51,3 @@ private:
 };
 
 #endif
-
-
-/** @file gui/Desktop.hpp */

@@ -20,39 +20,43 @@ msgstr ""
 
 #: src/lincity-ng/ButtonPanel.cpp:200
 msgid "Query Tool"
-msgstr "Ferr. de Pesquisa"
+msgstr "Ferramenta de Seleção"
 
 #: src/lincity-ng/ButtonPanel.cpp:201
 msgid "Bulldozer"
-msgstr "Niveladora"
+msgstr "Escavadeira"
+
+#: src/lincity-ng/ButtonPanel.cpp:201
+msgid "Evacuate"
+msgstr "Evacuar"
 
 #: src/lincity-ng/ButtonPanel.cpp:203
-msgid "Residential: 50 denizens, low birthrate, high deathrate"
-msgstr "Residencial: 50 habitantes, baixo índice de natalidade, alta mortalidade"
+msgid ": 50 tenants, low birthrate, high deathrate"
+msgstr ": 50 habitantes, baixo índice de natalidade, alta mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:204
-msgid "Residential: 100 denizens, high birthrate, low deathrate"
-msgstr "Residencial: 100 habitantes, alto índice de natalidade, baixa mortalidade"
+msgid ": 100 tenants, high birthrate, low deathrate"
+msgstr ": 100 habitantes, alto índice de natalidade, baixa mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:205
-msgid "Residential: 200 denizens, high birthrate, high deathrate"
-msgstr "Residencial: 200 habitantes, alto índice de natalidade, alta mortalidade"
+msgid ": 200 tenants, high birthrate, high deathrate"
+msgstr ": 200 habitantes, alto índice de natalidade, alta mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:206
-msgid "Residential: 100 denizens, low birthrate, high deathrate"
-msgstr "Residencial: 100 habitantes, baixo índice de natalidade, alta mortalidade"
+msgid ": 100 tenants, low birthrate, high deathrate"
+msgstr ": 100 habitantes, baixo índice de natalidade, alta mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:207
-msgid "Residential: 200 denizens, high birthrate, low deathrate"
-msgstr "Residencial: 200 habitantes, alto índice de natalidade, baixa mortalidade"
+msgid ": 200 tenants, high birthrate, low deathrate"
+msgstr ": 200 habitantes, alto índice de natalidade, baixa mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:208
-msgid "Residential: 400 denizens, high birthrate, high deathrate"
-msgstr "Residencial: 400 habitantes, alto índice de natalidade, alta mortalidade"
+msgid ": 400 tenants, high birthrate, high deathrate"
+msgstr ": 400 habitantes, alto índice de natalidade, alta mortalidade"
 
 #: src/lincity-ng/ButtonPanel.cpp:217
-msgid " [Click right for help.]"
-msgstr " [Clique com o botão direito para ajuda]"
+msgid "Click right for help."
+msgstr "Clique com o botão direito ou assegure para ajuda"
 
 #: src/lincity-ng/ButtonPanel.cpp:245
 #: src/lincity-ng/ButtonPanel.cpp:288
@@ -60,7 +64,13 @@ msgstr " [Clique com o botão direito para ajuda]"
 #: src/lincity-ng/ButtonPanel.cpp:439
 #, c-format
 msgid "%s (Techlevel %.1f required.)"
-msgstr "%s (Nível Tecno. %.1f requerido.)"
+msgstr "%s (Nível Tecnológico %.1f necessário.)"
+
+msgid "Techlevel"
+msgstr "Nível Tecnológico"
+
+msgid "required"
+msgstr "necessário"
 
 #: src/lincity-ng/ButtonPanel.cpp:254
 #, c-format
@@ -77,53 +87,92 @@ msgstr "----- EM MODO DE TESTE -------"
 
 #: src/lincity-ng/Dialog.cpp:374
 #, c-format
-msgid "Game statistics from LinCity-NG Version %s"
-msgstr "Estatísticas de jogo do LinCity-NG Versão %s"
+msgid "Game statistics from LinCity-NG"
+msgstr "Estatísticas do jogo LinCity-NG"
 
 #: src/lincity-ng/Dialog.cpp:377
 #, c-format
-msgid "Initial loaded scene - %s"
-msgstr "Cena inicial aberta - %s"
+msgid "Initial loaded scene"
+msgstr "Jogo inicial carregado"
 
 #: src/lincity-ng/Dialog.cpp:381
 #, c-format
 msgid "Economy is sustainable"
-msgstr "A economia é sustentável"
+msgstr "Economia é sustentável"
 
 #: src/lincity-ng/Dialog.cpp:384
 #, c-format
 msgid "Population  %d  of which  %d  are not housed."
-msgstr "A população é de  %d  dos quais  %d  são sem teto."
+msgstr "A população é de  %d  -  %d  estão sem teto."
+
+msgid "of which"
+msgstr " - "
+
+msgid "are not housed"
+msgstr "estão sem teto"
 
 #: src/lincity-ng/Dialog.cpp:388
 #, c-format
 msgid "Max population %d  Number evacuated %d Total births %d"
 msgstr "População máxima %d  Número de evacuados %d Total de nascimentos %d"
 
+msgid "Max population"
+msgstr "População máxima"
+
+msgid "Number evacuated"
+msgstr "Número de evacuados"
+
+msgid "Total births"
+msgstr "Total de nascimentos"
+
 #: src/lincity-ng/Dialog.cpp:392
 #, c-format
 msgid "Date %s %04d  Money %8d   Tech-level %5.1f (%5.1f)"
 msgstr "Data %s %04d  Dinheiro %8d  Nível Tecnológico %5.1f (%5.1f)"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Tech-level"
+msgstr "Nível Tecnológico"
 
 #: src/lincity-ng/Dialog.cpp:398
 #, c-format
 msgid "Deaths by starvation %7d   History %8.3f"
 msgstr "Mortes por fome %7d   Histórico %8.3f"
 
+msgid "Deaths by starvation"
+msgstr "Mortes por fome"
+
+msgid "History"
+msgstr "Histórico"
+
 #: src/lincity-ng/Dialog.cpp:402
 #, c-format
 msgid "Deaths from pollution %7d   History %8.3f"
-msgstr "Mortos pela poluição %7d   Histórico %8.3f"
+msgstr "Mortes pela poluição %7d   Histórico %8.3f"
+
+msgid "Deaths from pollution"
+msgstr "Mortes pela poluição"
 
 #: src/lincity-ng/Dialog.cpp:405
 #, c-format
 msgid "Years of unemployment %7d   History %8.3f"
 msgstr "Anos de desemprego %7d   Histórico %8.3f"
 
+msgid "Years of unemployment"
+msgstr "Anos de desemprego"
+
 #: src/lincity-ng/Dialog.cpp:408
 #, c-format
 msgid "Rockets launched %2d  Successful launches %2d"
 msgstr "Foguetes lançados %2d  Lançamentos bem sucedidos %2d"
+
+msgid "Rockets launched"
+msgstr "Foguetes lançados"
+
+msgid "Successful launches"
+msgstr "Lançamentos bem sucedidos"
 
 #: src/lincity-ng/Dialog.cpp:417
 msgid "Residences"
@@ -140,6 +189,10 @@ msgstr "Fazendas"
 #: src/lincity-ng/Dialog.cpp:427
 msgid "Water wells"
 msgstr "Poços"
+
+#: src/lincity-ng/Dialog.cpp:427
+msgid "Wind powers"
+msgstr "Turbinas Eólicas"
 
 #: src/lincity-ng/Dialog.cpp:435
 msgid "Monuments"
@@ -168,7 +221,7 @@ msgstr "Quadras de esporte"
 
 #: src/lincity-ng/Dialog.cpp:443
 msgid "Health centres"
-msgstr "Centros de saúde"
+msgstr "Hospitais"
 
 #: src/lincity-ng/Dialog.cpp:444
 msgid "Tips"
@@ -185,11 +238,14 @@ msgstr "Moinhos de vento"
 
 #: src/lincity-ng/Dialog.cpp:452
 msgid "Coal powers"
-msgstr "EE Carvão"
+msgstr "Usinas a carvão"
 
 #: src/lincity-ng/Dialog.cpp:453
 msgid "Solar powers"
-msgstr "EE Solar"
+msgstr "Usinas solares"
+
+msgid "Solar Power Plant"
+msgstr "Usina Solar"
 
 #: src/lincity-ng/Dialog.cpp:455
 msgid "Substations"
@@ -197,7 +253,7 @@ msgstr "Sub-estações"
 
 #: src/lincity-ng/Dialog.cpp:456
 msgid "Power lines"
-msgstr "Linhas de transmissão"
+msgstr "Postes"
 
 #: src/lincity-ng/Dialog.cpp:457
 msgid "Ports"
@@ -205,7 +261,7 @@ msgstr "Portos"
 
 #: src/lincity-ng/Dialog.cpp:459
 msgid "Tracks"
-msgstr "Trilhas"
+msgstr "Pistas"
 
 #: src/lincity-ng/Dialog.cpp:460
 msgid "Roads"
@@ -229,15 +285,15 @@ msgstr "Moinhos"
 
 #: src/lincity-ng/Dialog.cpp:471
 msgid "Light inds"
-msgstr "Ind. Leve"
+msgstr "Indústrias Leves"
 
 #: src/lincity-ng/Dialog.cpp:472
 msgid "Heavy inds"
-msgstr "Ind. Pesada"
+msgstr "Indústrias Pesadas"
 
 #: src/lincity-ng/Dialog.cpp:473
 msgid "Recyclers"
-msgstr "Centros de Reciclagem"
+msgstr "C. de Reciclagem"
 
 #: src/lincity-ng/Dialog.cpp:475
 msgid "Coal mines"
@@ -251,11 +307,20 @@ msgstr "Minas de minério"
 msgid "Communes"
 msgstr "Comunas"
 
+msgid "Forests"
+msgstr "Comunas"
+
 #: src/lincity-ng/Dialog.cpp:632
 #: src/lincity/lintypes.cpp:88
 #: src/lincity/modules/market.cpp:1011
 msgid "Market"
 msgstr "Mercado"
+
+#: src/lincity-ng/Dialog.cpp:632
+#: src/lincity/lintypes.cpp:88
+#: src/lincity/modules/waterwell.cpp:1011
+msgid "Water tower"
+msgstr "Poço"
 
 #: src/lincity-ng/Dialog.cpp:686
 #: src/lincity/lintypes.cpp:209
@@ -265,23 +330,23 @@ msgstr "Porto"
 
 #: src/lincity-ng/EconomyGraph.cpp:124
 msgid "Mining"
-msgstr "Miner."
+msgstr "Mineração"
 
 #: src/lincity-ng/EconomyGraph.cpp:126
 msgid "Trade"
-msgstr "Comér."
+msgstr "Comércio"
 
 #: src/lincity-ng/EconomyGraph.cpp:128
 msgid "Money"
-msgstr "Dinhe."
+msgstr "Dinheiro"
 
 #: src/lincity-ng/EconomyGraph.cpp:130
 msgid "Popul."
-msgstr "Popul."
+msgstr "População"
 
 #: src/lincity-ng/EconomyGraph.cpp:132
 msgid "Techn."
-msgstr "Tecn."
+msgstr "Tecnologia"
 
 #: src/lincity-ng/EconomyGraph.cpp:134
 #: src/lincity-ng/MpsInterface.cpp:389
@@ -308,7 +373,7 @@ msgstr "Você perdeu."
 
 #: src/lincity-ng/GameView.cpp:239
 msgid "Minimap: outline map"
-msgstr "Minimapa: mapa do esboço"
+msgstr "Minimapa"
 
 #: src/lincity-ng/GameView.cpp:242
 msgid "Minimap: unemployment"
@@ -373,11 +438,11 @@ msgstr ": Custo de construção "
 
 #: src/lincity-ng/GameView.cpp:1676
 msgid "Query Tool: Show information about selected building."
-msgstr "Ferr. de Pesquisa: Exibe informações sobre a construção selecionada."
+msgstr "Ferramenta de Seleção: Exibe informações sobre a construção selecionada."
 
 #: src/lincity-ng/GameView.cpp:1680
 msgid "Bulldozer: remove building -price varies-"
-msgstr "Niveladora: remover construção -preço variável-"
+msgstr "Escavadeira: remove construção -preço variável-"
 
 #: src/lincity-ng/GameView.cpp:1688
 #: src/lincity-ng/GameView.cpp:1691
@@ -406,19 +471,47 @@ msgstr "Bons tempos"
 
 #: src/lincity-ng/MainMenu.cpp:142
 msgid "bad_times"
-msgstr "Tempo ruim"
+msgstr "Tempos ruins"
 
 #: src/lincity-ng/MainMenu.cpp:143
 msgid "Beach"
 msgstr "Praia"
 
+#: src/lincity-ng/MainMenu.cpp:143
+msgid "Rocket_98"
+msgstr "Foguete 98"
+
 #: src/lincity-ng/MainMenu.cpp:144
 msgid "extreme_arid"
-msgstr "Extremamente Árido"
+msgstr "Extremamente árido"
 
 #: src/lincity-ng/MainMenu.cpp:145
 msgid "extreme_wetland"
-msgstr "Pantanoso"
+msgstr "Pantanal extremo"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "Without trees"
+msgstr "Sem árvores"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "river delta"
+msgstr "Delta do rio"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "river delta"
+msgstr "Delta do rio"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "semi desert"
+msgstr "Semi deserto"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "temperate"
+msgstr "Moderado"
+
+#: src/lincity-ng/MainMenu.cpp:145
+msgid "swamp"
+msgstr "Pântano"
 
 #: src/lincity-ng/MainMenu.cpp:204
 msgid "empty"
@@ -426,11 +519,11 @@ msgstr "vazio"
 
 #: src/lincity-ng/MpsInterface.cpp:227
 msgid "no further information available"
-msgstr "sem mais informações disponíveis"
+msgstr "Sem mais informações disponíveis"
 
 #: src/lincity-ng/MpsInterface.cpp:230
 msgid "build something here"
-msgstr "construir algo aqui"
+msgstr "Construa algo aqui"
 
 #: src/lincity-ng/MpsInterface.cpp:387
 msgid "Coverage"
@@ -502,11 +595,11 @@ msgstr "poluído"
 
 #: src/lincity-ng/MpsInterface.cpp:412
 msgid "bad"
-msgstr "mau"
+msgstr "ruim"
 
 #: src/lincity-ng/MpsInterface.cpp:414
 msgid "very bad"
-msgstr "muito mau"
+msgstr "muito ruim"
 
 #: src/lincity-ng/MpsInterface.cpp:416
 msgid "death!"
@@ -522,6 +615,9 @@ msgstr "N/D"
 
 #: src/lincity-ng/MpsInterface.cpp:445
 msgid "Tax Income"
+msgstr "Receita de Impostos"
+
+msgid "Tax income"
 msgstr "Receita de Impostos"
 
 #: src/lincity-ng/MpsInterface.cpp:449
@@ -564,7 +660,11 @@ msgstr "Bens"
 
 #: src/lincity-ng/MpsInterface.cpp:461
 msgid "Export"
-msgstr "Exportar"
+msgstr "Exportação"
+
+#: src/lincity-ng/MpsInterface.cpp:461
+msgid "Import"
+msgstr "Importação"
 
 #: src/lincity-ng/MpsInterface.cpp:465
 msgid "Expenses"
@@ -572,7 +672,7 @@ msgstr "Gastos"
 
 #: src/lincity-ng/MpsInterface.cpp:469
 msgid "Unemp."
-msgstr "Desemp."
+msgstr "Desemprego"
 
 #: src/lincity-ng/MpsInterface.cpp:473
 msgid "Transport"
@@ -652,7 +752,7 @@ msgstr "Desabrigados"
 
 #: src/lincity-ng/MpsInterface.cpp:545
 msgid "Unn Dths"
-msgstr "Des.Mortos"
+msgstr "Des. Mortos"
 
 #: src/lincity-ng/MpsInterface.cpp:546
 msgid "Unemployment"
@@ -789,7 +889,7 @@ msgstr "Isto é um centro de reciclagem."
 
 #: src/lincity/engine.cpp:615
 msgid "It's at a health centre."
-msgstr "Isto é um centro de saúde."
+msgstr "Isto é um hospital."
 
 #: src/lincity/engine.cpp:617
 msgid "It's at a rocket site."
@@ -905,7 +1005,7 @@ msgstr "Vazio"
 
 #: src/lincity/lintypes.cpp:33
 msgid "Power line"
-msgstr "Linha de transmissão de energia"
+msgstr "Linha de transmissão"
 
 #: src/lincity/lintypes.cpp:44
 msgid "Solar PS"
@@ -914,6 +1014,11 @@ msgstr "EE Solar"
 #: src/lincity/lintypes.cpp:55
 #: src/lincity/modules/substation.cpp:93
 msgid "Substation"
+msgstr "Sub-estação"
+
+#: src/lincity/lintypes.cpp:55
+#: src/lincity/modules/substation.cpp:93
+msgid "Power Substation"
 msgstr "Sub-estação"
 
 #: src/lincity/lintypes.cpp:66
@@ -974,11 +1079,18 @@ msgstr "Indústria pesada"
 msgid "Park"
 msgstr "Parque"
 
+#: src/lincity/lintypes.cpp:231
+msgid "Park (Pond)"
+msgstr "Parque com lago"
+
 #: src/lincity/lintypes.cpp:253
 #: src/lincity/modules/residence.cpp:264
 #: src/lincity/modules/water.cpp:20
 msgid "Water"
 msgstr "Água"
+
+msgid "busy"
+msgstr "Ocupação"
 
 #: src/lincity/lintypes.cpp:264
 msgid "Health centre"
@@ -995,7 +1107,7 @@ msgstr "Monumento"
 
 #: src/lincity/lintypes.cpp:308
 #: src/lincity/modules/school.cpp:43
-msgid "School"
+msgid "Elementary School"
 msgstr "Escola"
 
 #: src/lincity/lintypes.cpp:319
@@ -1027,6 +1139,9 @@ msgstr "Escombros"
 
 #: src/lincity/lintypes.cpp:387
 msgid "Shanty town"
+msgstr "Favela"
+
+msgid "Shanty Town"
 msgstr "Favela"
 
 #: src/lincity/lintypes.cpp:411
@@ -1071,11 +1186,11 @@ msgstr "Árvores"
 
 #: src/lincity/lintypes.cpp:527
 msgid "Forest"
-msgstr "Floresta"
+msgstr "Comuna"
 
 #: src/lincity/lintypes.cpp:540
 msgid "Track Bridge"
-msgstr "Ponte de trilha"
+msgstr "Ponte de pista"
 
 #: src/lincity/lintypes.cpp:552
 msgid "Road Bridge"
@@ -1126,7 +1241,7 @@ msgstr "Inventário"
 
 #: src/lincity/modules/coal_power.cpp:84
 msgid "Coal Power Station"
-msgstr "EE a Carvão"
+msgstr "Usina a Carvão"
 
 #: src/lincity/modules/coal_power.cpp:88
 #: src/lincity/modules/solar_power.cpp:49
@@ -1162,7 +1277,7 @@ msgstr "Empregos"
 #: src/lincity/modules/solar_power.cpp:58
 #: src/lincity/modules/windmill.cpp:75
 msgid "Tech"
-msgstr "Tecn"
+msgstr "Tecnologia"
 
 #: src/lincity/modules/coal_power.cpp:100
 #: src/lincity/modules/power_line.cpp:49
@@ -1228,17 +1343,37 @@ msgstr "Aço"
 msgid "Waste"
 msgstr "Desperdício"
 
+msgid "Production:"
+msgstr "Produção:"
+
+msgid "Inventory:"
+msgstr "Inventário:"
+
+msgid "Lo-Volt"
+msgstr "Baixa V."
+
+msgid "Hi-Volt"
+msgstr "Alta V."
+
 #: src/lincity/modules/firestation.cpp:109
 msgid "Fire Station"
 msgstr "Corpo de Bombeiros"
 
 #: src/lincity/modules/health_centre.cpp:58
 msgid "Health Centre"
-msgstr "Centro de Saúde"
+msgstr "Hospital"
+
+#: src/lincity/modules/health_centre.cpp:58
+msgid "Health Care"
+msgstr "Assistência Médica"
 
 #: src/lincity/modules/heavy_industry.cpp:270
 msgid "Heavy Industry"
 msgstr "Indústria Pesada"
+
+#: src/lincity/modules/heavy_industry.cpp:270
+msgid "Steel Works"
+msgstr "Siderúrgica"
 
 #: src/lincity/modules/heavy_industry.cpp:277
 msgid "Grid"
@@ -1346,9 +1481,38 @@ msgstr "Linha de Transmissão"
 msgid "Recycling Center"
 msgstr "Centro de Reciclagem"
 
+msgid "Recycling Centre"
+msgstr "Centro de Reciclagem"
+
 #: src/lincity/modules/residence.cpp:255
 msgid "Residence"
 msgstr "Residência"
+
+#: src/lincity/modules/residence.cpp:259
+msgid "Tenants"
+msgstr "Habitantes"
+
+#: src/lincity/modules/residence.cpp:259
+msgid "Desireability"
+msgstr "Procura"
+
+#: src/lincity/modules/residence.cpp:259
+msgid "Births p.a."
+msgstr "Nascimentos p.a."
+
+#: src/lincity/modules/residence.cpp:259
+msgid "Death p.a."
+msgstr "Mortes p.a."
+
+msgid "Deaths p.a."
+msgstr "Mortes p.a."
+
+#: src/lincity/modules/residence.cpp:259
+msgid "Unnat. mortality"
+msgstr "Mortes n/naturais"
+
+msgid "Unnat. Deaths"
+msgstr "Mortes n/naturais"
 
 #: src/lincity/modules/residence.cpp:259
 msgid "People"
@@ -1367,7 +1531,7 @@ msgid "poor"
 msgstr "pobre"
 
 #: src/lincity/modules/residence.cpp:277
-msgid "Job"
+msgid "Labor"
 msgstr "Emprego"
 
 #: src/lincity/modules/residence.cpp:280
@@ -1378,9 +1542,17 @@ msgstr "Saúde Cvr"
 msgid "Rocket Pad"
 msgstr "Base de Foguete"
 
+#: src/lincity/modules/rocket_pad.cpp:188
+msgid "Overall Progress"
+msgstr "Progresso"
+
+#: src/lincity/modules/rocket_pad.cpp:188
+msgid "Next Step"
+msgstr "Próximo Passo"
+
 #: src/lincity/modules/rocket_pad.cpp:191
 msgid "Completion"
-msgstr "Completo"
+msgstr "Execução"
 
 #: src/lincity/modules/school.cpp:45
 msgid "Lessons Learned"
@@ -1388,7 +1560,7 @@ msgstr "Lições Aprendidas"
 
 #: src/lincity/modules/solar_power.cpp:43
 msgid "Solar power station"
-msgstr "EE Energia Solar"
+msgstr "Usina solar"
 
 #: src/lincity/modules/substation.cpp:97
 msgid "Local Demand"
@@ -1419,6 +1591,9 @@ msgstr "Demanda"
 msgid "Landfill"
 msgstr "Depósito de Lixo"
 
+msgid "Land Fill"
+msgstr "Depósito de Lixo"
+
 #: src/lincity/modules/tip.cpp:103
 msgid "Last Month"
 msgstr "Último Mês"
@@ -1434,11 +1609,18 @@ msgstr "Porcento"
 #: src/lincity/modules/tip.cpp:107
 #, c-format
 msgid "% Filled"
-msgstr "% Completo"
+msgstr "% de utilização"
+
+msgid "Filled"
+msgstr "Utilização"
 
 #: src/lincity/modules/university.cpp:61
 msgid "Tech Produced"
 msgstr "Tecnologia Produzida"
+
+#: src/lincity/modules/university.cpp:61
+msgid "Tech researched"
+msgstr "Tecnologia Descoberta"
 
 #: src/lincity/modules/water.cpp:24
 msgid "Navigable"
@@ -1472,50 +1654,142 @@ msgstr "Você possui muitas malhas de transmissão de energia. Junte algumas del
 msgid "Upgrading from old game. You have 10 years to build water wells where needed. After, starvation will occur!  You should check starvation minimap, and read waterwell help page :-)"
 msgstr "Atualizando do jogo antigo. Você tem 10 anos para construir poços onde for preciso. Depois disso, escassez irá ocorrer! Você deve verificar o mini-mapa de escassez e ler a página de ajuda sobre poços."
 
-#~ msgid "NO "
-#~ msgstr "NÃO "
-#~ msgid "Recycling"
-#~ msgstr "Reciclagem"
-#~ msgid "Center"
-#~ msgstr "Centro"
-#~ msgid "Heavy"
-#~ msgstr "Pesada"
-#~ msgid "Industry"
-#~ msgstr "Indústria"
-#~ msgid "Output"
-#~ msgstr "Saída"
-#~ msgid "Power Station"
-#~ msgstr "Estação de Energia"
-#~ msgid "Light"
-#~ msgstr "Leve"
-#~ msgid "Solar"
-#~ msgstr "Solar"
-#~ msgid "Saving scene"
-#~ msgstr "Salvando cena"
-#~ msgid ".   Coal mines %4d       Ore mines %4d         Communes %4d"
-#~ msgstr ".   Minas de carvão %4d   Minas de minério %4d    Comunas %4d"
-#~ msgid ".   Light inds %4d      Heavy inds %4d        Recyclers %4d"
-#~ msgstr ""
-#~ ".    Indústias lv %4d      Indústrias pes %4d  Centros de reciclagem %4d"
-#~ msgid ".    Potteries %4d     Blacksmiths %4d            Mills %4d"
-#~ msgstr ".     Olarias %4d     Ferreiros %4d            Moinhos %4d"
-#~ msgid ".       Tracks %4d           Roads %4d             Rail %4d"
-#~ msgstr ".        Pistas %4d           Estradas %4d         Trilhos %4d"
-#~ msgid ".  Substations %4d     Power lines %4d            Ports %4d"
-#~ msgstr ".  Sub-estações %4d   Linhas de transmissão %4d   Portos %4d"
-#~ msgid ".    Windmills %4d     Coal powers %4d     Solar powers %4d"
-#~ msgstr ""
-#~ ".   Moinhos de vento %4d   Usinas de carvão %4d   Usinas solares %4d"
-#~ msgid "Health centres %4d            Tips %4d         Shanties %4d"
-#~ msgstr "Centros de saúde %4d         Aterros %4d         Favelas %4d"
-#~ msgid ".Fire stations %4d           Parks %4d    Sports fields %4d"
-#~ msgstr ".Bombeiros %4d            Parques %4d  Quadras de Esporte %4d"
-#~ msgid ".    Monuments %4d         Schools %4d     Universities %4d"
-#~ msgstr ".    Monumentos %4d       Escolas %4d     Universidades %4d"
-#~ msgid ".  Water wells %4d"
-#~ msgstr ". Moinhos %4d"
-#~ msgid ".   Residences %4d         Markets %4d            Farms %4d"
-#~ msgstr ".   Residências %4d         Mercados %4d          Fazendas %4d"
-#~ msgid ".Deaths by starvation %7d   History %8.3f"
-#~ msgstr ".Mortos pela fome %7d   Histórico %8.3f"
+msgid "Deposits"
+msgstr "Depósitos"
 
+msgid "Fertility"
+msgstr "Fertilidade"
+
+msgid "Fertile"
+msgstr "Fértil"
+
+msgid "lazy months"
+msgstr "Meses parados"
+
+msgid "Basketball court"
+msgstr "Quadra de Basket"
+
+msgid "Public sports"
+msgstr "Esportes públicos"
+
+msgid "Public Sports"
+msgstr "Esportes Públicos"
+
+msgid "Air Pollution"
+msgstr "Poluição do Ar"
+
+msgid "Bull. Cost"
+msgstr "Custo de Demolição"
+
+msgid "Ore Reserve"
+msgstr "Reserva de Minério"
+
+msgid "Coal Reserve"
+msgstr "Reserva de Carvão"
+
+msgid "ground level"
+msgstr "Nível do chão"
+
+msgid "water level"
+msgstr "Nível do mar"
+
+msgid "burnt down"
+msgstr "Queimado"
+
+msgid "degraded"
+msgstr "Degradado"
+
+msgid "Fire Protection"
+msgstr "Proteção contra incêndio"
+
+msgid "Culture exchanged"
+msgstr "Troca cultural"
+
+msgid "Efficiency Ore"
+msgstr "Eficiência - Minério"
+
+msgid "Efficiency Steel"
+msgstr "Eficiência - Aço"
+
+msgid "usage"
+msgstr "Uso"
+
+msgid "Traffic"
+msgstr "Tráfego"
+
+msgid "Commodities"
+msgstr "Mercadorias"
+
+msgid "Lake"
+msgstr "Lago"
+
+msgid "River"
+msgstr "Rio"
+
+msgid "Pond"
+msgstr "Lagoa"
+
+msgid "Wind Power"
+msgstr "Turbina Eólica"
+
+msgid "Market Range"
+msgstr "Alcançe do Mercado"
+
+msgid "saddle point"
+msgstr "Ponto de equilíbrio"
+
+msgid "minimum"
+msgstr "Mínimo"
+
+msgid "maximum"
+msgstr "Máximo"
+
+msgid "lowest edge"
+msgstr "Mais baixo"
+
+msgid "NO "
+msgstr "NÃO "
+msgid "Recycling"
+msgstr "Reciclagem"
+msgid "Center"
+msgstr "Centro"
+msgid "Heavy"
+msgstr "Pesada"
+msgid "Industry"
+msgstr "Indústria"
+msgid "Output"
+msgstr "Saída"
+msgid "Power Station"
+msgstr "Estação de Energia"
+msgid "Light"
+msgstr "Leve"
+msgid "Solar"
+msgstr "Solar"
+msgid "Saving scene"
+msgstr "Salvando cena"
+msgid ".   Coal mines %4d       Ore mines %4d         Communes %4d"
+msgstr ".   Minas de carvão %4d   Minas de minério %4d    Comunas %4d"
+msgid ".   Light inds %4d      Heavy inds %4d        Recyclers %4d"
+msgstr ""
+".    Indústias lv %4d      Indústrias pes %4d  Centros de reciclagem %4d"
+msgid ".    Potteries %4d     Blacksmiths %4d            Mills %4d"
+msgstr ".     Olarias %4d     Ferreiros %4d            Moinhos %4d"
+msgid ".       Tracks %4d           Roads %4d             Rail %4d"
+msgstr ".        Pistas %4d           Estradas %4d         Trilhos %4d"
+msgid ".  Substations %4d     Power lines %4d            Ports %4d"
+msgstr ".  Sub-estações %4d   Linhas de transmissão %4d   Portos %4d"
+msgid ".    Windmills %4d     Coal powers %4d     Solar powers %4d"
+msgstr ""
+".   Moinhos de vento %4d   Usinas de carvão %4d   Usinas solares %4d"
+msgid "Health centres %4d            Tips %4d         Shanties %4d"
+msgstr "Centros de saúde %4d         Aterros %4d         Favelas %4d"
+msgid ".Fire stations %4d           Parks %4d    Sports fields %4d"
+msgstr ".Bombeiros %4d            Parques %4d  Quadras de Esporte %4d"
+msgid ".    Monuments %4d         Schools %4d     Universities %4d"
+msgstr ".    Monumentos %4d       Escolas %4d     Universidades %4d"
+msgid ".  Water wells %4d"
+msgstr ". Moinhos %4d"
+msgid ".   Residences %4d         Markets %4d            Farms %4d"
+msgstr ".   Residências %4d         Mercados %4d          Fazendas %4d"
+msgid ".Deaths by starvation %7d   History %8.3f"
+msgstr ".Mortos pela fome %7d   Histórico %8.3f"

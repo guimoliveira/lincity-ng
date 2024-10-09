@@ -1,34 +1,34 @@
 #define GROUP_COMMUNE_COLOUR (green(30))
-#define GROUP_COMMUNE_COST  1
+#define GROUP_COMMUNE_COST 1
 #define GROUP_COMMUNE_COST_MUL 2
-#define GROUP_COMMUNE_BUL_COST  1000
-#define GROUP_COMMUNE_TECH  0
+#define GROUP_COMMUNE_BUL_COST 1000
+#define GROUP_COMMUNE_TECH 0
 #define GROUP_COMMUNE_FIREC 30
 #define GROUP_COMMUNE_RANGE 0
 #define GROUP_COMMUNE_SIZE 4
 
-//#define LABOR_AT_COMMUNE_GATE 4
 #define COMMUNE_ANIM_SPEED 750
-#define COMMUNE_POP  5 //Used at shanty
+#define COMMUNE_POP 5 // Used at shanty
 
 #define COMMUNE_COAL_MADE 3
-#define MAX_COAL_AT_COMMUNE (20*COMMUNE_COAL_MADE)
+#define MAX_COAL_AT_COMMUNE (20 * COMMUNE_COAL_MADE)
 #define COMMUNE_ORE_MADE 6
 #define COMMUNE_ORE_FROM_WASTE 1
-#define MAX_ORE_AT_COMMUNE (20*(COMMUNE_ORE_MADE + COMMUNE_ORE_FROM_WASTE))
+#define MAX_ORE_AT_COMMUNE (20 * (COMMUNE_ORE_MADE + COMMUNE_ORE_FROM_WASTE))
 #define COMMUNE_STEEL_MADE 2
-#define MAX_STEEL_AT_COMMUNE (20*COMMUNE_STEEL_MADE)
+#define MAX_STEEL_AT_COMMUNE (20 * COMMUNE_STEEL_MADE)
 #define COMMUNE_WASTE_GET 20
-#define MAX_WASTE_AT_COMMUNE (20*COMMUNE_WASTE_GET)
+#define MAX_WASTE_AT_COMMUNE (20 * COMMUNE_WASTE_GET)
 #define WATER_FOREST 5
 #define COMMUNE_WATER_GET (16 * WATER_FOREST)
-#define MAX_WATER_AT_COMMUNE (20*COMMUNE_WATER_GET)
+#define MAX_WATER_AT_COMMUNE (20 * COMMUNE_WATER_GET)
 
-#include <array>                    // for array
+#include <array>
 
 #include "modules.h"
 
-class CommuneConstructionGroup: public ConstructionGroup {
+class CommuneConstructionGroup : public ConstructionGroup
+{
 public:
     CommuneConstructionGroup(
         const char *name,
@@ -36,11 +36,9 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         commodityRuleCount[STUFF_COAL].maxload = MAX_COAL_AT_COMMUNE;
         commodityRuleCount[STUFF_COAL].take = false;
@@ -64,9 +62,10 @@ public:
 
 extern CommuneConstructionGroup communeConstructionGroup;
 
-class Commune: public RegisteredConstruction<Commune> { // Commune inherits from Construction
+class Commune : public RegisteredConstruction<Commune>
+{ // Commune inherits from Construction
 public:
-    Commune(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Commune>(x ,y)
+    Commune(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Commune>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -83,39 +82,45 @@ public:
         {
             for (int j = 0; j < constructionGroup->size; j++)
             {
-                if (world(x+j, y+i)->flags & FLAG_HAS_UNDERGROUND_WATER)
-                {    w++;}
-            }// end j
-        }//end i
+                if (world(x + j, y + i)->flags & FLAG_HAS_UNDERGROUND_WATER)
+                {
+                    w++;
+                }
+            } // end j
+        } // end i
         this->ugwCount = w;
         if (w < 16 / 3)
-        {   this->coalprod = COMMUNE_COAL_MADE/3;}
+        {
+            this->coalprod = COMMUNE_COAL_MADE / 3;
+        }
         else if (w < (2 * 16) / 3)
-        {   this->coalprod = COMMUNE_COAL_MADE/2;}
+        {
+            this->coalprod = COMMUNE_COAL_MADE / 2;
+        }
         else
-        {   this->coalprod = COMMUNE_COAL_MADE;}
+        {
+            this->coalprod = COMMUNE_COAL_MADE;
+        }
 
         commodityMaxCons[STUFF_WATER] = 100 *
-          constructionGroup->size * constructionGroup->size * WATER_FOREST;
+                                        constructionGroup->size * constructionGroup->size * WATER_FOREST;
         commodityMaxProd[STUFF_COAL] = 100 * COMMUNE_COAL_MADE;
         commodityMaxProd[STUFF_ORE] = 100 *
-          (COMMUNE_ORE_MADE + COMMUNE_ORE_FROM_WASTE);
+                                      (COMMUNE_ORE_MADE + COMMUNE_ORE_FROM_WASTE);
         commodityMaxCons[STUFF_WASTE] = 100 * COMMUNE_WASTE_GET;
         commodityMaxProd[STUFF_STEEL] = 100 / 20 * COMMUNE_STEEL_MADE;
     }
-    virtual ~Commune() { }
+    virtual ~Commune() {}
     virtual void update() override;
     virtual void report() override;
     virtual void animate() override;
 
-    int  anim;
-    int  ugwCount;
-    int  coalprod;
-    int  monthly_stuff_made;
-    int  last_month_output;
-    int  lazy_months;
+    int anim;
+    int ugwCount;
+    int coalprod;
+    int monthly_stuff_made;
+    int last_month_output;
+    int lazy_months;
     bool animate_enable;
     bool steel_made;
 };
-
-/** @file lincity/modules/commune.h */

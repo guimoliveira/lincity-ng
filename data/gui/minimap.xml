@@ -14,7 +14,7 @@
 						<image-hover src="images/gui/buttons/tabbed/tabbed-hover.png"/>
 						<image-clicked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
 						<image-checked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
-						<text-caption font-size="16" translatable="yes">Map</text-caption>
+						<text-caption font-size="12" translatable="yes">Map</text-caption>
 						<tooltip translatable="yes">Show the MiniMap</tooltip>
 					</CheckButton>
 				</cell>
@@ -24,7 +24,7 @@
 						<image-hover src="images/gui/buttons/tabbed/tabbed-hover.png"/>
 						<image-clicked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
 						<image-checked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
-						<text-caption font-size="16" translatable="yes">Stats</text-caption>
+						<text-caption font-size="12" translatable="yes">Stats</text-caption>
 						<tooltip translatable="yes">Show resources. Use scroll buttons to cycle through views.</tooltip>
 					</CheckButton>
 				</cell>
@@ -34,7 +34,7 @@
 						<image-hover src="images/gui/buttons/tabbed/tabbed-hover.png"/>
 						<image-clicked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
 						<image-checked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
-						<text-caption font-size="16" translatable="yes">$</text-caption>
+						<text-caption font-size="12" translatable="yes">$</text-caption>
 						<tooltip translatable="yes">Show Income and Expenses. Use scroll buttons to cylce through views.</tooltip>
 					</CheckButton>
 				</cell>
@@ -44,7 +44,7 @@
 						<image-hover src="images/gui/buttons/tabbed/tabbed-hover.png"/>
 						<image-clicked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
 						<image-checked src="images/gui/buttons/tabbed/tabbed-clicked.png" />
-						<text-caption font-size="16" translatable="yes">Eco</text-caption>
+						<text-caption font-size="12" translatable="yes">Eco</text-caption>
 						<tooltip translatable="yes">Show economy graphs.</tooltip>
 					</CheckButton>
 				</cell>

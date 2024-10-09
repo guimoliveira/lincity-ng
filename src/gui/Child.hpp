@@ -1,33 +1,10 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Child.hpp
- */
-
 #ifndef __CHILD_HPP__
 #define __CHILD_HPP__
 
-#include <vector>       // for vector
+#include <vector>
 
-#include "Rect2D.hpp"   // for Rect2D
-#include "Vector2.hpp"  // for Vector2
+#include "Rect2D.hpp"
+#include "Vector2.hpp"
 
 class Component;
 
@@ -37,18 +14,19 @@ class Component;
 class Child
 {
 public:
-    Child(Component* _component = 0);
+    Child(Component *_component = 0);
     ~Child();
 
-    Component* getComponent() const
+    Component *getComponent() const
     {
         return component;
     }
-    void setComponent(Component* component);
+    void setComponent(Component *component);
 
     void enable(bool enabled)
     {
-        if(!component) {
+        if (!component)
+        {
             this->enabled = false;
             return;
         }
@@ -60,19 +38,19 @@ public:
         return enabled;
     }
 
-    void setPos(const Vector2& position)
+    void setPos(const Vector2 &position)
     {
         this->position = position;
     }
 
-    const Vector2& getPos() const
+    const Vector2 &getPos() const
     {
         return position;
     }
 
-    bool inside(const Vector2& pos) const;
+    bool inside(const Vector2 &pos) const;
 
-    void setClipRect(const Rect2D& rect)
+    void setClipRect(const Rect2D &rect)
     {
         useClipRect = true;
         clipRect = rect;
@@ -86,7 +64,7 @@ private:
     bool enabled;
     bool useClipRect;
     Rect2D clipRect;
-    Component* component;
+    Component *component;
 };
 
 /**
@@ -107,6 +85,3 @@ public:
 };
 
 #endif
-
-/** @file gui/Child.hpp */
-

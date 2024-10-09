@@ -1,18 +1,10 @@
-/* ---------------------------------------------------------------------- *
- * recycle.c
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * (c) Corey Keasling, 2004
- * ---------------------------------------------------------------------- */
-
-
 #include "recycle.h"
 
 #include "modules.h"
 
 RecycleConstructionGroup recycleConstructionGroup(
     N_("Recycling Centre"),
-    FALSE,                     /* need credit? */
+    FALSE, /* need credit? */
     GROUP_RECYCLE,
     GROUP_RECYCLE_SIZE,
     GROUP_RECYCLE_COLOUR,
@@ -21,10 +13,10 @@ RecycleConstructionGroup recycleConstructionGroup(
     GROUP_RECYCLE_FIREC,
     GROUP_RECYCLE_COST,
     GROUP_RECYCLE_TECH,
-    GROUP_RECYCLE_RANGE
-);
+    GROUP_RECYCLE_RANGE);
 
-Construction *RecycleConstructionGroup::createConstruction(int x, int y) {
+Construction *RecycleConstructionGroup::createConstruction(int x, int y)
+{
     return new Recycle(x, y, this);
 }
 
@@ -33,9 +25,7 @@ void Recycle::update()
     recycle_cost += RECYCLE_RUNNING_COST;
 
     // always recycle waste and only make steel & ore if there are free capacities
-    if (commodityCount[STUFF_WASTE] >= WASTE_RECYCLED
-        && commodityCount[STUFF_LOVOLT] >= LOVOLT_RECYCLE_WASTE
-        && commodityCount[STUFF_LABOR] >= RECYCLE_LABOR)
+    if (commodityCount[STUFF_WASTE] >= WASTE_RECYCLED && commodityCount[STUFF_LOVOLT] >= LOVOLT_RECYCLE_WASTE && commodityCount[STUFF_LABOR] >= RECYCLE_LABOR)
     {
         consumeStuff(STUFF_LABOR, RECYCLE_LABOR);
         consumeStuff(STUFF_LOVOLT, LOVOLT_RECYCLE_WASTE);
@@ -44,11 +34,14 @@ void Recycle::update()
         // rather loose ore / steel than stop recycling the waste
         produceStuff(STUFF_ORE, make_ore);
         produceStuff(STUFF_STEEL, make_steel);
-        if(commodityCount[STUFF_ORE]>MAX_ORE_AT_RECYCLE)
-        {   levelStuff(STUFF_ORE, MAX_ORE_AT_RECYCLE);}
-        if(commodityCount[STUFF_STEEL]>MAX_STEEL_AT_RECYCLE)
-        {   levelStuff(STUFF_STEEL, MAX_STEEL_AT_RECYCLE);}
-
+        if (commodityCount[STUFF_ORE] > MAX_ORE_AT_RECYCLE)
+        {
+            levelStuff(STUFF_ORE, MAX_ORE_AT_RECYCLE);
+        }
+        if (commodityCount[STUFF_STEEL] > MAX_STEEL_AT_RECYCLE)
+        {
+            levelStuff(STUFF_STEEL, MAX_STEEL_AT_RECYCLE);
+        }
     }
     // monthly update
     if (total_time % 100 == 99)
@@ -59,7 +52,9 @@ void Recycle::update()
     }
     // if we've still >90% waste in stock, burn some waste cleanly.
     if (commodityCount[STUFF_WASTE] > (MAX_WASTE_AT_RECYCLE * 9 / 10))
-    {   consumeStuff(STUFF_WASTE, BURN_WASTE_AT_RECYCLE);}
+    {
+        consumeStuff(STUFF_WASTE, BURN_WASTE_AT_RECYCLE);
+    }
 }
 
 void Recycle::report()
@@ -69,11 +64,9 @@ void Recycle::report()
     mps_store_sd(i++, constructionGroup->name, ID);
     i++;
     mps_store_sfp(i++, N_("Tech"), tech * 100.0f / MAX_TECH_LEVEL);
-    mps_store_sfp(i++, N_("Efficiency Ore"), (float) make_ore * 100 / WASTE_RECYCLED);
-    mps_store_sfp(i++, N_("Efficiency Steel"),(float) make_steel * 100 / WASTE_RECYCLED);
+    mps_store_sfp(i++, N_("Efficiency Ore"), (float)make_ore * 100 / WASTE_RECYCLED);
+    mps_store_sfp(i++, N_("Efficiency Steel"), (float)make_steel * 100 / WASTE_RECYCLED);
     mps_store_sfp(i++, N_("busy"), busy);
     // i++;
     list_commodities(&i);
 }
-
-/** @file lincity/modules/recycle.cpp */

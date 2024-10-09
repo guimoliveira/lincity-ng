@@ -1,39 +1,15 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Desktop.cpp
- */
-
 #include "Desktop.hpp"
 
-#include <SDL.h>                // for SDL_GetDefaultCursor, SDL_SystemCursor
-#include <libxml/xmlreader.h>   // for XML_READER_TYPE_ELEMENT
-#include <stddef.h>             // for NULL
-#include <iostream>             // for basic_ostream, operator<<, cerr
-#include <stdexcept>            // for runtime_error
-#include <string>               // for char_traits, basic_string, operator==
+#include <SDL.h>
+#include <stddef.h>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
-#include "Child.hpp"            // for Childs, Child
-#include "ComponentLoader.hpp"  // for createComponent
-#include "Style.hpp"            // for parseStyleDef
-#include "XmlReader.hpp"        // for XmlReader
+#include "Child.hpp"
+#include "ComponentLoader.hpp"
+#include "Style.hpp"
+#include "XmlReader.hpp"
 
 class Event;
 class Painter;
@@ -46,72 +22,80 @@ Desktop::Desktop()
     cursorOwner = NULL;
 }
 
-Desktop::~Desktop() {
+Desktop::~Desktop()
+{
     freeAllSystemCursors();
 }
 
-void
-Desktop::parse(XmlReader& reader)
+void Desktop::parse(XmlReader &reader)
 {
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(parseAttribute(attribute, value)) {
+        if (parseAttribute(attribute, value))
+        {
             continue;
-        } else {
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribute '" << attribute << "'.\n";
         }
     }
 
     int depth = reader.getDepth();
-    while(reader.read() && reader.getDepth() > depth) {
-        if(reader.getNodeType() == XML_READER_TYPE_ELEMENT) {
-            std::string element = (const char*) reader.getName();
+    while (reader.read() && reader.getDepth() > depth)
+    {
+        if (reader.getNodeType() == XML_READER_TYPE_ELEMENT)
+        {
+            std::string element = reader.getName();
 
-            if(element == "DefineStyle") {
+            if (element == "DefineStyle")
+            {
                 parseStyleDef(reader);
-            } else {
-                Component* component = createComponent(element, reader);
+            }
+            else
+            {
+                Component *component = createComponent(element, reader);
                 addChild(component);
             }
         }
     }
 }
 
-void
-Desktop::event(const Event& event)
+void Desktop::event(const Event &event)
 {
     Component::event(event);
 }
 
-bool
-Desktop::needsRedraw() const
+bool Desktop::needsRedraw() const
 {
     return dirtyRectangles.size() > 0;
 }
 
-void
-Desktop::draw(Painter& painter)
+void Desktop::draw(Painter &painter)
 {
-    if(dirtyRectangles.size() > 0) {
+    if (dirtyRectangles.size() > 0)
+    {
         Component::draw(painter);
-        if(cursor != SDL_GetCursor())
+        if (cursor != SDL_GetCursor())
             SDL_SetCursor(cursor);
     }
     dirtyRectangles.clear();
 }
 
-bool
-Desktop::opaque(const Vector2& pos) const
+bool Desktop::opaque(const Vector2 &pos) const
 {
-    for(Childs::const_iterator i = childs.begin(); i != childs.end(); ++i) {
-        const Child& child = *i;
-        if(!child.getComponent() || !child.isEnabled())
+    for (Childs::const_iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        const Child &child = *i;
+        if (!child.getComponent() || !child.isEnabled())
             continue;
 
-        if(child.getComponent()->opaque(pos - child.getPos())) {
+        if (child.getComponent()->opaque(pos - child.getPos()))
+        {
             return true;
         }
     }
@@ -119,19 +103,18 @@ Desktop::opaque(const Vector2& pos) const
     return false;
 }
 
-void
-Desktop::resize(float width, float height)
+void Desktop::resize(float width, float height)
 {
-    for(Childs::iterator i = childs.begin(); i != childs.end(); ++i) {
-        Component* component = i->getComponent();
-        if(component->getFlags() & FLAG_RESIZABLE)
+    for (Childs::iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        Component *component = i->getComponent();
+        if (component->getFlags() & FLAG_RESIZABLE)
             component->resize(width, height);
 #ifdef DEBUG
-        if(! (component->getFlags() & FLAG_RESIZABLE)
-                && (component->getWidth() <= 0 || component->getHeight() <= 0))
+        if (!(component->getFlags() & FLAG_RESIZABLE) && (component->getWidth() <= 0 || component->getHeight() <= 0))
             std::cerr << "Warning: component with name '"
-                << component->getName()
-                << "' has invalid width/height but is not resizable.\n";
+                      << component->getName()
+                      << "' has invalid width/height but is not resizable.\n";
 #endif
     }
     this->width = width;
@@ -140,70 +123,75 @@ Desktop::resize(float width, float height)
 }
 
 Vector2
-Desktop::getPos(Component* component)
+Desktop::getPos(Component *component)
 {
     // find child
-    Child* child = 0;
-    for(Childs::iterator i = childs.begin(); i != childs.end(); ++i) {
-        if(i->getComponent() == component) {
+    Child *child = 0;
+    for (Childs::iterator i = childs.begin(); i != childs.end(); ++i)
+    {
+        if (i->getComponent() == component)
+        {
             child = &(*i);
             break;
         }
     }
-    if(child == 0)
+    if (child == 0)
         throw std::runtime_error(
-                "Trying to getPos a component that is not a direct child");
+            "Trying to getPos a component that is not a direct child");
 
     return child->getPos();
 }
 
-void
-Desktop::setCursor(Component *owner, SDL_Cursor *cursor) {
-    if(cursor != this->cursor)
+void Desktop::setCursor(Component *owner, SDL_Cursor *cursor)
+{
+    if (cursor != this->cursor)
         setDirty(Rect2D());
     this->cursor = cursor;
     cursorOwner = owner;
 }
 
-void
-Desktop::setSystemCursor(Component *owner, SDL_SystemCursor id) {
+void Desktop::setSystemCursor(Component *owner, SDL_SystemCursor id)
+{
     setCursor(owner, getSystemCursor(id));
 }
 
-void
-Desktop::tryClearCursor(Component *owner) {
-    if(owner == cursorOwner) {
+void Desktop::tryClearCursor(Component *owner)
+{
+    if (owner == cursorOwner)
+    {
         setCursor(NULL, SDL_GetDefaultCursor());
     }
 }
 
 SDL_Cursor *
-Desktop::getSystemCursor(SDL_SystemCursor id) {
+Desktop::getSystemCursor(SDL_SystemCursor id)
+{
     SDL_Cursor *&cursor = systemCursors[id];
-    if(!cursor)
+    if (!cursor)
         cursor = SDL_CreateSystemCursor(id);
     return cursor;
 }
 
-void
-Desktop::freeSystemCursor(SDL_SystemCursor id) {
+void Desktop::freeSystemCursor(SDL_SystemCursor id)
+{
     SDL_FreeCursor(systemCursors[id]);
     systemCursors[id] = NULL;
 }
 
-void
-Desktop::freeAllSystemCursors() {
-    for(int id = 0; id < SDL_NUM_SYSTEM_CURSORS; id++)
+void Desktop::freeAllSystemCursors()
+{
+    for (int id = 0; id < SDL_NUM_SYSTEM_CURSORS; id++)
         freeSystemCursor((SDL_SystemCursor)id);
 }
 
-void
-Desktop::setDirty(const Rect2D& rect)
+void Desktop::setDirty(const Rect2D &rect)
 {
     // check if rectangle overlaps with 1 of the existing rectangles
-    for(DirtyRectangles::iterator i = dirtyRectangles.begin();
-            i != dirtyRectangles.end(); ++i) {
-        if(i->overlap(rect)) {
+    for (DirtyRectangles::iterator i = dirtyRectangles.begin();
+         i != dirtyRectangles.end(); ++i)
+    {
+        if (i->overlap(rect))
+        {
             i->join(rect);
             return;
         }
@@ -217,5 +205,3 @@ Desktop::setDirty(const Rect2D& rect)
 
     Component::setDirty(rect);
 }
-
-/** @file gui/Desktop.cpp */

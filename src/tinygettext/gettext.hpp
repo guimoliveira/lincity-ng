@@ -3,24 +3,20 @@
 
 #include "tinygettext/tinygettext.hpp"
 
-extern tinygettext::DictionaryManager* dictionaryManager;
+extern tinygettext::DictionaryManager *dictionaryManager;
 
 #ifdef NEED_GETTEXT_CHARHACK
-static inline char* _(const char* message)
+static inline char *_(const char *message)
 {
-    return const_cast<char*>
-        (dictionaryManager->get_dictionary().translate(message));
+    return const_cast<char *>(dictionaryManager->get_dictionary().translate(message));
 }
 #else
-static inline const char* _(const char* message)
+static inline const char *_(const char *message)
 {
     return dictionaryManager->get_dictionary().translate(message);
 }
 #endif
 
-#define N_(s)      s
+#define N_(s) s
 
 #endif
-
-/** @file tinygettext/gettext.hpp */
-

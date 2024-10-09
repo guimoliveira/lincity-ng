@@ -1,6 +1,0 @@
-Lightindustry
-
-Truck model:
--	Author: 	SONGKRO
--	Liense:	CC-BY
--	Source:	http://www.blendswap.com/blends/view/19418

@@ -7,22 +7,22 @@
 #define GROUP_UNIVERSITY_RANGE 0
 #define GROUP_UNIVERSITY_SIZE 3
 
-#define UNIVERSITY_LABOR   250
-#define UNIVERSITY_GOODS  750
+#define UNIVERSITY_LABOR 250
+#define UNIVERSITY_GOODS 750
 #define UNIVERSITY_RUNNING_COST 23
-#define UNIVERSITY_TECH_MADE    4
+#define UNIVERSITY_TECH_MADE 4
 
 #define MAX_LABOR_AT_UNIVERSITY (20 * UNIVERSITY_LABOR)
 #define MAX_GOODS_AT_UNIVERSITY (20 * UNIVERSITY_GOODS)
 #define MAX_WASTE_AT_UNIVERSITY (20 * UNIVERSITY_GOODS / 3)
 
-#include <array>                    // for array
-#include <string>                   // for basic_string
+#include <array>
+#include <string>
 
 #include "modules.h"
 
-
-class UniversityConstructionGroup: public ConstructionGroup {
+class UniversityConstructionGroup : public ConstructionGroup
+{
 public:
     UniversityConstructionGroup(
         const char *name,
@@ -30,11 +30,10 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    ) {
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
+    {
         commodityRuleCount[STUFF_LABOR].maxload = MAX_LABOR_AT_UNIVERSITY;
         commodityRuleCount[STUFF_LABOR].take = true;
         commodityRuleCount[STUFF_LABOR].give = false;
@@ -51,9 +50,10 @@ public:
 
 extern UniversityConstructionGroup universityConstructionGroup;
 
-class University: public RegisteredConstruction<University> { // university inherits from its own RegisteredConstruction
+class University : public RegisteredConstruction<University>
+{ // university inherits from its own RegisteredConstruction
 public:
-    University(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<University>(x, y)
+    University(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<University>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -65,15 +65,12 @@ public:
 
         commodityMaxCons[STUFF_LABOR] = 100 * UNIVERSITY_LABOR;
         commodityMaxCons[STUFF_GOODS] = 100 * UNIVERSITY_GOODS;
-        commodityMaxProd[STUFF_WASTE] = 100 * (UNIVERSITY_GOODS/3);
+        commodityMaxProd[STUFF_WASTE] = 100 * (UNIVERSITY_GOODS / 3);
     }
-    virtual ~University() { }
+    virtual ~University() {}
     virtual void update();
     virtual void report();
 
     int total_tech_made;
     int working_days, busy;
 };
-
-
-/** @file lincity/modules/university.h */

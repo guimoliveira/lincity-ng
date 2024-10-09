@@ -1,39 +1,38 @@
 #define GROUP_POTTERY_COLOUR (red(12))
-#define GROUP_POTTERY_COST   1000
+#define GROUP_POTTERY_COST 1000
 #define GROUP_POTTERY_COST_MUL 25
 #define GROUP_POTTERY_BUL_COST 1000
-#define GROUP_POTTERY_TECH  0
+#define GROUP_POTTERY_TECH 0
 #define GROUP_POTTERY_FIREC 50
 #define GROUP_POTTERY_RANGE 0
 #define GROUP_POTTERY_SIZE 2
 
-#define POTTERY_ORE_MAKE_GOODS    11
-#define POTTERY_COAL_MAKE_GOODS    2
-#define POTTERY_LABOR              35
-#define POTTERY_MADE_GOODS        35
-#define POTTERY_ANIM_SPEED        280
-#define POTTERY_CLOSE_TIME        25
-#define MAX_ORE_AT_POTTERY        (POTTERY_ORE_MAKE_GOODS*20)
-#define MAX_COAL_AT_POTTERY       (POTTERY_COAL_MAKE_GOODS*20)
-#define MAX_LABOR_AT_POTTERY       (POTTERY_LABOR*20)
-#define MAX_GOODS_AT_POTTERY      (POTTERY_MADE_GOODS*20)
+#define POTTERY_ORE_MAKE_GOODS 11
+#define POTTERY_COAL_MAKE_GOODS 2
+#define POTTERY_LABOR 35
+#define POTTERY_MADE_GOODS 35
+#define POTTERY_ANIM_SPEED 280
+#define POTTERY_CLOSE_TIME 25
+#define MAX_ORE_AT_POTTERY (POTTERY_ORE_MAKE_GOODS * 20)
+#define MAX_COAL_AT_POTTERY (POTTERY_COAL_MAKE_GOODS * 20)
+#define MAX_LABOR_AT_POTTERY (POTTERY_LABOR * 20)
+#define MAX_GOODS_AT_POTTERY (POTTERY_MADE_GOODS * 20)
 
-#include <array>                    // for array
+#include <array>
 
 #include "modules.h"
 
-class PotteryConstructionGroup: public ConstructionGroup {
+class PotteryConstructionGroup : public ConstructionGroup
+{
 public:
     PotteryConstructionGroup(
         const char *name,
         unsigned short no_credit,
         unsigned short group,
         unsigned short size, int colour,
-        int cost_mul, int bul_cost, int fire_chance, int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost_mul, int bul_cost, int fire_chance, int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                                                                        cost, tech, range, 2 /*mps_pages*/
+                                                                                      )
     {
         commodityRuleCount[STUFF_LABOR].maxload = MAX_LABOR_AT_POTTERY;
         commodityRuleCount[STUFF_LABOR].take = true;
@@ -54,9 +53,10 @@ public:
 
 extern PotteryConstructionGroup potteryConstructionGroup;
 
-class Pottery: public RegisteredConstruction<Pottery> { // Pottery inherits from its own RegisteredConstruction
+class Pottery : public RegisteredConstruction<Pottery>
+{ // Pottery inherits from its own RegisteredConstruction
 public:
-    Pottery(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Pottery>(x, y)
+    Pottery(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Pottery>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -72,13 +72,13 @@ public:
         commodityMaxCons[STUFF_COAL] = 100 * POTTERY_COAL_MAKE_GOODS;
         commodityMaxCons[STUFF_LABOR] = 100 * POTTERY_LABOR;
     }
-    virtual ~Pottery() { }
+    virtual ~Pottery() {}
     virtual void update() override;
     virtual void report() override;
     virtual void animate() override;
 
-    int  anim;
-    int  pauseCounter;
-    int  working_days, busy;
+    int anim;
+    int pauseCounter;
+    int working_days, busy;
     bool animate_enable;
 };

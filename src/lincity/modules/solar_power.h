@@ -8,17 +8,17 @@
 #define GROUP_SOLAR_POWER_SIZE 4
 
 #define SOLAR_POWER_LABOR 50
-#define POWERS_SOLAR_OUTPUT 900 //1800
+#define POWERS_SOLAR_OUTPUT 900 // 1800
 #define MAX_LABOR_AT_SOLARPS (20 * SOLAR_POWER_LABOR)
 #define MAX_HIVOLT_AT_SOLARPS (20 * POWERS_SOLAR_OUTPUT)
 
-#include <array>                    // for array
-#include <string>                   // for basic_string
+#include <array>
+#include <string>
 
 #include "modules.h"
 
-
-class SolarPowerConstructionGroup: public ConstructionGroup {
+class SolarPowerConstructionGroup : public ConstructionGroup
+{
 public:
     SolarPowerConstructionGroup(
         const char *name,
@@ -26,11 +26,9 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    )
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
     {
         commodityRuleCount[STUFF_LABOR].maxload = MAX_LABOR_AT_SOLARPS;
         commodityRuleCount[STUFF_LABOR].take = true;
@@ -45,9 +43,10 @@ public:
 
 extern SolarPowerConstructionGroup solarPowerConstructionGroup;
 
-class SolarPower: public RegisteredConstruction<SolarPower> { // park inherits from RegisteredConstruction
+class SolarPower : public RegisteredConstruction<SolarPower>
+{ // park inherits from RegisteredConstruction
 public:
-    SolarPower(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<SolarPower>(x, y)
+    SolarPower(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<SolarPower>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -62,21 +61,19 @@ public:
         commodityMaxCons[STUFF_LABOR] = 100 * SOLAR_POWER_LABOR;
     }
 
-    virtual void initialize() override {
+    virtual void initialize() override
+    {
         RegisteredConstruction::initialize();
 
         this->hivolt_output = (int)(POWERS_SOLAR_OUTPUT +
-          (((double)tech * POWERS_SOLAR_OUTPUT) / MAX_TECH_LEVEL));
+                                    (((double)tech_level * POWERS_SOLAR_OUTPUT) / MAX_TECH_LEVEL));
 
         commodityMaxProd[STUFF_HIVOLT] = 100 * hivolt_output;
     }
 
     virtual void update() override;
     virtual void report() override;
-    int  hivolt_output;
-    int  tech;
-    int  working_days, busy;
+    int hivolt_output;
+    int tech;
+    int working_days, busy;
 };
-
-
-/** @file lincity/modules/solar_power.h */

@@ -1,33 +1,10 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file TableLayout.hpp
- */
-
 #ifndef __TABLELAYOUT_HPP__
 #define __TABLELAYOUT_HPP__
 
-#include <stddef.h>       // for size_t
-#include <vector>         // for vector
+#include <stddef.h>
+#include <vector>
 
-#include "Component.hpp"  // for Component
+#include "Component.hpp"
 
 class Painter;
 class Vector2;
@@ -36,8 +13,8 @@ class XmlReader;
 /**
  * @class TableLayout
  * @brief This components allows to layout child-components in a
- * flat-rectangular table. 
- * 
+ * flat-rectangular table.
+ *
  * You can setup an arbitrary number of rows and columns (you need at
  * least 1 of course). You specify the sizing properties for each row and column
  * (see layouting algorithm below)
@@ -62,11 +39,11 @@ public:
     TableLayout();
     ~TableLayout();
 
-    void parse(XmlReader& reader);
+    void parse(XmlReader &reader);
 
     void resize(float width, float height);
-    void draw(Painter& painter);
-    bool opaque(const Vector2& pos) const;
+    void draw(Painter &painter);
+    bool opaque(const Vector2 &pos) const;
 
     struct RowColProperties
     {
@@ -75,34 +52,45 @@ public:
         {
         }
 
-        enum Type { TYPE_FIXEDSIZE, TYPE_RELATIVE };
+        enum Type
+        {
+            TYPE_FIXEDSIZE,
+            TYPE_RELATIVE
+        };
         Type type;
         float val;
         float realval;
     };
-    
+
     struct Cell
     {
         Cell(int _childid = -1)
             : childid(_childid), halign(CENTER), valign(CENTER),
-            colspan(1), rowspan(1)
-        { }
+              colspan(1), rowspan(1)
+        {
+        }
 
-        enum Alignment { LEFT = 0, CENTER = 1, RIGHT = 2,
-                         TOP = 0, BOTTOM = 2 };                  
+        enum Alignment
+        {
+            LEFT = 0,
+            CENTER = 1,
+            RIGHT = 2,
+            TOP = 0,
+            BOTTOM = 2
+        };
         int childid;
         Alignment halign;
         Alignment valign;
         int colspan;
         int rowspan;
     };
-    void addRow(const RowColProperties& props);
-    void addColumn(const RowColProperties& props);
-    void addComponent(size_t col, size_t row, Component* component);
+    void addRow(const RowColProperties &props);
+    void addColumn(const RowColProperties &props);
+    void addComponent(size_t col, size_t row, Component *component);
 
 private:
     void removeComponents();
-    int parseProperties(XmlReader& reader, RowColProperties& props);
+    int parseProperties(XmlReader &reader, RowColProperties &props);
 
     typedef std::vector<RowColProperties> Properties;
     Properties rowproperties;
@@ -114,7 +102,3 @@ private:
 };
 
 #endif
-
-
-/** @file gui/TableLayout.hpp */
-

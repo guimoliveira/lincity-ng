@@ -1,44 +1,37 @@
-/* ---------------------------------------------------------------------- *
- * windmill.c
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * (c) Corey Keasling, 2004
- * ---------------------------------------------------------------------- */
-
 #include "windmill.h"
 
-#include <list>                     // for _List_iterator
+#include <list>
 
 #include "modules.h"
 
-
 WindmillConstructionGroup windmillConstructionGroup(
     N_("Windmill"),
-     FALSE,                     /* need credit? */
-     GROUP_WINDMILL,
-     GROUP_WINDMILL_SIZE,
-     GROUP_WINDMILL_COLOUR,
-     GROUP_WINDMILL_COST_MUL,
-     GROUP_WINDMILL_BUL_COST,
-     GROUP_WINDMILL_FIREC,
-     GROUP_WINDMILL_COST,
-     GROUP_WINDMILL_TECH,
-     GROUP_WINDMILL_RANGE
-);
+    FALSE, /* need credit? */
+    GROUP_WINDMILL,
+    GROUP_WINDMILL_SIZE,
+    GROUP_WINDMILL_COLOUR,
+    GROUP_WINDMILL_COST_MUL,
+    GROUP_WINDMILL_BUL_COST,
+    GROUP_WINDMILL_FIREC,
+    GROUP_WINDMILL_COST,
+    GROUP_WINDMILL_TECH,
+    GROUP_WINDMILL_RANGE);
 
-Construction *WindmillConstructionGroup::createConstruction(int x, int y) {
+Construction *WindmillConstructionGroup::createConstruction(int x, int y)
+{
     return new Windmill(x, y, this);
 }
 
 void Windmill::update()
 {
-    if (!(total_time%(WINDMILL_RCOST)))
-    {   windmill_cost++;}
-    int lovolt_made = (commodityCount[STUFF_LOVOLT] + lovolt_output <= MAX_LOVOLT_AT_WINDMILL)?lovolt_output:MAX_LOVOLT_AT_WINDMILL-commodityCount[STUFF_LOVOLT];
+    if (!(total_time % (WINDMILL_RCOST)))
+    {
+        windmill_cost++;
+    }
+    int lovolt_made = (commodityCount[STUFF_LOVOLT] + lovolt_output <= MAX_LOVOLT_AT_WINDMILL) ? lovolt_output : MAX_LOVOLT_AT_WINDMILL - commodityCount[STUFF_LOVOLT];
     int labor_used = WINDMILL_LABOR * lovolt_made / lovolt_output;
 
-    if ((commodityCount[STUFF_LABOR] >= labor_used)
-     && (lovolt_made >= WINDMILL_LOVOLT))
+    if ((commodityCount[STUFF_LABOR] >= labor_used) && (lovolt_made >= WINDMILL_LOVOLT))
     {
         consumeStuff(STUFF_LABOR, labor_used);
         produceStuff(STUFF_LOVOLT, lovolt_made);
@@ -46,8 +39,10 @@ void Windmill::update()
         working_days += lovolt_made;
     }
     else
-    {   animate_enable = false;}
-    //monthly update
+    {
+        animate_enable = false;
+    }
+    // monthly update
     if (total_time % 100 == 99)
     {
         reset_prod_counters();
@@ -56,11 +51,13 @@ void Windmill::update()
     }
 }
 
-void Windmill::animate() {
-  if(animate_enable && real_time >= anim) {
-    anim = real_time + ANIM_THRESHOLD(ANTIQUE_WINDMILL_ANIM_SPEED);
-    ++frameIt->frame %= 3;
-  }
+void Windmill::animate()
+{
+    if (animate_enable && real_time >= anim)
+    {
+        anim = real_time + ANIM_THRESHOLD(ANTIQUE_WINDMILL_ANIM_SPEED);
+        ++frameIt->frame %= 3;
+    }
 }
 
 void Windmill::report()
@@ -73,5 +70,3 @@ void Windmill::report()
     // i++;
     list_commodities(&i);
 }
-
-/** @file lincity/modules/windmill.cpp */

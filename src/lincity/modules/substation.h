@@ -7,17 +7,17 @@
 #define GROUP_SUBSTATION_RANGE 0
 #define GROUP_SUBSTATION_SIZE 2
 
-#define SUBSTATION_HIVOLT                          (1500)
-#define MAX_HIVOLT_AT_SUBSTATION    (20 * SUBSTATION_HIVOLT)
-#define SUBSTATION_LOVOLT            (2 * SUBSTATION_HIVOLT)
-#define MAX_LOVOLT_AT_SUBSTATION    (20 * SUBSTATION_LOVOLT)
+#define SUBSTATION_HIVOLT (1500)
+#define MAX_HIVOLT_AT_SUBSTATION (20 * SUBSTATION_HIVOLT)
+#define SUBSTATION_LOVOLT (2 * SUBSTATION_HIVOLT)
+#define MAX_LOVOLT_AT_SUBSTATION (20 * SUBSTATION_LOVOLT)
 
-
-#include <array>                    // for array
+#include <array>
 
 #include "modules.h"
 
-class SubstationConstructionGroup: public ConstructionGroup {
+class SubstationConstructionGroup : public ConstructionGroup
+{
 public:
     SubstationConstructionGroup(
         const char *name,
@@ -25,11 +25,10 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    ) {
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
+    {
 
         commodityRuleCount[STUFF_HIVOLT].maxload = MAX_HIVOLT_AT_SUBSTATION;
         commodityRuleCount[STUFF_HIVOLT].take = true;
@@ -43,12 +42,13 @@ public:
 };
 
 extern SubstationConstructionGroup substationConstructionGroup;
-//extern SubstationConstructionGroup substation_RG_ConstructionGroup;
-//extern SubstationConstructionGroup substation_G_ConstructionGroup;
+// extern SubstationConstructionGroup substation_RG_ConstructionGroup;
+// extern SubstationConstructionGroup substation_G_ConstructionGroup;
 
-class Substation: public RegisteredConstruction<Substation> { // Substation inherits from Construction
+class Substation : public RegisteredConstruction<Substation>
+{ // Substation inherits from Construction
 public:
-    Substation(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<Substation>(x, y)
+    Substation(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<Substation>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
@@ -59,12 +59,10 @@ public:
         commodityMaxCons[STUFF_HIVOLT] = 100 * SUBSTATION_HIVOLT;
         commodityMaxProd[STUFF_LOVOLT] = 100 * 2 * SUBSTATION_HIVOLT;
     }
-    virtual ~Substation() { }
+    virtual ~Substation() {}
     virtual void update() override;
     virtual void report() override;
     virtual void animate() override;
 
-    int  working_days, busy;
+    int working_days, busy;
 };
-
-/** @file lincity/modules/substation.h */

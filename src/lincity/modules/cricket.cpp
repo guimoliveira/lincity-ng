@@ -1,15 +1,7 @@
-/* ---------------------------------------------------------------------- *
- * cricket.c
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * (c) Corey Keasling, 2004
- * ---------------------------------------------------------------------- */
-
-
 #include "cricket.h"
 
-#include <list>                     // for _List_iterator
-#include <vector>                   // for vector
+#include <list>     
+#include <vector>   
 
 #include "modules.h"
 
@@ -100,5 +92,3 @@ void Cricket::report()
     p = active?N_("Yes"):N_("No");
     mps_store_ss(i++, N_("Public sports"), p);
 }
-
-/** @file lincity/modules/cricket.cpp */

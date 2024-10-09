@@ -1,16 +1,11 @@
-/* ---------------------------------------------------------------------- *
- * engglobs.c
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
 #include "engglobs.h"
 
-#include <stddef.h>             // for NULL
-#include <map>                  // for map
+#include <stddef.h>
+#include <map>
 
-#include "ConstructionCount.h"  // for ConstructionCount
-#include "lin-city.h"           // for EX_DISCOUNT_TRIGGER_1, EX_DISCOUNT_TR...
-#include "world.h"              // for World, WORLD_SIDE_LEN
+#include "ConstructionCount.h"
+#include "lin-city.h"
+#include "world.h"
 
 enum Commodity : int;
 
@@ -21,20 +16,20 @@ int use_waterwell = true;
 ConstructionCount constructionCount = ConstructionCount();
 World world = World(WORLD_SIDE_LEN);
 int world_id = 0;
-UserOperation* userOperation = NULL;
+UserOperation *userOperation = NULL;
 
 /* Vector for visiting neigbours = ( dx[k] , dy[k] )  ; ordered so that diagonal moves are the last 4 */
-const int dx[8] = { -1, 0, 1, 0, 1, 1, -1, -1};
-const int dy[8] = { 0, -1, 0, 1, 1, -1, 1, -1};
-//anti clockwise ordering
-const int dxo[8] ={ -1, -1,  0,  1,  1,  1,  0, -1};
-const int dyo[8] ={  0, -1, -1, -1,  0,  1,  1,  1};
+const int dx[8] = {-1, 0, 1, 0, 1, 1, -1, -1};
+const int dy[8] = {0, -1, 0, 1, 1, -1, 1, -1};
+// anti clockwise ordering
+const int dxo[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+const int dyo[8] = {0, -1, -1, -1, 0, 1, 1, 1};
 
 bool binary_mode = true;
 bool seed_compression = true;
-//You may want to set these to false for easier debugging
+// You may want to set these to false for easier debugging
 
-//These have to be decalred as extern in lintypes.h after class Construction
+// These have to be decalred as extern in lintypes.h after class Construction
 std::map<Commodity, int> tstat_capacities;
 std::map<Commodity, int> tstat_census;
 
@@ -60,7 +55,7 @@ int sust_old_money_count = 0, sust_old_population = 0, sust_old_population_count
 int sust_old_tech = 0, sust_old_tech_count = 0, sust_fire_count = 0;
 
 bool refresh_cover = false;
-int total_time = 0;             /* game time */
+int total_time = 0; /* game time */
 int deadline = 0;
 
 int population, starving_population;
@@ -81,7 +76,7 @@ int total_unemployed_years = 0;
 float pollution_deaths_history = 0.0, starve_deaths_history = 0.0;
 float unemployed_history = 0.0;
 
-//int university_intake_rate;
+// int university_intake_rate;
 int power_made, power_used, coal_made, coal_used;
 int goods_made, goods_used, ore_made, ore_used;
 int rockets_launched, rockets_launched_success;
@@ -98,12 +93,9 @@ int ex_tax_dis[NUMOF_DISCOUNT_TRIGGERS] = {
     EX_DISCOUNT_TRIGGER_6,
 };
 
-
-int  global_aridity;
-int  global_mountainity;
-//TODO These and their updating should go to class World
+int global_aridity;
+int global_mountainity;
+// TODO These and their updating should go to class World
 int alt_min, alt_max, alt_step;
 
 int fast_time_for_year;
-
-/** @file lincity/engglobs.cpp */

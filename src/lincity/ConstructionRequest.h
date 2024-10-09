@@ -3,52 +3,58 @@
 
 class Construction;
 
-class ConstructionRequest {
+class ConstructionRequest
+{
 public:
-    ConstructionRequest(Construction *subject): subject(subject) { }
-    virtual ~ConstructionRequest() { }
+    ConstructionRequest(Construction *subject) : subject(subject) {}
+    virtual ~ConstructionRequest() {}
     virtual void execute() = 0;
+
 protected:
     Construction *subject;
     friend class ConstructionManager;
 };
 
-class ConstructionDeletionRequest: public ConstructionRequest {
+class ConstructionDeletionRequest : public ConstructionRequest
+{
 public:
-    ConstructionDeletionRequest(Construction *subject): ConstructionRequest(subject) { }
+    ConstructionDeletionRequest(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
 
-class OreMineDeletionRequest: public ConstructionRequest {
+class OreMineDeletionRequest : public ConstructionRequest
+{
 public:
-    OreMineDeletionRequest(Construction *subject): ConstructionRequest(subject) { }
+    OreMineDeletionRequest(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
 
-class CommuneDeletionRequest: public ConstructionRequest {
+class CommuneDeletionRequest : public ConstructionRequest
+{
 public:
-    CommuneDeletionRequest(Construction *subject): ConstructionRequest(subject) { }
+    CommuneDeletionRequest(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
 
-class BurnDownRequest: public ConstructionRequest {
+class BurnDownRequest : public ConstructionRequest
+{
 public:
-    BurnDownRequest(Construction *subject): ConstructionRequest(subject) { }
+    BurnDownRequest(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
 
-class SetOnFire: public ConstructionRequest {
+class SetOnFire : public ConstructionRequest
+{
 public:
-    SetOnFire(Construction *subject): ConstructionRequest(subject) { }
+    SetOnFire(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
 
-
-class PowerLineFlashRequest: public ConstructionRequest {
+class PowerLineFlashRequest : public ConstructionRequest
+{
 public:
-    PowerLineFlashRequest(Construction *subject): ConstructionRequest(subject) { }
+    PowerLineFlashRequest(Construction *subject) : ConstructionRequest(subject) {}
     virtual void execute();
 };
-
 
 #endif

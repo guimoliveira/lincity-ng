@@ -1,29 +1,25 @@
-/* ---------------------------------------------------------------------- *
- * Vehicles.cpp
- * This file is part of lincity-NG.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2001.
- * ---------------------------------------------------------------------- */
-
 #include "Vehicles.h"
 
-#include <stdlib.h>         // for NULL, rand
-#include <cmath>            // for ceil
-#include <iostream>         // for basic_ostream, basic_ostream::operator<<
-#include <iterator>         // for advance
-#include <map>              // for map
-#include <string>           // for char_traits, basic_string, operator<
-#include <vector>           // for vector
+#include <stdlib.h>
+#include <cmath>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <string>
+#include <vector>
 
-#include "commodities.hpp"  // for Commodity
-#include "engglobs.h"       // for world
-#include "engine.h"         // for real_time
-#include "groups.h"         // for GROUP_ROAD_BRIDGE, GROUP_TRACK_BRIDGE
-#include "lintypes.h"       // for Construction
-#include "world.h"          // for World, MapTile
+#include "commodities.hpp"
+#include "engglobs.h"
+#include "engine.h"
+#include "groups.h"
+#include "lintypes.h"
+#include "world.h"
 
-std::list<Vehicle*> Vehicle::vehicleList;
+extern int lincitySpeed; // is defined in lincity-ng/MainLincity.cpp
 
-Vehicle::Vehicle(int x0, int y0, VehicleModel model0, VehicleStrategy vehicleStrategy)
+std::list<Vehicle *> Vehicle::vehicleList;
+
+Vehicle::Vehicle(int x0, int y0, Commodity stuffID, VehicleStrategy vehicleStrategy)
 {
     this->x = x0;
     this->y = y0;
@@ -44,52 +40,115 @@ Vehicle::Vehicle(int x0, int y0, VehicleModel model0, VehicleStrategy vehicleStr
     this->xr = x;
     this->yr = y;
 
-    this->stuff_id = STUFF_LABOR;
-    //TODO Choose a random model for suitable stuff
-    this->model = model0;
+    this->stuff_id = stuffID;
     this->strategy = vehicleStrategy;
-    if (world(x,y)->reportingConstruction)
-    {   this->initial_cargo = world(x,y)->reportingConstruction->tellstuff(stuff_id,-2);}
+    if (world(x, y)->reportingConstruction)
+    {
+        this->initial_cargo = world(x, y)->reportingConstruction->tellstuff(stuff_id, -2);
+    }
     else
-    {   this->initial_cargo = -1;}
+    {
+        this->initial_cargo = -1;
+    }
 
     vehicleList.push_back(this);
-    frameIt = world(x,y)->createframe();
-    frameIt->frame = -2; //special value to indicate fresh fast forward car
+    frameIt = world(x, y)->createframe();
+    frameIt->frame = -2; // special value to indicate fresh fast forward car
     map_idx = x + y * world.len();
-    switch(model)
-    {
-        case (VEHICLE_BLUECAR):
-            frameIt->resourceGroup =  ResourceGroup::resMap["Bluecar"];
-            speed0 = BLUE_CAR_SPEED;
-            break;
-        default:
-        std::cout << "default in new vehicle model = " << model << " at x= " << x << " y= " << y << std::endl;
 
+    switch (stuffID)
+    {
+    case STUFF_FOOD:
+        model = VEHICLE_REDTRUCK;
+        break;
+    case STUFF_LABOR:
+        model = (VehicleModel)(rand() % 5);
+        break;
+    case STUFF_COAL:
+        model = VEHICLE_GREENTRUCK;
+        break;
+    case STUFF_GOODS:
+        model = VEHICLE_WHITETRUCK;
+        break;
+    case STUFF_ORE:
+        model = VEHICLE_YELLOWTRUCK;
+        break;
+    case STUFF_STEEL:
+        model = VEHICLE_BLUETRUCK;
+        break;
+    default:
+        std::cout << "invalid stuffID in new vehicle " << stuffID << " at x= " << x << " y= " << y << std::endl;
     }
+
+    switch (model)
+    {
+    case VEHICLE_BLUECAR:
+        frameIt->resourceGroup = ResourceGroup::resMap["BlueCar"];
+        speed0 = CAR_SPEED;
+        break;
+    case VEHICLE_REDCAR:
+        frameIt->resourceGroup = ResourceGroup::resMap["RedCar"];
+        speed0 = CAR_SPEED;
+        break;
+    case VEHICLE_YELLOWCAR:
+        frameIt->resourceGroup = ResourceGroup::resMap["YellowCar"];
+        speed0 = CAR_SPEED;
+        break;
+    case VEHICLE_GREENCAR:
+        frameIt->resourceGroup = ResourceGroup::resMap["GreenCar"];
+        speed0 = CAR_SPEED;
+        break;
+    case VEHICLE_GRAYCAR:
+        frameIt->resourceGroup = ResourceGroup::resMap["GrayCar"];
+        speed0 = CAR_SPEED;
+        break;
+    case VEHICLE_REDTRUCK:
+        frameIt->resourceGroup = ResourceGroup::resMap["RedTruck"];
+        speed0 = TRUCK_SPEED;
+        break;
+    case VEHICLE_GREENTRUCK:
+        frameIt->resourceGroup = ResourceGroup::resMap["GreenTruck"];
+        speed0 = TRUCK_SPEED;
+        break;
+    case VEHICLE_WHITETRUCK:
+        frameIt->resourceGroup = ResourceGroup::resMap["WhiteTruck"];
+        speed0 = TRUCK_SPEED;
+        break;
+    case VEHICLE_YELLOWTRUCK:
+        frameIt->resourceGroup = ResourceGroup::resMap["YellowTruck"];
+        speed0 = TRUCK_SPEED;
+        break;
+    case VEHICLE_BLUETRUCK:
+        frameIt->resourceGroup = ResourceGroup::resMap["BlueTruck"];
+        speed0 = TRUCK_SPEED;
+        break;
+    default:
+        std::cout << "default in new vehicle model = " << model << " at x= " << x << " y= " << y << std::endl;
+    }
+    
     speed = speed0;
-/*
-#ifdef DEBUG
-    std::cout << "new vehicle model = " << model << " at x= " << x << " y= " << y
-    << " transporting " << commodityNames[stuff_id] << std::endl;
-#endif
-*/
+    /*
+    #ifdef DEBUG
+        std::cout << "new vehicle model = " << model << " at x= " << x << " y= " << y
+        << " transporting " << commodityNames[stuff_id] << std::endl;
+    #endif
+    */
 }
 
 Vehicle::~Vehicle()
 {
     world(map_idx)->killframe(frameIt);
-/*
-#ifdef DEBUG
-    std::cout << "kill vehicle model= " << model << " at x= " << x << " y= " << y
-    << " traveled distance " << (100-death_counter) << std::endl;
-#endif
-*/
+    /*
+    #ifdef DEBUG
+        std::cout << "kill vehicle model= " << model << " at x= " << x << " y= " << y
+        << " traveled distance " << (100-death_counter) << std::endl;
+    #endif
+    */
 }
 
 void Vehicle::clearVehicleList()
 {
-    while(! vehicleList.empty())
+    while (!vehicleList.empty())
     {
         delete vehicleList.front();
         vehicleList.pop_front();
@@ -98,11 +157,11 @@ void Vehicle::clearVehicleList()
 
 void Vehicle::cleanVehicleList()
 {
-    for(std::list<Vehicle*>::iterator it = vehicleList.begin();
-        it != vehicleList.end();
-        std::advance(it,1))
+    for (std::list<Vehicle *>::iterator it = vehicleList.begin();
+         it != vehicleList.end();
+         std::advance(it, 1))
     {
-        if(! (*it)->alive)
+        if (!(*it)->alive)
         {
             delete (*it);
             *it = NULL;
@@ -114,237 +173,258 @@ void Vehicle::cleanVehicleList()
 void Vehicle::drive(void)
 {
     --death_counter;
-    speed = speed0;
+    speed = speed0 * lincitySpeed;
     int xstep = xnext - xprev;
     int ystep = ynext - yprev;
-    if(xstep == 2)
-    {   direction = 2;}
-    else if(xstep == -2)
-    {   direction = 6;}
-    else if(ystep == 2)
-    {   direction = 0;}
-    else if(ystep == -2)
-    {   direction = 4;}
-    else if( (xstep == 1) && (ystep == 1) )
+    if (xstep == 2)
     {
-        direction = 1;            //vertically down
-        turn_left = (xprev == x); //turning left
+        direction = 2;
     }
-    else if( (xstep == 1) && (ystep == -1) )
+    else if (xstep == -2)
     {
-        direction = 3; //horizontally right
-        turn_left = (xprev != x); //turning left and YES == is correct
+        direction = 6;
     }
-    else if( (xstep == -1) && (ystep == 1) )
+    else if (ystep == 2)
+    {
+        direction = 0;
+    }
+    else if (ystep == -2)
+    {
+        direction = 4;
+    }
+    else if ((xstep == 1) && (ystep == 1))
+    {
+        direction = 1;            // vertically down
+        turn_left = (xprev == x); // turning left
+    }
+    else if ((xstep == 1) && (ystep == -1))
+    {
+        direction = 3;            // horizontally right
+        turn_left = (xprev != x); // turning left and YES == is correct
+    }
+    else if ((xstep == -1) && (ystep == 1))
     {
         direction = 7;
-        turn_left = (xprev != x); //turning left and YES == is correct
-
+        turn_left = (xprev != x); // turning left and YES == is correct
     }
-    else if( (xstep == -1) && (ystep == -1) )
+    else if ((xstep == -1) && (ystep == -1))
     {
-        direction = 5;            //vertically up
-        turn_left = (xprev == x); //turning left
+        direction = 5;            // vertically up
+        turn_left = (xprev == x); // turning left
     }
 
-    if(direction&1)
-    {   speed = (turn_left?3:1)*speed0/2;}
+    if (direction & 1)
+    {
+        speed = (turn_left ? 3 : 1) * speed0 * lincitySpeed / 2;
+    }
 
-    //now advance to position of the vehicle
-    xold2=xold1;
-    yold2=yold1;
-    xold1=xprev;
-    yold1=yprev;
+    // now advance to position of the vehicle
+    xold2 = xold1;
+    yold2 = yold1;
+    xold1 = xprev;
+    yold1 = yprev;
     xprev = x;
     yprev = y;
     x = xnext;
     y = ynext;
 
     if (frameIt->frame < -1)
-    {   ++frameIt->frame;}
+    {
+        ++frameIt->frame;
+    }
     else
     {
         int s = (int)frameIt->resourceGroup->graphicsInfoVector.size();
-        if(s)
-        {   frameIt->frame = direction % s;}
+        if (s)
+        {
+            frameIt->frame = direction % s;
+        }
     }
 }
 
 void Vehicle::walk()
 {
-    double remaining = double(anim-real_time)/speed;
+    double remaining = double(anim - real_time) / speed;
     double elapsed = 1 - remaining;
-    //mx,my are like continuos coordinates for the map
+    // mx,my are like continuos coordinates for the map
     //(0,0) is always the southern corner of the tiles
     double mx = 0;
     double my = 0;
-    switch (direction) //pointing towards
+    switch (direction) // pointing towards
     {
-        case (0): //lower left
-            mx = -0.65;
-            my = -remaining;
+    case (0): // lower left
+        mx = -0.65;
+        my = -remaining;
         break;
-        case(4): //upper right
-            mx = -0.27;
-            my = -elapsed;
+    case (4): // upper right
+        mx = -0.27;
+        my = -elapsed;
         break;
-        case (2): //lower right
-            mx = -remaining;
-            my = -0.27;
+    case (2): // lower right
+        mx = -remaining;
+        my = -0.27;
         break;
-        case (6): //upper left
-            mx = -elapsed;
-            my = -0.65;
+    case (6): // upper left
+        mx = -elapsed;
+        my = -0.65;
         break;
-        case (1): //vertically down
+    case (1): // vertically down
+    {
+        if (turn_left)
         {
-            if(turn_left)
+            mx = -0.65 + elapsed * elapsed;
+            my = -1.13 + 1 * elapsed;
+        }
+        else
+        {
+            mx = -1 + 0.35 * elapsed;
+            my = -0.27 + 0.27 * elapsed * elapsed;
+        }
+    }
+    break;
+    case (5): // vertically up
+    {
+        if (turn_left)
+        {
+            mx = -0.27 - 0.73 * elapsed * elapsed;
+            my = -0.65 * elapsed;
+        }
+        else
+        {
+            mx = 0 - 0.23 * elapsed;
+            my = -0.65 - 0.35 * elapsed * elapsed;
+        }
+    }
+    break;
+    case (3): // horizontally right
+    {
+        if (turn_left)
+        {
+            if (elapsed < 0.5)
             {
-                mx = -0.65 + elapsed * elapsed;
-                my = -1.13 + 1 * elapsed;
+                mx = -1 + elapsed;
+                my = -0.27 - 0.5 * elapsed * elapsed;
             }
             else
             {
-                mx =  -1 + 0.35 * elapsed;
-                my = -0.27 + 0.27 * elapsed * elapsed;
+                mx = -0.27 - 0.5 * remaining * remaining;
+                my = -1 + remaining;
             }
         }
-        break;
-        case (5): //vertically up
+        else
         {
-            if(turn_left)
-            {
-                mx = -0.27 - 0.73 * elapsed * elapsed;
-                my =  -0.65 * elapsed;
-            }
-            else
-            {
-                mx = 0 - 0.23 * elapsed;
-                my = -0.65 - 0.35 * elapsed * elapsed;
-            }
+            mx = -0.27 * remaining * remaining;
+            my = -0.27 * elapsed;
         }
-        break;
-        case (3): //horizontally right
+    }
+    break;
+    case (7): // horizontally left
+    {
+        if (turn_left)
         {
-            if(turn_left)
-            {
-                if(elapsed < 0.5)
-                {
-                    mx = -1 + elapsed;
-                    my =  -0.27 - 0.5 * elapsed * elapsed;
-                }
-                else
-                {
-                    mx = -0.27 - 0.5 * remaining * remaining;
-                    my = -1 + remaining;
-                }
-            }
-            else
-            {
-                mx = -0.27 * remaining * remaining;
-                my = -0.27 * elapsed;
-            }
-
+            mx = -0.65 * elapsed;
+            my = -0.65 + 0.65 * elapsed * elapsed;
         }
-        break;
-        case (7): //horizontally left
+        else
         {
-            if (turn_left)
-            {
-                mx = -0.65 * elapsed;
-                my = -0.65 + 0.65 * elapsed * elapsed;
-            }
-            else
-            {
-                mx = -0.65 - 0.35 * elapsed * elapsed;
-                my = -1 + 0.35 * elapsed;
-            }
-
+            mx = -0.65 - 0.35 * elapsed * elapsed;
+            my = -1 + 0.35 * elapsed;
         }
-        break;
+    }
+    break;
     }
 
     // a car with (mx,my)==(0,0) has its center in the southern corner
     mx += 0.25;
     my += 0.25;
-    //update absolute floating positions
+    // update absolute floating positions
     xr = (double)xprev + mx;
     yr = (double)yprev + my;
-    //choose tile for placing the frame
+    // choose tile for placing the frame
     int xtile = ceil(xr);
     int ytile = ceil(yr);
-    //no need to go up or left
-    if( xtile < xprev ) {   xtile = xprev;  }
-    if( ytile < yprev ) {   ytile = yprev;  }
-    //align animation to placement of frame on map
+    // no need to go up or left
+    if (xtile < xprev)
+    {
+        xtile = xprev;
+    }
+    if (ytile < yprev)
+    {
+        ytile = yprev;
+    }
+    // align animation to placement of frame on map
     mx = xr - (double)xtile;
     my = yr - (double)ytile;
-    if( xtile +  ytile * world.len() != map_idx)
-    {   move_frame(xtile +  ytile * world.len());}
+    if (xtile + ytile * world.len() != map_idx)
+    {
+        move_frame(xtile + ytile * world.len());
+    }
 
-    //Apply the animation of the sprite
-    //dx, dy are on screen coordinates
+    // Apply the animation of the sprite
+    // dx, dy are on screen coordinates
     int dx = (mx - my) * 64;
     int dy = (mx + my) * 32;
 
-    //Check for bridges and ramps
-    switch(world(xprev,yprev)->getGroup())
+    // Check for bridges and ramps
+    switch (world(xprev, yprev)->getGroup())
     {
-        case GROUP_TRACK_BRIDGE:
-            dy -= TRACK_BRIDGE_HEIGHT;
-            break;
-        case GROUP_ROAD_BRIDGE:
-            dy -= ROAD_BRIDGE_HEIGHT;
-            break;
-         case GROUP_ROAD:
-            if( world(xnext,ynext)->getGroup() == GROUP_ROAD_BRIDGE
-            ||  world(x,y)->getGroup() == GROUP_ROAD_BRIDGE)
+    case GROUP_TRACK_BRIDGE:
+        dy -= TRACK_BRIDGE_HEIGHT;
+        break;
+    case GROUP_ROAD_BRIDGE:
+        dy -= ROAD_BRIDGE_HEIGHT;
+        break;
+    case GROUP_ROAD:
+        if (world(xnext, ynext)->getGroup() == GROUP_ROAD_BRIDGE || world(x, y)->getGroup() == GROUP_ROAD_BRIDGE)
+        {
+            dy -= (elapsed * ROAD_BRIDGE_HEIGHT / 2);
+            frameIt->frame = 8 + direction / 2; // going up hill
+            if (world(x, y)->getGroup() == GROUP_ROAD_BRIDGE)
             {
-                dy -= (elapsed * ROAD_BRIDGE_HEIGHT/ 2);
-                frameIt->frame = 8 + direction/2; //going up hill
-                if(world(x,y)->getGroup() == GROUP_ROAD_BRIDGE)
-                {dy -= ROAD_BRIDGE_HEIGHT/ 2;}
+                dy -= ROAD_BRIDGE_HEIGHT / 2;
             }
-            else if(world(xold2,yold2)->getGroup() == GROUP_ROAD_BRIDGE
-            ||      world(xold1,yold1)->getGroup() == GROUP_ROAD_BRIDGE)
+        }
+        else if (world(xold2, yold2)->getGroup() == GROUP_ROAD_BRIDGE || world(xold1, yold1)->getGroup() == GROUP_ROAD_BRIDGE)
+        {
+            dy -= (remaining * ROAD_BRIDGE_HEIGHT / 2);
+            frameIt->frame = 12 + direction / 2; // going down hill
+            if (world(xold1, yold1)->getGroup() == GROUP_ROAD_BRIDGE)
             {
-                dy -= (remaining * ROAD_BRIDGE_HEIGHT/ 2);
-                frameIt->frame = 12 + direction/2; //going down hill
-                if(world(xold1,yold1)->getGroup() == GROUP_ROAD_BRIDGE)
-                {dy -= ROAD_BRIDGE_HEIGHT/ 2;}
+                dy -= ROAD_BRIDGE_HEIGHT / 2;
             }
-            break;
-        case GROUP_TRACK:
-            if( world(x,y)->getGroup() == GROUP_TRACK_BRIDGE )
-            {
-                dy -= (elapsed * TRACK_BRIDGE_HEIGHT);
-                frameIt->frame = 8 + direction/2; //going up hill
-            }
-            else if(world(xold1,yold1)->getGroup() == GROUP_TRACK_BRIDGE)
-            {
-                dy -= (remaining * TRACK_BRIDGE_HEIGHT );
-                frameIt->frame = 12 + direction/2;// going down hill
-            }
-            break;
+        }
+        break;
+    case GROUP_TRACK:
+        if (world(x, y)->getGroup() == GROUP_TRACK_BRIDGE)
+        {
+            dy -= (elapsed * TRACK_BRIDGE_HEIGHT);
+            frameIt->frame = 8 + direction / 2; // going up hill
+        }
+        else if (world(xold1, yold1)->getGroup() == GROUP_TRACK_BRIDGE)
+        {
+            dy -= (remaining * TRACK_BRIDGE_HEIGHT);
+            frameIt->frame = 12 + direction / 2; // going down hill
+        }
+        break;
     }
 
     frameIt->move_x = dx;
     frameIt->move_y = dy;
-
 }
-
 
 void Vehicle::move_frame(int new_idx)
 {
-    if(!world(new_idx)->framesptr)
-    {   world(new_idx)->framesptr = new std::list<ExtraFrame>;}
+    if (!world(new_idx)->framesptr)
+    {
+        world(new_idx)->framesptr = new std::list<ExtraFrame>;
+    }
     world(new_idx)->framesptr->splice(world(new_idx)->framesptr->end(), *(world(map_idx)->framesptr), frameIt);
-    if(world(map_idx)->framesptr->empty())
+    if (world(map_idx)->framesptr->empty())
     {
         delete world(map_idx)->framesptr;
         world(map_idx)->framesptr = NULL;
     }
-    map_idx = new_idx; //remember where the frame was put
+    map_idx = new_idx; // remember where the frame was put
 }
 
 bool Vehicle::acceptable_heading(int idx)
@@ -352,47 +432,58 @@ bool Vehicle::acceptable_heading(int idx)
 
     unsigned short g = world(idx)->getTransportGroup();
 
-    if( !( (g == GROUP_TRACK) || (g == GROUP_ROAD) ) )
+    if (!((g == GROUP_TRACK) || (g == GROUP_ROAD)))
     {
-        if(g != GROUP_RAIL)
-        {   return false;}
+        if (g != GROUP_RAIL)
+        {
+            return false;
+        }
         int x_trial = idx % world.len();
         int y_trial = idx / world.len();
-        if(!world.is_visible(x_trial, y_trial))
-        {   return false;}
+        if (!world.is_visible(x_trial, y_trial))
+        {
+            return false;
+        }
         unsigned short g2 = world(xprev, yprev)->getTransportGroup();
-        unsigned short g3 = world(2*x_trial-x, 2*y_trial-y)->getTransportGroup();
+        unsigned short g3 = world(2 * x_trial - x, 2 * y_trial - y)->getTransportGroup();
         if (g2 != g3)
-        {   return false;}
+        {
+            return false;
+        }
     }
 
-    //handle trivial case
-    if(strategy == VEHICLE_STRATEGY_RANDOM)
-    {   return true;}
-
-    //dont go nowhere
-    if(!world(idx)->reportingConstruction)
-    {   return false;}
-    //always leave from illegal area
-    if(!world(x,y)->reportingConstruction)
-    {   return true;}
-
-    switch(strategy)
+    // handle trivial case
+    if (strategy == VEHICLE_STRATEGY_RANDOM)
     {
-        case VEHICLE_STRATEGY_MAXIMIZE:
-            return world(x,y)->reportingConstruction->tellstuff(stuff_id, -2)*24/25 <
-            world(idx)->reportingConstruction->tellstuff(stuff_id, -2) &&
-            initial_cargo*99/100 < world(idx)->reportingConstruction->tellstuff(stuff_id, -2);
-        case VEHICLE_STRATEGY_MINIMIZE:
-            return world(x,y)->reportingConstruction->tellstuff(stuff_id, -2) >
-            world(idx)->reportingConstruction->tellstuff(stuff_id, -2)*24/25
-            && initial_cargo > world(idx)->reportingConstruction->tellstuff(stuff_id, -2)*99/100;
-        default: //silence warning
+        return true;
+    }
+
+    // dont go nowhere
+    if (!world(idx)->reportingConstruction)
+    {
+        return false;
+    }
+    // always leave from illegal area
+    if (!world(x, y)->reportingConstruction)
+    {
+        return true;
+    }
+
+    switch (strategy)
+    {
+    case VEHICLE_STRATEGY_MAXIMIZE:
+        return world(x, y)->reportingConstruction->tellstuff(stuff_id, -2) * 24 / 25 <
+                   world(idx)->reportingConstruction->tellstuff(stuff_id, -2) &&
+               initial_cargo * 99 / 100 < world(idx)->reportingConstruction->tellstuff(stuff_id, -2);
+    case VEHICLE_STRATEGY_MINIMIZE:
+        return world(x, y)->reportingConstruction->tellstuff(stuff_id, -2) >
+                   world(idx)->reportingConstruction->tellstuff(stuff_id, -2) * 24 / 25 &&
+               initial_cargo > world(idx)->reportingConstruction->tellstuff(stuff_id, -2) * 99 / 100;
+    default: // silence warning
         return true;
     }
     return false;
 }
-
 
 void Vehicle::getNewHeadings()
 {
@@ -401,64 +492,95 @@ void Vehicle::getNewHeadings()
     int sum = 0;
     const int len = world.len();
 
-    //never turn back the car
-    if  (  (x >= xprev) && acceptable_heading( (x+1) + y*len ) )
-    {   headings |= 1; ++sum;}
-    if  (  (x <= xprev) && acceptable_heading( (x-1) + y*len ) )
-    {   headings |= 2; ++sum;}
-    if ( (y <= yprev) && acceptable_heading( x + (y-1)*len ) )
-    {   headings |= 4; ++sum;}
-    if ( (y >= yprev) && acceptable_heading( x + (y+1)*len ) )
-    {   headings |= 8; ++sum;}
+    // never turn back the car
+    if ((x >= xprev) && acceptable_heading((x + 1) + y * len))
+    {
+        headings |= 1;
+        ++sum;
+    }
+    if ((x <= xprev) && acceptable_heading((x - 1) + y * len))
+    {
+        headings |= 2;
+        ++sum;
+    }
+    if ((y <= yprev) && acceptable_heading(x + (y - 1) * len))
+    {
+        headings |= 4;
+        ++sum;
+    }
+    if ((y >= yprev) && acceptable_heading(x + (y + 1) * len))
+    {
+        headings |= 8;
+        ++sum;
+    }
 
-    //absolutely nowhere to go
+    // absolutely nowhere to go
     if (!sum)
-    {   alive = false;  return;}
+    {
+        alive = false;
+        return;
+    }
 
-    //choose a random branch
+    // choose a random branch
     int k = 0;
     int choice = rand() % sum;
     int j = 0;
-    for(int i = 1; i < 16; i*=2)
+    for (int i = 1; i < 16; i *= 2)
     {
-        if(headings&i)
+        if (headings & i)
         {
-            if(choice == j)
-            {   break;}
+            if (choice == j)
+            {
+                break;
+            }
             ++j;
         }
         ++k;
     }
 
-    //set the next destination
+    // set the next destination
     switch (k)
     {
-        case 0: xnext = x + 1; break;
-        case 1: xnext = x - 1; break;
-        case 2: ynext = y - 1; break;
-        case 3: ynext = y + 1; break;
+    case 0:
+        xnext = x + 1;
+        break;
+    case 1:
+        xnext = x - 1;
+        break;
+    case 2:
+        ynext = y - 1;
+        break;
+    case 3:
+        ynext = y + 1;
+        break;
     }
 }
 
-
 void Vehicle::update()
 {
-    //get a new heading
-    if(x == xnext && y == ynext)
-    {   getNewHeadings();}
+    // get a new heading
+    if (x == xnext && y == ynext)
+    {
+        getNewHeadings();
+    }
     // check if it is time to make a step
-    if( real_time > anim) //move to dest
+    if (real_time > anim) // move to dest
     {
         drive();
         if (frameIt->frame < 0)
-        {   anim = real_time + 50;}
+        {
+            anim = real_time + 50;
+        }
         else
-        {   anim = real_time + speed;}
+        {
+            anim = real_time + speed;
+        }
     }
-    //animate the sprite
+    // animate the sprite
     walk();
-    //cars have limited lifespan
-    if(death_counter < 0)
-    {   alive = false;}
-
+    // cars have limited lifespan
+    if (death_counter < 0)
+    {
+        alive = false;
+    }
 }

@@ -1,35 +1,34 @@
 #define GROUP_SCHOOL_COLOUR (white(15))
-#define GROUP_SCHOOL_COST   10000
+#define GROUP_SCHOOL_COST 10000
 #define GROUP_SCHOOL_COST_MUL 25
-#define GROUP_SCHOOL_BUL_COST   10000
-#define GROUP_SCHOOL_TECH   1
+#define GROUP_SCHOOL_BUL_COST 10000
+#define GROUP_SCHOOL_TECH 1
 #define GROUP_SCHOOL_FIREC 40
 #define GROUP_SCHOOL_RANGE 0
 #define GROUP_SCHOOL_SIZE 2
 
-#define LABOR_MAKE_TECH_SCHOOL  200
-#define GOODS_MAKE_TECH_SCHOOL  75
-#define TECH_MADE_BY_SCHOOL    2
-#define MAX_LABOR_AT_SCHOOL     (20 * LABOR_MAKE_TECH_SCHOOL)
-#define MAX_GOODS_AT_SCHOOL    (20 * GOODS_MAKE_TECH_SCHOOL)
-#define MAX_WASTE_AT_SCHOOL    (20 * GOODS_MAKE_TECH_SCHOOL / 3)
-#define SCHOOL_RUNNING_COST    2
+#define LABOR_MAKE_TECH_SCHOOL 200
+#define GOODS_MAKE_TECH_SCHOOL 75
+#define TECH_MADE_BY_SCHOOL 2
+#define MAX_LABOR_AT_SCHOOL (20 * LABOR_MAKE_TECH_SCHOOL)
+#define MAX_GOODS_AT_SCHOOL (20 * GOODS_MAKE_TECH_SCHOOL)
+#define MAX_WASTE_AT_SCHOOL (20 * GOODS_MAKE_TECH_SCHOOL / 3)
+#define SCHOOL_RUNNING_COST 2
 
 #define SCHOOL_ANIMATION_SPEED 80
 #define SCHOOL_ANIMATION_BREAK 9500
 
-
-#include <stddef.h>                 // for NULL
-#include <array>                    // for array
-#include <iterator>                 // for advance
-#include <list>                     // for list, _List_iterator
-#include <map>                      // for map
-#include <string>                   // for basic_string, operator<
+#include <stddef.h>
+#include <array>
+#include <iterator>
+#include <list>
+#include <map>
+#include <string>
 
 #include "modules.h"
 
-
-class SchoolConstructionGroup: public ConstructionGroup {
+class SchoolConstructionGroup : public ConstructionGroup
+{
 public:
     SchoolConstructionGroup(
         const char *name,
@@ -37,11 +36,10 @@ public:
         unsigned short group,
         unsigned short size, int colour,
         int cost_mul, int bul_cost, int fire_chance,
-        int cost, int tech, int range
-    ): ConstructionGroup(
-        name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
-        cost, tech, range, 2/*mps_pages*/
-    ) {
+        int cost, int tech, int range) : ConstructionGroup(name, no_credit, group, size, colour, cost_mul, bul_cost, fire_chance,
+                                                           cost, tech, range, 2 /*mps_pages*/
+                                         )
+    {
         commodityRuleCount[STUFF_LABOR].maxload = MAX_LABOR_AT_SCHOOL;
         commodityRuleCount[STUFF_LABOR].take = true;
         commodityRuleCount[STUFF_LABOR].give = false;
@@ -58,19 +56,20 @@ public:
 
 extern SchoolConstructionGroup schoolConstructionGroup;
 
-class School: public RegisteredConstruction<School> { // School inherits from its own RegisteredConstruction
+class School : public RegisteredConstruction<School>
+{ // School inherits from its own RegisteredConstruction
 public:
-    School(int x, int y, ConstructionGroup *cstgrp): RegisteredConstruction<School>(x, y)
+    School(int x, int y, ConstructionGroup *cstgrp) : RegisteredConstruction<School>(x, y)
     {
         this->constructionGroup = cstgrp;
         init_resources();
-        //std::list<ExtraFrame>::iterator frit = world(x,y)->createframe();
-        //CK ?? Why the hell is the variant above unsafe?
-        world(x,y)->framesptr->resize(world(x,y)->framesptr->size()+1);
+        // std::list<ExtraFrame>::iterator frit = world(x,y)->createframe();
+        // CK ?? Why the hell is the variant above unsafe?
+        world(x, y)->framesptr->resize(world(x, y)->framesptr->size() + 1);
         frit = frameIt;
         std::advance(frit, 1);
-        frit->resourceGroup = ResourceGroup::resMap["ChildOnSwing"]; //host of the swing
-        frit->frame = -1; //hide the swing
+        frit->resourceGroup = ResourceGroup::resMap["ChildOnSwing"]; // host of the swing
+        frit->frame = -1;                                            // hide the swing
         // this->animate_enable = false;
         this->anim = 0;
         this->anim2 = 0;
@@ -82,18 +81,18 @@ public:
 
         commodityMaxCons[STUFF_LABOR] = 100 * LABOR_MAKE_TECH_SCHOOL;
         commodityMaxCons[STUFF_GOODS] = 100 * GOODS_MAKE_TECH_SCHOOL;
-        commodityMaxProd[STUFF_WASTE] = 100 * (GOODS_MAKE_TECH_SCHOOL/3);
+        commodityMaxProd[STUFF_WASTE] = 100 * (GOODS_MAKE_TECH_SCHOOL / 3);
     }
 
-    virtual ~School() //remove the one extraframe
+    virtual ~School() // remove the one extraframe
     {
-        if(world(x,y)->framesptr)
+        if (world(x, y)->framesptr)
         {
-            world(x,y)->framesptr->erase(frit);
-            if(world(x,y)->framesptr->empty())
+            world(x, y)->framesptr->erase(frit);
+            if (world(x, y)->framesptr->empty())
             {
-                delete world(x,y)->framesptr;
-                world(x,y)->framesptr = NULL;
+                delete world(x, y)->framesptr;
+                world(x, y)->framesptr = NULL;
             }
         }
     }
@@ -108,6 +107,3 @@ public:
     int total_tech_made;
     int working_days, busy;
 };
-
-
-/** @file lincity/modules/school.h */

@@ -1,41 +1,18 @@
-/*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/**
- * @author Matthias Braun
- * @file Image.cpp
- */
-
 #include "Image.hpp"
 
-#include <stdio.h>               // for sscanf
-#include <string.h>              // for strcmp
-#include <iostream>              // for operator<<, basic_ostream, basic_ios
-#include <sstream>               // for basic_stringstream
-#include <stdexcept>             // for runtime_error
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
 
-#include "ComponentFactory.hpp"  // for IMPLEMENT_COMPONENT_FACTORY
-#include "Painter.hpp"           // for Painter
-#include "Rect2D.hpp"            // for Rect2D
-#include "Texture.hpp"           // for Texture
-#include "TextureManager.hpp"    // for TextureManager, texture_manager
-#include "Vector2.hpp"           // for Vector2
-#include "XmlReader.hpp"         // for XmlReader
+#include "ComponentFactory.hpp"
+#include "Painter.hpp"
+#include "Rect2D.hpp"
+#include "Texture.hpp"
+#include "TextureManager.hpp"
+#include "Vector2.hpp"
+#include "XmlReader.hpp"
 
 Image::Image()
     : texture(0)
@@ -46,87 +23,108 @@ Image::~Image()
 {
 }
 
-void
-Image::parse(XmlReader& reader)
+void Image::parse(XmlReader &reader)
 {
     bool resizable = false;
 
     bool grey = false;
 
     XmlReader::AttributeIterator iter(reader);
-    while(iter.next()) {
-        const char* attribute = (const char*) iter.getName();
-        const char* value = (const char*) iter.getValue();
+    while (iter.next())
+    {
+        std::string attribute = iter.getName();
+        std::string value = iter.getValue();
 
-        if(parseAttribute(attribute, value)) {
+        if (parseAttribute(attribute, value))
+        {
             continue;
-        } else if(strcmp(attribute, "width") == 0) {
-            if(sscanf(value, "%f", &width) != 1) {
+        }
+        else if (attribute == "width")
+        {
+            if (sscanf(value.c_str(), "%f", &width) != 1)
+            {
                 std::stringstream msg;
                 msg << "Couldn't parse width '" << value << "'.";
                 throw std::runtime_error(msg.str());
             }
-        } else if(strcmp(attribute, "height") == 0) {
-            if(sscanf(value, "%f", &height) != 1) {
+        }
+        else if (attribute == "height")
+        {
+            if (sscanf(value.c_str(), "%f", &height) != 1)
+            {
                 std::stringstream msg;
                 msg << "Couldn't parse height '" << value << "'.";
                 throw std::runtime_error(msg.str());
             }
-        } else if(strcmp(attribute, "src") == 0) {
-            filename=value;
-        } else if(strcmp(attribute, "filter") == 0) {
-            if(strcmp(value, "grey") == 0) {
+        }
+        else if (attribute == "src")
+        {
+            filename = "/data/" + value;
+        }
+        else if (attribute == "filter")
+        {
+            if (value ==  "grey")
+            {
                 grey = true;
-            } else if(strcmp(value, "no") == 0) {
+            }
+            else if (value == "no")
+            {
                 grey = false;
-            } else {
+            }
+            else
+            {
                 std::cerr << "Unknown filter value '" << value << "'.\n";
                 std::cerr << "Should be 'grey' or 'no'.\n";
             }
-        } else if(strcmp(attribute, "resizable") == 0) {
-            if(strcmp(value, "yes") == 0)
+        }
+        else if (attribute == "resizable")
+        {
+            if (value == "yes")
                 resizable = true;
-            else if(strcmp(value, "no") == 0)
+            else if (value == "no")
                 resizable = false;
             else
                 std::cerr
                     << "You should specify 'yes' or 'no' for the resizable"
                     << "attribute\n";
-        } else {
+        }
+        else
+        {
             std::cerr << "Skipping unknown attribute '"
-                << attribute << "'.\n";
+                      << attribute << "'.\n";
         }
     }
 
-    if(filename == "")
+    if (filename == "")
         throw std::runtime_error("No filename specified for image");
 
     texture = 0;
     texture = texture_manager->load(filename,
-				grey ? TextureManager::FILTER_GREY : TextureManager::NO_FILTER);
+                                    grey ? TextureManager::FILTER_GREY : TextureManager::NO_FILTER);
 
-    if(width <= 0 || height <= 0) {
+    if (width <= 0 || height <= 0)
+    {
         width = texture->getWidth();
         height = texture->getHeight();
     }
 
-    if(resizable)
+    if (resizable)
         flags |= FLAG_RESIZABLE;
 }
 
-void
-Image::resize(float width, float height)
+void Image::resize(float width, float height)
 {
-    if(width < 0) width = 0;
-    if(height < 0) height = 0;
+    if (width < 0)
+        width = 0;
+    if (height < 0)
+        height = 0;
     this->width = width;
     this->height = height;
 }
 
-void
-Image::draw(Painter& painter)
+void Image::draw(Painter &painter)
 {
-    if(width != texture->getWidth() || height != texture->getHeight())
+    if (width != texture->getWidth() || height != texture->getHeight())
         painter.drawStretchTexture(texture, Rect2D(0, 0, width, height));
     else
         painter.drawTexture(texture, Vector2(0, 0));
@@ -139,12 +137,9 @@ std::string Image::getFilename() const
 
 void Image::setFile(const std::string &pfilename)
 {
-    filename=pfilename;
+    filename = pfilename;
     texture = 0;
     texture = texture_manager->load(pfilename);
 }
 
 IMPLEMENT_COMPONENT_FACTORY(Image)
-
-
-/** @file gui/Image.cpp */

@@ -1,15 +1,9 @@
-/* ---------------------------------------------------------------------- *
- * ldsvguts.c
- * This file is part of lincity.
- * Lincity is copyright (c) I J Peters 1995-1997, (c) Greg Sharp 1997-2002.
- * Portions copyright (c) Corey Keasling, 2000-2002.
- * ---------------------------------------------------------------------- */
-#include <algorithm>        // for copy, max
-#include <map>              // for map
+#include <algorithm>      
+#include <map>            
 
-#include "commodities.hpp"  // for Commodity
-#include "engglobs.h"       // for housing, population, starving_population
-#include "lintypes.h"       // for tstat_capacities, tstat_census
+#include "commodities.hpp"
+#include "engglobs.h"     
+#include "lintypes.h"     
 #include "stats.h"
 
 /* ---------------------------------------------------------------------- *
@@ -17,13 +11,6 @@
  * ---------------------------------------------------------------------- */
 
 /* Daily accumulators */
-//int food_in_markets;
-//int labor_in_markets;
-//int coal_in_markets;
-//int goods_in_markets;
-//int ore_in_markets;
-//int steel_in_markets;
-//int waste_in_markets;
 int dbirths, ddeaths;
 
 /* Monthly accumulators */
@@ -227,6 +214,3 @@ void add_daily_to_monthly(void)
     tbirths += dbirths;
     tdeaths += ddeaths;
 }
-
-/** @file lincity/stats.cpp */
-

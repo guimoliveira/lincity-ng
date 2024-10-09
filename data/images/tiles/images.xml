@@ -607,7 +607,7 @@
     </group>
 
     <group>
-    <resourceID name="Bluecar" />
+    <resourceID name="BlueCar" />
     <image file="car01-0000.png" />
     <image file="car01-0001.png" />
     <image file="car01-0002.png" />
@@ -624,6 +624,186 @@
     <image file="car01-down0014.png" />
     <image file="car01-down0015.png" />
     <image file="car01-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="RedCar" />
+    <image file="car02-0000.png" />
+    <image file="car02-0001.png" />
+    <image file="car02-0002.png" />
+    <image file="car02-0003.png" />
+    <image file="car02-0004.png" />
+    <image file="car02-0005.png" />
+    <image file="car02-0006.png" />
+    <image file="car02-0007.png" />
+    <image file="car02-up0009.png" />
+    <image file="car02-up0010.png" />
+    <image file="car02-up0011.png" />
+    <image file="car02-up0012.png" />
+    <image file="car02-down0013.png" />
+    <image file="car02-down0014.png" />
+    <image file="car02-down0015.png" />
+    <image file="car02-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="YellowCar" />
+    <image file="car03-0000.png" />
+    <image file="car03-0001.png" />
+    <image file="car03-0002.png" />
+    <image file="car03-0003.png" />
+    <image file="car03-0004.png" />
+    <image file="car03-0005.png" />
+    <image file="car03-0006.png" />
+    <image file="car03-0007.png" />
+    <image file="car03-up0009.png" />
+    <image file="car03-up0010.png" />
+    <image file="car03-up0011.png" />
+    <image file="car03-up0012.png" />
+    <image file="car03-down0013.png" />
+    <image file="car03-down0014.png" />
+    <image file="car03-down0015.png" />
+    <image file="car03-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="GreenCar" />
+    <image file="car04-0000.png" />
+    <image file="car04-0001.png" />
+    <image file="car04-0002.png" />
+    <image file="car04-0003.png" />
+    <image file="car04-0004.png" />
+    <image file="car04-0005.png" />
+    <image file="car04-0006.png" />
+    <image file="car04-0007.png" />
+    <image file="car04-up0009.png" />
+    <image file="car04-up0010.png" />
+    <image file="car04-up0011.png" />
+    <image file="car04-up0012.png" />
+    <image file="car04-down0013.png" />
+    <image file="car04-down0014.png" />
+    <image file="car04-down0015.png" />
+    <image file="car04-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="GrayCar" />
+    <image file="car05-0000.png" />
+    <image file="car05-0001.png" />
+    <image file="car05-0002.png" />
+    <image file="car05-0003.png" />
+    <image file="car05-0004.png" />
+    <image file="car05-0005.png" />
+    <image file="car05-0006.png" />
+    <image file="car05-0007.png" />
+    <image file="car05-up0009.png" />
+    <image file="car05-up0010.png" />
+    <image file="car05-up0011.png" />
+    <image file="car05-up0012.png" />
+    <image file="car05-down0013.png" />
+    <image file="car05-down0014.png" />
+    <image file="car05-down0015.png" />
+    <image file="car05-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="RedTruck" />
+    <image file="truck01-0000.png" />
+    <image file="truck01-0001.png" />
+    <image file="truck01-0002.png" />
+    <image file="truck01-0003.png" />
+    <image file="truck01-0004.png" />
+    <image file="truck01-0005.png" />
+    <image file="truck01-0006.png" />
+    <image file="truck01-0007.png" />
+    <image file="truck01-up0009.png" />
+    <image file="truck01-up0010.png" />
+    <image file="truck01-up0011.png" />
+    <image file="truck01-up0012.png" />
+    <image file="truck01-down0013.png" />
+    <image file="truck01-down0014.png" />
+    <image file="truck01-down0015.png" />
+    <image file="truck01-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="GreenTruck" />
+    <image file="truck02-0000.png" />
+    <image file="truck02-0001.png" />
+    <image file="truck02-0002.png" />
+    <image file="truck02-0003.png" />
+    <image file="truck02-0004.png" />
+    <image file="truck02-0005.png" />
+    <image file="truck02-0006.png" />
+    <image file="truck02-0007.png" />
+    <image file="truck02-up0009.png" />
+    <image file="truck02-up0010.png" />
+    <image file="truck02-up0011.png" />
+    <image file="truck02-up0012.png" />
+    <image file="truck02-down0013.png" />
+    <image file="truck02-down0014.png" />
+    <image file="truck02-down0015.png" />
+    <image file="truck02-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="WhiteTruck" />
+    <image file="truck03-0000.png" />
+    <image file="truck03-0001.png" />
+    <image file="truck03-0002.png" />
+    <image file="truck03-0003.png" />
+    <image file="truck03-0004.png" />
+    <image file="truck03-0005.png" />
+    <image file="truck03-0006.png" />
+    <image file="truck03-0007.png" />
+    <image file="truck03-up0009.png" />
+    <image file="truck03-up0010.png" />
+    <image file="truck03-up0011.png" />
+    <image file="truck03-up0012.png" />
+    <image file="truck03-down0013.png" />
+    <image file="truck03-down0014.png" />
+    <image file="truck03-down0015.png" />
+    <image file="truck03-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="YellowTruck" />
+    <image file="truck04-0000.png" />
+    <image file="truck04-0001.png" />
+    <image file="truck04-0002.png" />
+    <image file="truck04-0003.png" />
+    <image file="truck04-0004.png" />
+    <image file="truck04-0005.png" />
+    <image file="truck04-0006.png" />
+    <image file="truck04-0007.png" />
+    <image file="truck04-up0009.png" />
+    <image file="truck04-up0010.png" />
+    <image file="truck04-up0011.png" />
+    <image file="truck04-up0012.png" />
+    <image file="truck04-down0013.png" />
+    <image file="truck04-down0014.png" />
+    <image file="truck04-down0015.png" />
+    <image file="truck04-down0016.png" />
+    </group>
+
+    <group>
+    <resourceID name="BlueTruck" />
+    <image file="truck05-0000.png" />
+    <image file="truck05-0001.png" />
+    <image file="truck05-0002.png" />
+    <image file="truck05-0003.png" />
+    <image file="truck05-0004.png" />
+    <image file="truck05-0005.png" />
+    <image file="truck05-0006.png" />
+    <image file="truck05-0007.png" />
+    <image file="truck05-up0009.png" />
+    <image file="truck05-up0010.png" />
+    <image file="truck05-up0011.png" />
+    <image file="truck05-up0012.png" />
+    <image file="truck05-down0013.png" />
+    <image file="truck05-down0014.png" />
+    <image file="truck05-down0015.png" />
+    <image file="truck05-down0016.png" />
     </group>
 
 </resources>
